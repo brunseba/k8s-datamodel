@@ -1,0 +1,1662 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="A CLI tool to model and analyze Kubernetes cluster data including CRDs, operators, and OLM components" name="description"/>
+<meta content="brunseba" name="author"/>
+<link href="https://brunseba.github.io/k8s-datamodel/usage/database/" rel="canonical"/>
+<link href="../cluster/" rel="prev"/>
+<link href="../output-formats/" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.15" name="generator"/>
+<title>Database Operations - K8s DataModel</title>
+<link href="../../assets/stylesheets/main.342714a4.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="blue" data-md-color-primary="blue" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#database-operations">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<div data-md-color-scheme="default" data-md-component="outdated" hidden="">
+</div>
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="K8s DataModel" class="md-header__button md-logo" data-md-component="logo" href="../.." title="K8s DataModel">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            K8s DataModel
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Database Operations
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="blue" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="blue" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="blue" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="blue" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<a aria-label="Share" class="md-search__icon md-icon" data-clipboard="" data-clipboard-text="" data-md-component="search-share" href="javascript:void(0)" tabindex="-1" title="Share">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+</a>
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/brunseba/k8s-datamodel" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
+    brunseba/k8s-datamodel
+  </div>
+</a>
+</div>
+</nav>
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../PROJECT_SUMMARY/">
+        
+  
+  
+    
+  
+  Project Overview
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../CRD_EXPORT_EXAMPLES/">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../quick-start/">
+          
+  
+  
+    
+  
+  Usage
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../examples/">
+          
+  
+  
+    
+  
+  Examples
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../api/cli/">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../contributing/">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../RELEASE_NOTES/">
+        
+  
+  
+    
+  
+  Release Notes
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../changelog/">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="K8s DataModel" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="K8s DataModel">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    K8s DataModel
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/brunseba/k8s-datamodel" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
+    brunseba/k8s-datamodel
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
+    Home
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../PROJECT_SUMMARY/">
+<span class="md-ellipsis">
+    Project Overview
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Features
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../CRD_EXPORT_EXAMPLES/">
+<span class="md-ellipsis">
+    CRD Export Examples
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../OLM_FEATURE_SUMMARY/">
+<span class="md-ellipsis">
+    OLM Integration
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+<span class="md-ellipsis">
+    Usage
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Usage
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../quick-start/">
+<span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../crds/">
+<span class="md-ellipsis">
+    CRDs
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../operators/">
+<span class="md-ellipsis">
+    Operators
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cluster/">
+<span class="md-ellipsis">
+    Cluster Operations
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Database Operations
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Database Operations
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      Overview
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-architecture">
+<span class="md-ellipsis">
+      Database Architecture
+    </span>
+</a>
+<nav aria-label="Database Architecture" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-schema">
+<span class="md-ellipsis">
+      Database Schema
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-location">
+<span class="md-ellipsis">
+      Database Location
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#storage-operations">
+<span class="md-ellipsis">
+      Storage Operations
+    </span>
+</a>
+<nav aria-label="Storage Operations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#storing-complete-inventory-snapshots">
+<span class="md-ellipsis">
+      Storing Complete Inventory Snapshots
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#storing-from-individual-commands">
+<span class="md-ellipsis">
+      Storing from Individual Commands
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#custom-database-location">
+<span class="md-ellipsis">
+      Custom Database Location
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-cluster-storage">
+<span class="md-ellipsis">
+      Multi-Cluster Storage
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#querying-and-viewing-data">
+<span class="md-ellipsis">
+      Querying and Viewing Data
+    </span>
+</a>
+<nav aria-label="Querying and Viewing Data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#listing-snapshots">
+<span class="md-ellipsis">
+      Listing Snapshots
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#viewing-snapshot-details">
+<span class="md-ellipsis">
+      Viewing Snapshot Details
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exporting-snapshots">
+<span class="md-ellipsis">
+      Exporting Snapshots
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-management">
+<span class="md-ellipsis">
+      Database Management
+    </span>
+</a>
+<nav aria-label="Database Management" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-statistics">
+<span class="md-ellipsis">
+      Database Statistics
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cleaning-up-old-snapshots">
+<span class="md-ellipsis">
+      Cleaning Up Old Snapshots
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-backup-and-restore">
+<span class="md-ellipsis">
+      Database Backup and Restore
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#advanced-usage-patterns">
+<span class="md-ellipsis">
+      Advanced Usage Patterns
+    </span>
+</a>
+<nav aria-label="Advanced Usage Patterns" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#automated-inventory-collection">
+<span class="md-ellipsis">
+      Automated Inventory Collection
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#monitoring-and-alerting">
+<span class="md-ellipsis">
+      Monitoring and Alerting
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#compliance-and-auditing">
+<span class="md-ellipsis">
+      Compliance and Auditing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-environment-comparison">
+<span class="md-ellipsis">
+      Multi-Environment Comparison
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#advanced-spec-analysis">
+<span class="md-ellipsis">
+      Advanced Spec Analysis
+    </span>
+</a>
+<nav aria-label="Advanced Spec Analysis" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#querying-resource-specifications">
+<span class="md-ellipsis">
+      Querying Resource Specifications
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuration-drift-analysis">
+<span class="md-ellipsis">
+      Configuration Drift Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-analysis">
+<span class="md-ellipsis">
+      Security Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resource-requirements-analysis">
+<span class="md-ellipsis">
+      Resource Requirements Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#custom-analysis-scripts">
+<span class="md-ellipsis">
+      Custom Analysis Scripts
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integration-examples">
+<span class="md-ellipsis">
+      Integration Examples
+    </span>
+</a>
+<nav aria-label="Integration Examples" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cicd-pipeline-integration">
+<span class="md-ellipsis">
+      CI/CD Pipeline Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#terraform-integration">
+<span class="md-ellipsis">
+      Terraform Integration
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#troubleshooting">
+<span class="md-ellipsis">
+      Troubleshooting
+    </span>
+</a>
+<nav aria-label="Troubleshooting" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common-issues">
+<span class="md-ellipsis">
+      Common Issues
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-considerations">
+<span class="md-ellipsis">
+      Performance Considerations
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#best-practices">
+<span class="md-ellipsis">
+      Best Practices
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../output-formats/">
+<span class="md-ellipsis">
+    Output Formats
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Examples
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/">
+<span class="md-ellipsis">
+    Overview
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/database-workflows/">
+<span class="md-ellipsis">
+    Database Workflows
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/olm-workflows/">
+<span class="md-ellipsis">
+    OLM Management
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/security-compliance/">
+<span class="md-ellipsis">
+    Security &amp; Compliance
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/cli/">
+<span class="md-ellipsis">
+    CLI Commands
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/core/">
+<span class="md-ellipsis">
+    Core Modules
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contributing/">
+<span class="md-ellipsis">
+    Contributing
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../RELEASE_NOTES/">
+<span class="md-ellipsis">
+    Release Notes
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../changelog/">
+<span class="md-ellipsis">
+    Changelog
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      Overview
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-architecture">
+<span class="md-ellipsis">
+      Database Architecture
+    </span>
+</a>
+<nav aria-label="Database Architecture" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-schema">
+<span class="md-ellipsis">
+      Database Schema
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-location">
+<span class="md-ellipsis">
+      Database Location
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#storage-operations">
+<span class="md-ellipsis">
+      Storage Operations
+    </span>
+</a>
+<nav aria-label="Storage Operations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#storing-complete-inventory-snapshots">
+<span class="md-ellipsis">
+      Storing Complete Inventory Snapshots
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#storing-from-individual-commands">
+<span class="md-ellipsis">
+      Storing from Individual Commands
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#custom-database-location">
+<span class="md-ellipsis">
+      Custom Database Location
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-cluster-storage">
+<span class="md-ellipsis">
+      Multi-Cluster Storage
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#querying-and-viewing-data">
+<span class="md-ellipsis">
+      Querying and Viewing Data
+    </span>
+</a>
+<nav aria-label="Querying and Viewing Data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#listing-snapshots">
+<span class="md-ellipsis">
+      Listing Snapshots
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#viewing-snapshot-details">
+<span class="md-ellipsis">
+      Viewing Snapshot Details
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exporting-snapshots">
+<span class="md-ellipsis">
+      Exporting Snapshots
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-management">
+<span class="md-ellipsis">
+      Database Management
+    </span>
+</a>
+<nav aria-label="Database Management" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-statistics">
+<span class="md-ellipsis">
+      Database Statistics
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cleaning-up-old-snapshots">
+<span class="md-ellipsis">
+      Cleaning Up Old Snapshots
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#database-backup-and-restore">
+<span class="md-ellipsis">
+      Database Backup and Restore
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#advanced-usage-patterns">
+<span class="md-ellipsis">
+      Advanced Usage Patterns
+    </span>
+</a>
+<nav aria-label="Advanced Usage Patterns" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#automated-inventory-collection">
+<span class="md-ellipsis">
+      Automated Inventory Collection
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#monitoring-and-alerting">
+<span class="md-ellipsis">
+      Monitoring and Alerting
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#compliance-and-auditing">
+<span class="md-ellipsis">
+      Compliance and Auditing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-environment-comparison">
+<span class="md-ellipsis">
+      Multi-Environment Comparison
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#advanced-spec-analysis">
+<span class="md-ellipsis">
+      Advanced Spec Analysis
+    </span>
+</a>
+<nav aria-label="Advanced Spec Analysis" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#querying-resource-specifications">
+<span class="md-ellipsis">
+      Querying Resource Specifications
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuration-drift-analysis">
+<span class="md-ellipsis">
+      Configuration Drift Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-analysis">
+<span class="md-ellipsis">
+      Security Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#resource-requirements-analysis">
+<span class="md-ellipsis">
+      Resource Requirements Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#custom-analysis-scripts">
+<span class="md-ellipsis">
+      Custom Analysis Scripts
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integration-examples">
+<span class="md-ellipsis">
+      Integration Examples
+    </span>
+</a>
+<nav aria-label="Integration Examples" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cicd-pipeline-integration">
+<span class="md-ellipsis">
+      CI/CD Pipeline Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#terraform-integration">
+<span class="md-ellipsis">
+      Terraform Integration
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#troubleshooting">
+<span class="md-ellipsis">
+      Troubleshooting
+    </span>
+</a>
+<nav aria-label="Troubleshooting" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common-issues">
+<span class="md-ellipsis">
+      Common Issues
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-considerations">
+<span class="md-ellipsis">
+      Performance Considerations
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#best-practices">
+<span class="md-ellipsis">
+      Best Practices
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="database-operations">Database Operations<a class="headerlink" href="#database-operations" title="Permanent link">¶</a></h1>
+<p>The k8s-datamodel includes powerful database functionality for persistent storage and historical tracking of Kubernetes cluster inventories. This allows you to store complete snapshots of your cluster state, including the full specifications of all resources, compare changes over time, and maintain a comprehensive historical record of your Kubernetes resources.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>The database functionality provides:</p>
+<ul>
+<li><strong>Persistent Storage</strong>: Store complete cluster inventories in SQLite database</li>
+<li><strong>Complete Spec Storage</strong>: Store full Kubernetes resource specifications for deep analysis</li>
+<li><strong>Snapshot Management</strong>: Create, list, view, and delete inventory snapshots</li>
+<li><strong>Historical Tracking</strong>: Track changes in CRDs, operators, and OLM resources over time</li>
+<li><strong>Flexible Storage</strong>: Choose what to include in each snapshot (CRDs, operators, OLM CSVs)</li>
+<li><strong>Multiple Cluster Support</strong>: Store inventories from multiple clusters in the same database</li>
+<li><strong>Spec-level Analysis</strong>: Query and analyze stored resource specifications</li>
+</ul>
+<h2 id="database-architecture">Database Architecture<a class="headerlink" href="#database-architecture" title="Permanent link">¶</a></h2>
+<h3 id="database-schema">Database Schema<a class="headerlink" href="#database-schema" title="Permanent link">¶</a></h3>
+<p>The k8s-datamodel database uses SQLite and consists of the following main tables:</p>
+<pre class="mermaid"><code>erDiagram
+    inventory_snapshots {
+        int id PK
+        text timestamp
+        text cluster_context
+        text cluster_info
+        int crd_count
+        int operator_count
+        int csv_count
+        text namespace_filter
+        text notes
+        datetime created_at
+    }
+
+    crds {
+        int id PK
+        int snapshot_id FK
+        text name
+        text group_name
+        text version
+        text kind
+        text plural
+        text singular
+        text scope
+        text creation_timestamp
+        text labels
+        text annotations
+        int instance_count
+        text spec
+    }
+
+    operators {
+        int id PK
+        int snapshot_id FK
+        text name
+        text namespace
+        text operator_type
+        text image
+        text version
+        text creation_timestamp
+        text operator_framework
+        int replicas
+        int ready_replicas
+        text managed_crds
+        text spec
+    }
+
+    csvs {
+        int id PK
+        int snapshot_id FK
+        text name
+        text namespace
+        text display_name
+        text version
+        text phase
+        text description
+        text provider
+        text owned_crds
+        text required_crds
+        text spec
+    }
+
+    inventory_snapshots ||--o{ crds : contains
+    inventory_snapshots ||--o{ operators : contains
+    inventory_snapshots ||--o{ csvs : contains</code></pre>
+<h3 id="database-location">Database Location<a class="headerlink" href="#database-location" title="Permanent link">¶</a></h3>
+<p>By default, the database is stored at:
+- <strong>Linux/macOS</strong>: <code>~/.k8s-inventory/inventory.db</code>
+- <strong>Windows</strong>: <code>%USERPROFILE%\.k8s-inventory\inventory.db</code></p>
+<p>You can specify a custom database location using the <code>--db-path</code> option.</p>
+<h2 id="storage-operations">Storage Operations<a class="headerlink" href="#storage-operations" title="Permanent link">¶</a></h2>
+<h3 id="storing-complete-inventory-snapshots">Storing Complete Inventory Snapshots<a class="headerlink" href="#storing-complete-inventory-snapshots" title="Permanent link">¶</a></h3>
+<p>The primary way to store data is using the <code>database store</code> command, which creates a complete snapshot of your cluster's inventory:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1"># Store complete inventory snapshot</span>
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>store
+</span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="c1"># Store with descriptive notes</span>
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Production cluster before upgrade"</span>
+</span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="c1"># Store only specific components</span>
+</span><span id="__span-0-8"><a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--no-crds<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Operators only"</span>
+</span><span id="__span-0-9"><a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--no-operators<span class="w"> </span>--no-olm<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"CRDs only"</span>
+</span><span id="__span-0-10"><a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--no-crds<span class="w"> </span>--no-operators<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"OLM CSVs only"</span>
+</span></code></pre></div>
+<h3 id="storing-from-individual-commands">Storing from Individual Commands<a class="headerlink" href="#storing-from-individual-commands" title="Permanent link">¶</a></h3>
+<p>You can also store data while running individual inventory commands:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1"># Store CRDs while listing them</span>
+</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>k8s-datamodel<span class="w"> </span>crd<span class="w"> </span>list<span class="w"> </span>--store-db<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"CRD inventory snapshot"</span>
+</span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="c1"># Store operators while listing them</span>
+</span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>k8s-datamodel<span class="w"> </span>operators<span class="w"> </span>list<span class="w"> </span>--store-db<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Operator inventory"</span>
+</span><span id="__span-1-6"><a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="c1"># Store OLM CSVs while listing them</span>
+</span><span id="__span-1-8"><a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>k8s-datamodel<span class="w"> </span>olm<span class="w"> </span>list<span class="w"> </span>--store-db<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"OLM snapshot"</span>
+</span></code></pre></div>
+<h3 id="custom-database-location">Custom Database Location<a class="headerlink" href="#custom-database-location" title="Permanent link">¶</a></h3>
+<p>Use a custom database file:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># Use specific database file</span>
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>k8s-datamodel<span class="w"> </span>--db-path<span class="w"> </span>/path/to/custom.db<span class="w"> </span>database<span class="w"> </span>store
+</span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="c1"># Store with custom location</span>
+</span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>k8s-datamodel<span class="w"> </span>crd<span class="w"> </span>list<span class="w"> </span>--store-db<span class="w"> </span>--db-path<span class="w"> </span>./cluster-snapshots.db
+</span></code></pre></div>
+<h3 id="multi-cluster-storage">Multi-Cluster Storage<a class="headerlink" href="#multi-cluster-storage" title="Permanent link">¶</a></h3>
+<p>Store inventories from different clusters:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># Store from production cluster</span>
+</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>prod-cluster<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Production inventory"</span>
+</span><span id="__span-3-3"><a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="c1"># Store from development cluster</span>
+</span><span id="__span-3-5"><a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>dev-cluster<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Development inventory"</span>
+</span><span id="__span-3-6"><a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="c1"># Store from staging with specific namespace</span>
+</span><span id="__span-3-8"><a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>staging<span class="w"> </span>--namespace<span class="w"> </span>app-namespace<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Staging app namespace"</span>
+</span></code></pre></div>
+<h2 id="querying-and-viewing-data">Querying and Viewing Data<a class="headerlink" href="#querying-and-viewing-data" title="Permanent link">¶</a></h2>
+<h3 id="listing-snapshots">Listing Snapshots<a class="headerlink" href="#listing-snapshots" title="Permanent link">¶</a></h3>
+<p>View all stored snapshots:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># List all snapshots</span>
+</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list
+</span><span id="__span-4-3"><a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="c1"># List with rich formatting</span>
+</span><span id="__span-4-5"><a href="#__codelineno-4-5" id="__codelineno-4-5" name="__codelineno-4-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>rich
+</span><span id="__span-4-6"><a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="c1"># Filter by cluster context</span>
+</span><span id="__span-4-8"><a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--cluster-context<span class="w"> </span>prod-cluster
+</span><span id="__span-4-9"><a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="c1"># Limit number of results</span>
+</span><span id="__span-4-11"><a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+</span><span id="__span-4-12"><a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="c1"># JSON output for scripting</span>
+</span><span id="__span-4-14"><a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>json
+</span></code></pre></div>
+<p>Example output:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a>┏━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+</span><span id="__span-5-2"><a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>┃ ID ┃ Timestamp           ┃ Cluster        ┃ CRDs  ┃ Operators ┃ CSVs    ┃ Notes                                    ┃
+</span><span id="__span-5-3"><a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>┡━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+</span><span id="__span-5-4"><a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a>│ 1  │ 2024-03-15 10:30:15 │ prod-cluster   │ 45    │ 12        │ 8       │ Production cluster before upgrade        │
+</span><span id="__span-5-5"><a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a>│ 2  │ 2024-03-15 14:45:22 │ prod-cluster   │ 47    │ 12        │ 9       │ Production cluster after upgrade         │
+</span><span id="__span-5-6"><a href="#__codelineno-5-6" id="__codelineno-5-6" name="__codelineno-5-6"></a>│ 3  │ 2024-03-16 09:15:30 │ dev-cluster    │ 32    │ 8         │ 5       │ Development cluster inventory            │
+</span><span id="__span-5-7"><a href="#__codelineno-5-7" id="__codelineno-5-7" name="__codelineno-5-7"></a>└────┴─────────────────────┴────────────────┴───────┴───────────┴─────────┴──────────────────────────────────────────┘
+</span></code></pre></div></p>
+<h3 id="viewing-snapshot-details">Viewing Snapshot Details<a class="headerlink" href="#viewing-snapshot-details" title="Permanent link">¶</a></h3>
+<p>Get detailed information about a specific snapshot:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="c1"># Show snapshot details in YAML</span>
+</span><span id="__span-6-2"><a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>show<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-6-3"><a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="c1"># Show in JSON format</span>
+</span><span id="__span-6-5"><a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>show<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json
+</span></code></pre></div>
+<p>Example output:
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nt">snapshot</span><span class="p">:</span>
+</span><span id="__span-7-2"><a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-7-3"><a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">  </span><span class="nt">timestamp</span><span class="p">:</span><span class="w"> </span><span class="s">'2024-03-15</span><span class="nv"> </span><span class="s">10:30:15'</span>
+</span><span id="__span-7-4"><a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">  </span><span class="nt">cluster_context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod-cluster</span>
+</span><span id="__span-7-5"><a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">  </span><span class="nt">cluster_info</span><span class="p">:</span>
+</span><span id="__span-7-6"><a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.28.3</span>
+</span><span id="__span-7-7"><a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w">    </span><span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eks</span>
+</span><span id="__span-7-8"><a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">    </span><span class="nt">nodes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</span><span id="__span-7-9"><a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">  </span><span class="nt">crd_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">45</span>
+</span><span id="__span-7-10"><a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="w">  </span><span class="nt">operator_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span>
+</span><span id="__span-7-11"><a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">  </span><span class="nt">csv_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+</span><span id="__span-7-12"><a href="#__codelineno-7-12" id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="w">  </span><span class="nt">notes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Production cluster before upgrade</span>
+</span><span id="__span-7-13"><a href="#__codelineno-7-13" id="__codelineno-7-13" name="__codelineno-7-13"></a><span class="nt">crds</span><span class="p">:</span>
+</span><span id="__span-7-14"><a href="#__codelineno-7-14" id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">certificates.cert-manager.io</span>
+</span><span id="__span-7-15"><a href="#__codelineno-7-15" id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.io</span>
+</span><span id="__span-7-16"><a href="#__codelineno-7-16" id="__codelineno-7-16" name="__codelineno-7-16"></a><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-7-17"><a href="#__codelineno-7-17" id="__codelineno-7-17" name="__codelineno-7-17"></a><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Certificate</span>
+</span><span id="__span-7-18"><a href="#__codelineno-7-18" id="__codelineno-7-18" name="__codelineno-7-18"></a><span class="w">    </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Namespaced</span>
+</span><span id="__span-7-19"><a href="#__codelineno-7-19" id="__codelineno-7-19" name="__codelineno-7-19"></a><span class="w">    </span><span class="nt">instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">23</span>
+</span><span id="__span-7-20"><a href="#__codelineno-7-20" id="__codelineno-7-20" name="__codelineno-7-20"></a><span class="w">  </span><span class="c1"># ... more CRDs</span>
+</span><span id="__span-7-21"><a href="#__codelineno-7-21" id="__codelineno-7-21" name="__codelineno-7-21"></a><span class="nt">operators</span><span class="p">:</span>
+</span><span id="__span-7-22"><a href="#__codelineno-7-22" id="__codelineno-7-22" name="__codelineno-7-22"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager</span>
+</span><span id="__span-7-23"><a href="#__codelineno-7-23" id="__codelineno-7-23" name="__codelineno-7-23"></a><span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager</span>
+</span><span id="__span-7-24"><a href="#__codelineno-7-24" id="__codelineno-7-24" name="__codelineno-7-24"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-7-25"><a href="#__codelineno-7-25" id="__codelineno-7-25" name="__codelineno-7-25"></a><span class="w">    </span><span class="nt">framework</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Helm</span>
+</span><span id="__span-7-26"><a href="#__codelineno-7-26" id="__codelineno-7-26" name="__codelineno-7-26"></a><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.12.0</span>
+</span><span id="__span-7-27"><a href="#__codelineno-7-27" id="__codelineno-7-27" name="__codelineno-7-27"></a><span class="w">    </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-7-28"><a href="#__codelineno-7-28" id="__codelineno-7-28" name="__codelineno-7-28"></a><span class="w">    </span><span class="nt">ready_replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-7-29"><a href="#__codelineno-7-29" id="__codelineno-7-29" name="__codelineno-7-29"></a><span class="w">  </span><span class="c1"># ... more operators</span>
+</span><span id="__span-7-30"><a href="#__codelineno-7-30" id="__codelineno-7-30" name="__codelineno-7-30"></a><span class="nt">csvs</span><span class="p">:</span>
+</span><span id="__span-7-31"><a href="#__codelineno-7-31" id="__codelineno-7-31" name="__codelineno-7-31"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert-manager.v1.12.0</span>
+</span><span id="__span-7-32"><a href="#__codelineno-7-32" id="__codelineno-7-32" name="__codelineno-7-32"></a><span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">operators</span>
+</span><span id="__span-7-33"><a href="#__codelineno-7-33" id="__codelineno-7-33" name="__codelineno-7-33"></a><span class="w">    </span><span class="nt">phase</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Succeeded</span>
+</span><span id="__span-7-34"><a href="#__codelineno-7-34" id="__codelineno-7-34" name="__codelineno-7-34"></a><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.12.0</span>
+</span><span id="__span-7-35"><a href="#__codelineno-7-35" id="__codelineno-7-35" name="__codelineno-7-35"></a><span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Certificate management for Kubernetes</span>
+</span><span id="__span-7-36"><a href="#__codelineno-7-36" id="__codelineno-7-36" name="__codelineno-7-36"></a><span class="w">  </span><span class="c1"># ... more CSVs</span>
+</span></code></pre></div></p>
+<h3 id="exporting-snapshots">Exporting Snapshots<a class="headerlink" href="#exporting-snapshots" title="Permanent link">¶</a></h3>
+<p>Export snapshots to files for external analysis:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="c1"># Export snapshot to JSON file</span>
+</span><span id="__span-8-2"><a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--file<span class="w"> </span>snapshot-1.json
+</span><span id="__span-8-3"><a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a href="#__codelineno-8-4" id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="c1"># Export to YAML</span>
+</span><span id="__span-8-5"><a href="#__codelineno-8-5" id="__codelineno-8-5" name="__codelineno-8-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>yaml<span class="w"> </span>--file<span class="w"> </span>snapshot-1.yaml
+</span><span id="__span-8-6"><a href="#__codelineno-8-6" id="__codelineno-8-6" name="__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a href="#__codelineno-8-7" id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="c1"># Export only specific components</span>
+</span><span id="__span-8-8"><a href="#__codelineno-8-8" id="__codelineno-8-8" name="__codelineno-8-8"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--crds-only<span class="w"> </span>--file<span class="w"> </span>crds-snapshot-1.json
+</span><span id="__span-8-9"><a href="#__codelineno-8-9" id="__codelineno-8-9" name="__codelineno-8-9"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--operators-only<span class="w"> </span>--file<span class="w"> </span>operators-snapshot-1.json
+</span></code></pre></div>
+<h2 id="database-management">Database Management<a class="headerlink" href="#database-management" title="Permanent link">¶</a></h2>
+<h3 id="database-statistics">Database Statistics<a class="headerlink" href="#database-statistics" title="Permanent link">¶</a></h3>
+<p>View database statistics and storage information:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="c1"># Show database stats</span>
+</span><span id="__span-9-2"><a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>stats
+</span><span id="__span-9-3"><a href="#__codelineno-9-3" id="__codelineno-9-3" name="__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a href="#__codelineno-9-4" id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="c1"># Rich formatted stats</span>
+</span><span id="__span-9-5"><a href="#__codelineno-9-5" id="__codelineno-9-5" name="__codelineno-9-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>stats<span class="w"> </span>--output<span class="w"> </span>rich
+</span><span id="__span-9-6"><a href="#__codelineno-9-6" id="__codelineno-9-6" name="__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a href="#__codelineno-9-7" id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="c1"># JSON output for monitoring</span>
+</span><span id="__span-9-8"><a href="#__codelineno-9-8" id="__codelineno-9-8" name="__codelineno-9-8"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>stats<span class="w"> </span>--output<span class="w"> </span>json
+</span></code></pre></div>
+<p>Example output:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a>Database Statistics
+</span><span id="__span-10-2"><a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a>━━━━━━━━━━━━━━━━━━━
+</span><span id="__span-10-3"><a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a>📊 General Statistics:
+</span><span id="__span-10-5"><a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a>  • Database Path: /Users/user/.k8s-inventory/inventory.db
+</span><span id="__span-10-6"><a href="#__codelineno-10-6" id="__codelineno-10-6" name="__codelineno-10-6"></a>  • Database Size: 2.4 MB
+</span><span id="__span-10-7"><a href="#__codelineno-10-7" id="__codelineno-10-7" name="__codelineno-10-7"></a>  • Total Snapshots: 15
+</span><span id="__span-10-8"><a href="#__codelineno-10-8" id="__codelineno-10-8" name="__codelineno-10-8"></a>  • Date Range: 2024-03-01 to 2024-03-20
+</span><span id="__span-10-9"><a href="#__codelineno-10-9" id="__codelineno-10-9" name="__codelineno-10-9"></a>
+</span><span id="__span-10-10"><a href="#__codelineno-10-10" id="__codelineno-10-10" name="__codelineno-10-10"></a>📈 Content Statistics:
+</span><span id="__span-10-11"><a href="#__codelineno-10-11" id="__codelineno-10-11" name="__codelineno-10-11"></a>  • Total CRDs Stored: 678
+</span><span id="__span-10-12"><a href="#__codelineno-10-12" id="__codelineno-10-12" name="__codelineno-10-12"></a>  • Total Operators Stored: 156
+</span><span id="__span-10-13"><a href="#__codelineno-10-13" id="__codelineno-10-13" name="__codelineno-10-13"></a>  • Total CSVs Stored: 89
+</span><span id="__span-10-14"><a href="#__codelineno-10-14" id="__codelineno-10-14" name="__codelineno-10-14"></a>  • Unique Clusters: 3
+</span><span id="__span-10-15"><a href="#__codelineno-10-15" id="__codelineno-10-15" name="__codelineno-10-15"></a>
+</span><span id="__span-10-16"><a href="#__codelineno-10-16" id="__codelineno-10-16" name="__codelineno-10-16"></a>🏗️ Cluster Breakdown:
+</span><span id="__span-10-17"><a href="#__codelineno-10-17" id="__codelineno-10-17" name="__codelineno-10-17"></a>  • prod-cluster: 8 snapshots
+</span><span id="__span-10-18"><a href="#__codelineno-10-18" id="__codelineno-10-18" name="__codelineno-10-18"></a>  • dev-cluster: 4 snapshots  
+</span><span id="__span-10-19"><a href="#__codelineno-10-19" id="__codelineno-10-19" name="__codelineno-10-19"></a>  • staging-cluster: 3 snapshots
+</span><span id="__span-10-20"><a href="#__codelineno-10-20" id="__codelineno-10-20" name="__codelineno-10-20"></a>
+</span><span id="__span-10-21"><a href="#__codelineno-10-21" id="__codelineno-10-21" name="__codelineno-10-21"></a>💾 Storage Breakdown:
+</span><span id="__span-10-22"><a href="#__codelineno-10-22" id="__codelineno-10-22" name="__codelineno-10-22"></a>  • Snapshots: 45%
+</span><span id="__span-10-23"><a href="#__codelineno-10-23" id="__codelineno-10-23" name="__codelineno-10-23"></a>  • CRDs: 35%
+</span><span id="__span-10-24"><a href="#__codelineno-10-24" id="__codelineno-10-24" name="__codelineno-10-24"></a>  • Operators: 15%
+</span><span id="__span-10-25"><a href="#__codelineno-10-25" id="__codelineno-10-25" name="__codelineno-10-25"></a>  • CSVs: 5%
+</span></code></pre></div></p>
+<h3 id="cleaning-up-old-snapshots">Cleaning Up Old Snapshots<a class="headerlink" href="#cleaning-up-old-snapshots" title="Permanent link">¶</a></h3>
+<p>Manage database size by removing old snapshots:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="c1"># Delete specific snapshot</span>
+</span><span id="__span-11-2"><a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>delete<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-11-3"><a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="c1"># Delete with confirmation skip</span>
+</span><span id="__span-11-5"><a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>delete<span class="w"> </span><span class="m">1</span><span class="w"> </span>--yes
+</span><span id="__span-11-6"><a href="#__codelineno-11-6" id="__codelineno-11-6" name="__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a href="#__codelineno-11-7" id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="c1"># Clean up old snapshots (keep most recent N)</span>
+</span><span id="__span-11-8"><a href="#__codelineno-11-8" id="__codelineno-11-8" name="__codelineno-11-8"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>cleanup<span class="w"> </span>--keep<span class="w"> </span><span class="m">10</span>
+</span><span id="__span-11-9"><a href="#__codelineno-11-9" id="__codelineno-11-9" name="__codelineno-11-9"></a>
+</span><span id="__span-11-10"><a href="#__codelineno-11-10" id="__codelineno-11-10" name="__codelineno-11-10"></a><span class="c1"># Clean up by date</span>
+</span><span id="__span-11-11"><a href="#__codelineno-11-11" id="__codelineno-11-11" name="__codelineno-11-11"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>cleanup<span class="w"> </span>--older-than<span class="w"> </span><span class="s2">"30 days"</span>
+</span><span id="__span-11-12"><a href="#__codelineno-11-12" id="__codelineno-11-12" name="__codelineno-11-12"></a>
+</span><span id="__span-11-13"><a href="#__codelineno-11-13" id="__codelineno-11-13" name="__codelineno-11-13"></a><span class="c1"># Clean up specific cluster</span>
+</span><span id="__span-11-14"><a href="#__codelineno-11-14" id="__codelineno-11-14" name="__codelineno-11-14"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>cleanup<span class="w"> </span>--cluster-context<span class="w"> </span>dev-cluster<span class="w"> </span>--keep<span class="w"> </span><span class="m">5</span>
+</span></code></pre></div>
+<h3 id="database-backup-and-restore">Database Backup and Restore<a class="headerlink" href="#database-backup-and-restore" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="c1"># Backup database</span>
+</span><span id="__span-12-2"><a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a>cp<span class="w"> </span>~/.k8s-inventory/inventory.db<span class="w"> </span>~/backups/inventory-backup-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
+</span><span id="__span-12-3"><a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a href="#__codelineno-12-4" id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="c1"># Restore from backup</span>
+</span><span id="__span-12-5"><a href="#__codelineno-12-5" id="__codelineno-12-5" name="__codelineno-12-5"></a>cp<span class="w"> </span>~/backups/inventory-backup-20240315.db<span class="w"> </span>~/.k8s-inventory/inventory.db
+</span><span id="__span-12-6"><a href="#__codelineno-12-6" id="__codelineno-12-6" name="__codelineno-12-6"></a>
+</span><span id="__span-12-7"><a href="#__codelineno-12-7" id="__codelineno-12-7" name="__codelineno-12-7"></a><span class="c1"># Use custom database location for backup testing</span>
+</span><span id="__span-12-8"><a href="#__codelineno-12-8" id="__codelineno-12-8" name="__codelineno-12-8"></a>k8s-datamodel<span class="w"> </span>--db-path<span class="w"> </span>./test-restore.db<span class="w"> </span>database<span class="w"> </span>list
+</span></code></pre></div>
+<h2 id="advanced-usage-patterns">Advanced Usage Patterns<a class="headerlink" href="#advanced-usage-patterns" title="Permanent link">¶</a></h2>
+<h3 id="automated-inventory-collection">Automated Inventory Collection<a class="headerlink" href="#automated-inventory-collection" title="Permanent link">¶</a></h3>
+<p>Set up automated snapshot collection using cron or scheduled tasks:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-13-2"><a href="#__codelineno-13-2" id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="c1"># daily-inventory.sh - Collect daily inventory snapshots</span>
+</span><span id="__span-13-3"><a href="#__codelineno-13-3" id="__codelineno-13-3" name="__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a href="#__codelineno-13-4" id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="c1"># Production cluster</span>
+</span><span id="__span-13-5"><a href="#__codelineno-13-5" id="__codelineno-13-5" name="__codelineno-13-5"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>prod-cluster<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Daily production snapshot - </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">"</span>
+</span><span id="__span-13-6"><a href="#__codelineno-13-6" id="__codelineno-13-6" name="__codelineno-13-6"></a>
+</span><span id="__span-13-7"><a href="#__codelineno-13-7" id="__codelineno-13-7" name="__codelineno-13-7"></a><span class="c1"># Development cluster  </span>
+</span><span id="__span-13-8"><a href="#__codelineno-13-8" id="__codelineno-13-8" name="__codelineno-13-8"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>dev-cluster<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Daily development snapshot - </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">"</span>
+</span><span id="__span-13-9"><a href="#__codelineno-13-9" id="__codelineno-13-9" name="__codelineno-13-9"></a>
+</span><span id="__span-13-10"><a href="#__codelineno-13-10" id="__codelineno-13-10" name="__codelineno-13-10"></a><span class="c1"># Cleanup old snapshots (keep 30 days)</span>
+</span><span id="__span-13-11"><a href="#__codelineno-13-11" id="__codelineno-13-11" name="__codelineno-13-11"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>cleanup<span class="w"> </span>--keep<span class="w"> </span><span class="m">30</span>
+</span></code></pre></div>
+<p>Add to crontab:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="c1"># Run daily at 2 AM</span>
+</span><span id="__span-14-2"><a href="#__codelineno-14-2" id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="m">0</span><span class="w"> </span><span class="m">2</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/path/to/daily-inventory.sh
+</span></code></pre></div></p>
+<h3 id="monitoring-and-alerting">Monitoring and Alerting<a class="headerlink" href="#monitoring-and-alerting" title="Permanent link">¶</a></h3>
+<p>Extract metrics for monitoring systems:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a href="#__codelineno-15-1" id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="c1"># Get snapshot counts for monitoring</span>
+</span><span id="__span-15-2"><a href="#__codelineno-15-2" id="__codelineno-15-2" name="__codelineno-15-2"></a><span class="nv">SNAPSHOT_COUNT</span><span class="o">=</span><span class="k">$(</span>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>stats<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">'.total_snapshots'</span><span class="k">)</span>
+</span><span id="__span-15-3"><a href="#__codelineno-15-3" id="__codelineno-15-3" name="__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a href="#__codelineno-15-4" id="__codelineno-15-4" name="__codelineno-15-4"></a><span class="c1"># Get latest snapshot info</span>
+</span><span id="__span-15-5"><a href="#__codelineno-15-5" id="__codelineno-15-5" name="__codelineno-15-5"></a><span class="nv">LATEST_SNAPSHOT</span><span class="o">=</span><span class="k">$(</span>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--limit<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.[0]'</span><span class="k">)</span>
+</span><span id="__span-15-6"><a href="#__codelineno-15-6" id="__codelineno-15-6" name="__codelineno-15-6"></a>
+</span><span id="__span-15-7"><a href="#__codelineno-15-7" id="__codelineno-15-7" name="__codelineno-15-7"></a><span class="c1"># Check for recent snapshots (alert if none in 24 hours)</span>
+</span><span id="__span-15-8"><a href="#__codelineno-15-8" id="__codelineno-15-8" name="__codelineno-15-8"></a><span class="nv">LATEST_TIME</span><span class="o">=</span><span class="k">$(</span>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--limit<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.[0].timestamp'</span><span class="k">)</span>
+</span></code></pre></div>
+<h3 id="compliance-and-auditing">Compliance and Auditing<a class="headerlink" href="#compliance-and-auditing" title="Permanent link">¶</a></h3>
+<p>Use database for compliance reporting:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a href="#__codelineno-16-1" id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="c1"># Generate compliance report for date range</span>
+</span><span id="__span-16-2"><a href="#__codelineno-16-2" id="__codelineno-16-2" name="__codelineno-16-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">'[.[] | select(.timestamp &gt;= "2024-03-01" and .timestamp &lt;= "2024-03-31")]'</span><span class="w"> </span>&gt;<span class="w"> </span>march-compliance-report.json
+</span><span id="__span-16-3"><a href="#__codelineno-16-3" id="__codelineno-16-3" name="__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a href="#__codelineno-16-4" id="__codelineno-16-4" name="__codelineno-16-4"></a><span class="c1"># Export security-relevant operators</span>
+</span><span id="__span-16-5"><a href="#__codelineno-16-5" id="__codelineno-16-5" name="__codelineno-16-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>show<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">'.operators[] | select(.framework == "OLM" and (.managed_crds | contains("security")))'</span><span class="w"> </span>&gt;<span class="w"> </span>security-operators.json
+</span></code></pre></div>
+<h3 id="multi-environment-comparison">Multi-Environment Comparison<a class="headerlink" href="#multi-environment-comparison" title="Permanent link">¶</a></h3>
+<p>Compare inventories across environments:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a href="#__codelineno-17-1" id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="c1"># Store snapshots from different environments</span>
+</span><span id="__span-17-2"><a href="#__codelineno-17-2" id="__codelineno-17-2" name="__codelineno-17-2"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>prod<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Production baseline"</span>
+</span><span id="__span-17-3"><a href="#__codelineno-17-3" id="__codelineno-17-3" name="__codelineno-17-3"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>staging<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Staging baseline"</span>
+</span><span id="__span-17-4"><a href="#__codelineno-17-4" id="__codelineno-17-4" name="__codelineno-17-4"></a>k8s-datamodel<span class="w"> </span>--context<span class="w"> </span>dev<span class="w"> </span>database<span class="w"> </span>store<span class="w"> </span>--notes<span class="w"> </span><span class="s2">"Development baseline"</span>
+</span><span id="__span-17-5"><a href="#__codelineno-17-5" id="__codelineno-17-5" name="__codelineno-17-5"></a>
+</span><span id="__span-17-6"><a href="#__codelineno-17-6" id="__codelineno-17-6" name="__codelineno-17-6"></a><span class="c1"># Export for comparison</span>
+</span><span id="__span-17-7"><a href="#__codelineno-17-7" id="__codelineno-17-7" name="__codelineno-17-7"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--file<span class="w"> </span>prod-inventory.json
+</span><span id="__span-17-8"><a href="#__codelineno-17-8" id="__codelineno-17-8" name="__codelineno-17-8"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">2</span><span class="w"> </span>--file<span class="w"> </span>staging-inventory.json<span class="w">  </span>
+</span><span id="__span-17-9"><a href="#__codelineno-17-9" id="__codelineno-17-9" name="__codelineno-17-9"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--file<span class="w"> </span>dev-inventory.json
+</span><span id="__span-17-10"><a href="#__codelineno-17-10" id="__codelineno-17-10" name="__codelineno-17-10"></a>
+</span><span id="__span-17-11"><a href="#__codelineno-17-11" id="__codelineno-17-11" name="__codelineno-17-11"></a><span class="c1"># Use external tools to diff the JSON files</span>
+</span><span id="__span-17-12"><a href="#__codelineno-17-12" id="__codelineno-17-12" name="__codelineno-17-12"></a>diff<span class="w"> </span>&lt;<span class="o">(</span>jq<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>prod-inventory.json<span class="o">)</span><span class="w"> </span>&lt;<span class="o">(</span>jq<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>staging-inventory.json<span class="o">)</span>
+</span></code></pre></div>
+<h2 id="advanced-spec-analysis">Advanced Spec Analysis<a class="headerlink" href="#advanced-spec-analysis" title="Permanent link">¶</a></h2>
+<p>With complete resource specifications stored in the database, you can perform deep analysis of your Kubernetes resources:</p>
+<h3 id="querying-resource-specifications">Querying Resource Specifications<a class="headerlink" href="#querying-resource-specifications" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a href="#__codelineno-18-1" id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="c1"># Export snapshot with full specifications</span>
+</span><span id="__span-18-2"><a href="#__codelineno-18-2" id="__codelineno-18-2" name="__codelineno-18-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--include-specs<span class="w"> </span>--file<span class="w"> </span>full-snapshot.json
+</span><span id="__span-18-3"><a href="#__codelineno-18-3" id="__codelineno-18-3" name="__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a href="#__codelineno-18-4" id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="c1"># Query CRD specifications from exported data</span>
+</span><span id="__span-18-5"><a href="#__codelineno-18-5" id="__codelineno-18-5" name="__codelineno-18-5"></a>jq<span class="w"> </span><span class="s1">'.crds[] | select(.name == "certificates.cert-manager.io") | .spec'</span><span class="w"> </span>full-snapshot.json
+</span><span id="__span-18-6"><a href="#__codelineno-18-6" id="__codelineno-18-6" name="__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a href="#__codelineno-18-7" id="__codelineno-18-7" name="__codelineno-18-7"></a><span class="c1"># Query operator container configurations</span>
+</span><span id="__span-18-8"><a href="#__codelineno-18-8" id="__codelineno-18-8" name="__codelineno-18-8"></a>jq<span class="w"> </span><span class="s1">'.operators[] | {name: .name, spec: .spec.spec.template.spec.containers[0]}'</span><span class="w"> </span>full-snapshot.json
+</span><span id="__span-18-9"><a href="#__codelineno-18-9" id="__codelineno-18-9" name="__codelineno-18-9"></a>
+</span><span id="__span-18-10"><a href="#__codelineno-18-10" id="__codelineno-18-10" name="__codelineno-18-10"></a><span class="c1"># Extract security contexts from all operators</span>
+</span><span id="__span-18-11"><a href="#__codelineno-18-11" id="__codelineno-18-11" name="__codelineno-18-11"></a>jq<span class="w"> </span><span class="s1">'.operators[] | {name: .name, security_context: .spec.spec.template.spec.containers[0].securityContext}'</span><span class="w"> </span>full-snapshot.json
+</span></code></pre></div>
+<h3 id="configuration-drift-analysis">Configuration Drift Analysis<a class="headerlink" href="#configuration-drift-analysis" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a href="#__codelineno-19-1" id="__codelineno-19-1" name="__codelineno-19-1"></a><span class="c1"># Compare operator configurations between snapshots</span>
+</span><span id="__span-19-2"><a href="#__codelineno-19-2" id="__codelineno-19-2" name="__codelineno-19-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--file<span class="w"> </span>snapshot1.json
+</span><span id="__span-19-3"><a href="#__codelineno-19-3" id="__codelineno-19-3" name="__codelineno-19-3"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">2</span><span class="w"> </span>--file<span class="w"> </span>snapshot2.json
+</span><span id="__span-19-4"><a href="#__codelineno-19-4" id="__codelineno-19-4" name="__codelineno-19-4"></a>
+</span><span id="__span-19-5"><a href="#__codelineno-19-5" id="__codelineno-19-5" name="__codelineno-19-5"></a><span class="c1"># Extract and compare specific operator specs</span>
+</span><span id="__span-19-6"><a href="#__codelineno-19-6" id="__codelineno-19-6" name="__codelineno-19-6"></a>jq<span class="w"> </span><span class="s1">'.operators[] | select(.name == "cert-manager") | .spec'</span><span class="w"> </span>snapshot1.json<span class="w"> </span>&gt;<span class="w"> </span>op1.json
+</span><span id="__span-19-7"><a href="#__codelineno-19-7" id="__codelineno-19-7" name="__codelineno-19-7"></a>jq<span class="w"> </span><span class="s1">'.operators[] | select(.name == "cert-manager") | .spec'</span><span class="w"> </span>snapshot2.json<span class="w"> </span>&gt;<span class="w"> </span>op2.json
+</span><span id="__span-19-8"><a href="#__codelineno-19-8" id="__codelineno-19-8" name="__codelineno-19-8"></a>diff<span class="w"> </span>op1.json<span class="w"> </span>op2.json
+</span><span id="__span-19-9"><a href="#__codelineno-19-9" id="__codelineno-19-9" name="__codelineno-19-9"></a>
+</span><span id="__span-19-10"><a href="#__codelineno-19-10" id="__codelineno-19-10" name="__codelineno-19-10"></a><span class="c1"># Compare CRD schema changes</span>
+</span><span id="__span-19-11"><a href="#__codelineno-19-11" id="__codelineno-19-11" name="__codelineno-19-11"></a>jq<span class="w"> </span><span class="s1">'.crds[] | select(.name == "certificates.cert-manager.io") | .spec.spec.versions[0].schema'</span><span class="w"> </span>snapshot1.json<span class="w"> </span>&gt;<span class="w"> </span>crd1.json
+</span><span id="__span-19-12"><a href="#__codelineno-19-12" id="__codelineno-19-12" name="__codelineno-19-12"></a>jq<span class="w"> </span><span class="s1">'.crds[] | select(.name == "certificates.cert-manager.io") | .spec.spec.versions[0].schema'</span><span class="w"> </span>snapshot2.json<span class="w"> </span>&gt;<span class="w"> </span>crd2.json
+</span><span id="__span-19-13"><a href="#__codelineno-19-13" id="__codelineno-19-13" name="__codelineno-19-13"></a>diff<span class="w"> </span>crd1.json<span class="w"> </span>crd2.json
+</span></code></pre></div>
+<h3 id="security-analysis">Security Analysis<a class="headerlink" href="#security-analysis" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a href="#__codelineno-20-1" id="__codelineno-20-1" name="__codelineno-20-1"></a><span class="c1"># Find operators with privileged security contexts</span>
+</span><span id="__span-20-2"><a href="#__codelineno-20-2" id="__codelineno-20-2" name="__codelineno-20-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>export-all<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-3"><a href="#__codelineno-20-3" id="__codelineno-20-3" name="__codelineno-20-3"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">'.[] | .operators[] | select(.spec.spec.template.spec.containers[0].securityContext.privileged == true)'</span>
+</span><span id="__span-20-4"><a href="#__codelineno-20-4" id="__codelineno-20-4" name="__codelineno-20-4"></a>
+</span><span id="__span-20-5"><a href="#__codelineno-20-5" id="__codelineno-20-5" name="__codelineno-20-5"></a><span class="c1"># Extract RBAC permissions from CSVs</span>
+</span><span id="__span-20-6"><a href="#__codelineno-20-6" id="__codelineno-20-6" name="__codelineno-20-6"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-7"><a href="#__codelineno-20-7" id="__codelineno-20-7" name="__codelineno-20-7"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">'.csvs[] | {name: .name, permissions: .spec.spec.install.spec.permissions}'</span>
+</span><span id="__span-20-8"><a href="#__codelineno-20-8" id="__codelineno-20-8" name="__codelineno-20-8"></a>
+</span><span id="__span-20-9"><a href="#__codelineno-20-9" id="__codelineno-20-9" name="__codelineno-20-9"></a><span class="c1"># Find operators with host network access</span>
+</span><span id="__span-20-10"><a href="#__codelineno-20-10" id="__codelineno-20-10" name="__codelineno-20-10"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-11"><a href="#__codelineno-20-11" id="__codelineno-20-11" name="__codelineno-20-11"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">'.operators[] | select(.spec.spec.template.spec.hostNetwork == true)'</span>
+</span></code></pre></div>
+<h3 id="resource-requirements-analysis">Resource Requirements Analysis<a class="headerlink" href="#resource-requirements-analysis" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a href="#__codelineno-21-1" id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="c1"># Analyze resource requests and limits</span>
+</span><span id="__span-21-2"><a href="#__codelineno-21-2" id="__codelineno-21-2" name="__codelineno-21-2"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-3"><a href="#__codelineno-21-3" id="__codelineno-21-3" name="__codelineno-21-3"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">'.operators[] | {name: .name, resources: .spec.spec.template.spec.containers[0].resources}'</span>
+</span><span id="__span-21-4"><a href="#__codelineno-21-4" id="__codelineno-21-4" name="__codelineno-21-4"></a>
+</span><span id="__span-21-5"><a href="#__codelineno-21-5" id="__codelineno-21-5" name="__codelineno-21-5"></a><span class="c1"># Find operators without resource limits</span>
+</span><span id="__span-21-6"><a href="#__codelineno-21-6" id="__codelineno-21-6" name="__codelineno-21-6"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-7"><a href="#__codelineno-21-7" id="__codelineno-21-7" name="__codelineno-21-7"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">'.operators[] | select(.spec.spec.template.spec.containers[0].resources.limits == null) | .name'</span>
+</span><span id="__span-21-8"><a href="#__codelineno-21-8" id="__codelineno-21-8" name="__codelineno-21-8"></a>
+</span><span id="__span-21-9"><a href="#__codelineno-21-9" id="__codelineno-21-9" name="__codelineno-21-9"></a><span class="c1"># Calculate total resource requests across snapshots</span>
+</span><span id="__span-21-10"><a href="#__codelineno-21-10" id="__codelineno-21-10" name="__codelineno-21-10"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-11"><a href="#__codelineno-21-11" id="__codelineno-21-11" name="__codelineno-21-11"></a><span class="w">  </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.[] | "\(.id) \(.timestamp)"'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-12"><a href="#__codelineno-21-12" id="__codelineno-21-12" name="__codelineno-21-12"></a><span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>id<span class="w"> </span>timestamp<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-21-13"><a href="#__codelineno-21-13" id="__codelineno-21-13" name="__codelineno-21-13"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Snapshot </span><span class="nv">$id</span><span class="s2"> (</span><span class="nv">$timestamp</span><span class="s2">):"</span>
+</span><span id="__span-21-14"><a href="#__codelineno-21-14" id="__codelineno-21-14" name="__codelineno-21-14"></a><span class="w">    </span>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">$id</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-15"><a href="#__codelineno-21-15" id="__codelineno-21-15" name="__codelineno-21-15"></a><span class="w">      </span>jq<span class="w"> </span><span class="s1">'[.operators[] | .spec.spec.template.spec.containers[0].resources.requests] | add'</span>
+</span><span id="__span-21-16"><a href="#__codelineno-21-16" id="__codelineno-21-16" name="__codelineno-21-16"></a><span class="w">  </span><span class="k">done</span>
+</span></code></pre></div>
+<h3 id="custom-analysis-scripts">Custom Analysis Scripts<a class="headerlink" href="#custom-analysis-scripts" title="Permanent link">¶</a></h3>
+<p>Create custom analysis scripts using the stored specifications:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a href="#__codelineno-22-1" id="__codelineno-22-1" name="__codelineno-22-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-22-2"><a href="#__codelineno-22-2" id="__codelineno-22-2" name="__codelineno-22-2"></a><span class="c1"># analyze-operator-images.sh - Analyze operator container images</span>
+</span><span id="__span-22-3"><a href="#__codelineno-22-3" id="__codelineno-22-3" name="__codelineno-22-3"></a>
+</span><span id="__span-22-4"><a href="#__codelineno-22-4" id="__codelineno-22-4" name="__codelineno-22-4"></a><span class="nv">SNAPSHOT_ID</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="s2">"latest"</span><span class="si">}</span>
+</span><span id="__span-22-5"><a href="#__codelineno-22-5" id="__codelineno-22-5" name="__codelineno-22-5"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$SNAPSHOT_ID</span><span class="s2">"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"latest"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-22-6"><a href="#__codelineno-22-6" id="__codelineno-22-6" name="__codelineno-22-6"></a><span class="w">  </span><span class="nv">SNAPSHOT_ID</span><span class="o">=</span><span class="k">$(</span>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>list<span class="w"> </span>--limit<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.[0].id'</span><span class="k">)</span>
+</span><span id="__span-22-7"><a href="#__codelineno-22-7" id="__codelineno-22-7" name="__codelineno-22-7"></a><span class="k">fi</span>
+</span><span id="__span-22-8"><a href="#__codelineno-22-8" id="__codelineno-22-8" name="__codelineno-22-8"></a>
+</span><span id="__span-22-9"><a href="#__codelineno-22-9" id="__codelineno-22-9" name="__codelineno-22-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Analyzing operator images in snapshot </span><span class="nv">$SNAPSHOT_ID</span><span class="s2">"</span>
+</span><span id="__span-22-10"><a href="#__codelineno-22-10" id="__codelineno-22-10" name="__codelineno-22-10"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">$SNAPSHOT_ID</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-11"><a href="#__codelineno-22-11" id="__codelineno-22-11" name="__codelineno-22-11"></a><span class="w">  </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.operators[] | "\(.name),\(.namespace),\(.spec.spec.template.spec.containers[0].image)"'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-12"><a href="#__codelineno-22-12" id="__codelineno-22-12" name="__codelineno-22-12"></a><span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="nv">IFS</span><span class="o">=</span>,<span class="w"> </span><span class="nb">read</span><span class="w"> </span>name<span class="w"> </span>namespace<span class="w"> </span>image<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-22-13"><a href="#__codelineno-22-13" id="__codelineno-22-13" name="__codelineno-22-13"></a><span class="w">    </span><span class="nv">registry</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$image</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">'/'</span><span class="w"> </span>-f1<span class="k">)</span>
+</span><span id="__span-22-14"><a href="#__codelineno-22-14" id="__codelineno-22-14" name="__codelineno-22-14"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Operator: </span><span class="nv">$name</span><span class="s2"> (ns: </span><span class="nv">$namespace</span><span class="s2">) - Registry: </span><span class="nv">$registry</span><span class="s2"> - Image: </span><span class="nv">$image</span><span class="s2">"</span>
+</span><span id="__span-22-15"><a href="#__codelineno-22-15" id="__codelineno-22-15" name="__codelineno-22-15"></a><span class="w">  </span><span class="k">done</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a href="#__codelineno-23-1" id="__codelineno-23-1" name="__codelineno-23-1"></a><span class="ch">#!/usr/bin/env python3</span>
+</span><span id="__span-23-2"><a href="#__codelineno-23-2" id="__codelineno-23-2" name="__codelineno-23-2"></a><span class="c1"># analyze-crd-schemas.py - Analyze CRD schema complexity</span>
+</span><span id="__span-23-3"><a href="#__codelineno-23-3" id="__codelineno-23-3" name="__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a href="#__codelineno-23-4" id="__codelineno-23-4" name="__codelineno-23-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="__span-23-5"><a href="#__codelineno-23-5" id="__codelineno-23-5" name="__codelineno-23-5"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span id="__span-23-6"><a href="#__codelineno-23-6" id="__codelineno-23-6" name="__codelineno-23-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+</span><span id="__span-23-7"><a href="#__codelineno-23-7" id="__codelineno-23-7" name="__codelineno-23-7"></a>
+</span><span id="__span-23-8"><a href="#__codelineno-23-8" id="__codelineno-23-8" name="__codelineno-23-8"></a><span class="k">def</span><span class="w"> </span><span class="nf">count_schema_properties</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+</span><span id="__span-23-9"><a href="#__codelineno-23-9" id="__codelineno-23-9" name="__codelineno-23-9"></a><span class="w">    </span><span class="sd">"""Count properties in a CRD schema recursively."""</span>
+</span><span id="__span-23-10"><a href="#__codelineno-23-10" id="__codelineno-23-10" name="__codelineno-23-10"></a>    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-23-11"><a href="#__codelineno-23-11" id="__codelineno-23-11" name="__codelineno-23-11"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">'properties'</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">:</span>
+</span><span id="__span-23-12"><a href="#__codelineno-23-12" id="__codelineno-23-12" name="__codelineno-23-12"></a>        <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_def</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">[</span><span class="s1">'properties'</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="__span-23-13"><a href="#__codelineno-23-13" id="__codelineno-23-13" name="__codelineno-23-13"></a>            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="__span-23-14"><a href="#__codelineno-23-14" id="__codelineno-23-14" name="__codelineno-23-14"></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prop_def</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">'properties'</span> <span class="ow">in</span> <span class="n">prop_def</span><span class="p">:</span>
+</span><span id="__span-23-15"><a href="#__codelineno-23-15" id="__codelineno-23-15" name="__codelineno-23-15"></a>                <span class="n">count</span> <span class="o">+=</span> <span class="n">count_schema_properties</span><span class="p">(</span><span class="n">prop_def</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-23-16"><a href="#__codelineno-23-16" id="__codelineno-23-16" name="__codelineno-23-16"></a>    <span class="k">return</span> <span class="n">count</span>
+</span><span id="__span-23-17"><a href="#__codelineno-23-17" id="__codelineno-23-17" name="__codelineno-23-17"></a>
+</span><span id="__span-23-18"><a href="#__codelineno-23-18" id="__codelineno-23-18" name="__codelineno-23-18"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span id="__span-23-19"><a href="#__codelineno-23-19" id="__codelineno-23-19" name="__codelineno-23-19"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+</span><span id="__span-23-20"><a href="#__codelineno-23-20" id="__codelineno-23-20" name="__codelineno-23-20"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"Usage: analyze-crd-schemas.py &lt;snapshot-file.json&gt;"</span><span class="p">)</span>
+</span><span id="__span-23-21"><a href="#__codelineno-23-21" id="__codelineno-23-21" name="__codelineno-23-21"></a>        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-23-22"><a href="#__codelineno-23-22" id="__codelineno-23-22" name="__codelineno-23-22"></a>
+</span><span id="__span-23-23"><a href="#__codelineno-23-23" id="__codelineno-23-23" name="__codelineno-23-23"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="__span-23-24"><a href="#__codelineno-23-24" id="__codelineno-23-24" name="__codelineno-23-24"></a>        <span class="n">snapshot</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="__span-23-25"><a href="#__codelineno-23-25" id="__codelineno-23-25" name="__codelineno-23-25"></a>
+</span><span id="__span-23-26"><a href="#__codelineno-23-26" id="__codelineno-23-26" name="__codelineno-23-26"></a>    <span class="n">complexity</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span id="__span-23-27"><a href="#__codelineno-23-27" id="__codelineno-23-27" name="__codelineno-23-27"></a>
+</span><span id="__span-23-28"><a href="#__codelineno-23-28" id="__codelineno-23-28" name="__codelineno-23-28"></a>    <span class="k">for</span> <span class="n">crd</span> <span class="ow">in</span> <span class="n">snapshot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'crds'</span><span class="p">,</span> <span class="p">[]):</span>
+</span><span id="__span-23-29"><a href="#__codelineno-23-29" id="__codelineno-23-29" name="__codelineno-23-29"></a>        <span class="k">if</span> <span class="s1">'spec'</span> <span class="ow">in</span> <span class="n">crd</span> <span class="ow">and</span> <span class="s1">'spec'</span> <span class="ow">in</span> <span class="n">crd</span><span class="p">[</span><span class="s1">'spec'</span><span class="p">]:</span>
+</span><span id="__span-23-30"><a href="#__codelineno-23-30" id="__codelineno-23-30" name="__codelineno-23-30"></a>            <span class="n">crd_spec</span> <span class="o">=</span> <span class="n">crd</span><span class="p">[</span><span class="s1">'spec'</span><span class="p">][</span><span class="s1">'spec'</span><span class="p">]</span>
+</span><span id="__span-23-31"><a href="#__codelineno-23-31" id="__codelineno-23-31" name="__codelineno-23-31"></a>            <span class="k">if</span> <span class="s1">'versions'</span> <span class="ow">in</span> <span class="n">crd_spec</span><span class="p">:</span>
+</span><span id="__span-23-32"><a href="#__codelineno-23-32" id="__codelineno-23-32" name="__codelineno-23-32"></a>                <span class="k">for</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">crd_spec</span><span class="p">[</span><span class="s1">'versions'</span><span class="p">]:</span>
+</span><span id="__span-23-33"><a href="#__codelineno-23-33" id="__codelineno-23-33" name="__codelineno-23-33"></a>                    <span class="k">if</span> <span class="s1">'schema'</span> <span class="ow">in</span> <span class="n">version</span> <span class="ow">and</span> <span class="s1">'openAPIV3Schema'</span> <span class="ow">in</span> <span class="n">version</span><span class="p">[</span><span class="s1">'schema'</span><span class="p">]:</span>
+</span><span id="__span-23-34"><a href="#__codelineno-23-34" id="__codelineno-23-34" name="__codelineno-23-34"></a>                        <span class="n">schema</span> <span class="o">=</span> <span class="n">version</span><span class="p">[</span><span class="s1">'schema'</span><span class="p">][</span><span class="s1">'openAPIV3Schema'</span><span class="p">]</span>
+</span><span id="__span-23-35"><a href="#__codelineno-23-35" id="__codelineno-23-35" name="__codelineno-23-35"></a>                        <span class="n">prop_count</span> <span class="o">=</span> <span class="n">count_schema_properties</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+</span><span id="__span-23-36"><a href="#__codelineno-23-36" id="__codelineno-23-36" name="__codelineno-23-36"></a>                        <span class="n">complexity</span><span class="p">[</span><span class="n">crd</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">complexity</span><span class="p">[</span><span class="n">crd</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]],</span> <span class="n">prop_count</span><span class="p">)</span>
+</span><span id="__span-23-37"><a href="#__codelineno-23-37" id="__codelineno-23-37" name="__codelineno-23-37"></a>
+</span><span id="__span-23-38"><a href="#__codelineno-23-38" id="__codelineno-23-38" name="__codelineno-23-38"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"CRD Schema Complexity Analysis:"</span><span class="p">)</span>
+</span><span id="__span-23-39"><a href="#__codelineno-23-39" id="__codelineno-23-39" name="__codelineno-23-39"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"==============================="</span><span class="p">)</span>
+</span><span id="__span-23-40"><a href="#__codelineno-23-40" id="__codelineno-23-40" name="__codelineno-23-40"></a>    <span class="k">for</span> <span class="n">crd_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">complexity</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="__span-23-41"><a href="#__codelineno-23-41" id="__codelineno-23-41" name="__codelineno-23-41"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">crd_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> properties"</span><span class="p">)</span>
+</span><span id="__span-23-42"><a href="#__codelineno-23-42" id="__codelineno-23-42" name="__codelineno-23-42"></a>
+</span><span id="__span-23-43"><a href="#__codelineno-23-43" id="__codelineno-23-43" name="__codelineno-23-43"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+</span><span id="__span-23-44"><a href="#__codelineno-23-44" id="__codelineno-23-44" name="__codelineno-23-44"></a>    <span class="n">main</span><span class="p">()</span>
+</span></code></pre></div>
+<h2 id="integration-examples">Integration Examples<a class="headerlink" href="#integration-examples" title="Permanent link">¶</a></h2>
+<h3 id="cicd-pipeline-integration">CI/CD Pipeline Integration<a class="headerlink" href="#cicd-pipeline-integration" title="Permanent link">¶</a></h3>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-24-1"><a href="#__codelineno-24-1" id="__codelineno-24-1" name="__codelineno-24-1"></a><span class="c1"># .github/workflows/inventory-tracking.yml</span>
+</span><span id="__span-24-2"><a href="#__codelineno-24-2" id="__codelineno-24-2" name="__codelineno-24-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Track Cluster Inventory</span>
+</span><span id="__span-24-3"><a href="#__codelineno-24-3" id="__codelineno-24-3" name="__codelineno-24-3"></a>
+</span><span id="__span-24-4"><a href="#__codelineno-24-4" id="__codelineno-24-4" name="__codelineno-24-4"></a><span class="nt">on</span><span class="p">:</span>
+</span><span id="__span-24-5"><a href="#__codelineno-24-5" id="__codelineno-24-5" name="__codelineno-24-5"></a><span class="w">  </span><span class="nt">schedule</span><span class="p">:</span>
+</span><span id="__span-24-6"><a href="#__codelineno-24-6" id="__codelineno-24-6" name="__codelineno-24-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">cron</span><span class="p">:</span><span class="w"> </span><span class="s">'0</span><span class="nv"> </span><span class="s">6</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*'</span><span class="w">  </span><span class="c1"># Daily at 6 AM</span>
+</span><span id="__span-24-7"><a href="#__codelineno-24-7" id="__codelineno-24-7" name="__codelineno-24-7"></a><span class="w">  </span><span class="nt">workflow_dispatch</span><span class="p">:</span>
+</span><span id="__span-24-8"><a href="#__codelineno-24-8" id="__codelineno-24-8" name="__codelineno-24-8"></a>
+</span><span id="__span-24-9"><a href="#__codelineno-24-9" id="__codelineno-24-9" name="__codelineno-24-9"></a><span class="nt">jobs</span><span class="p">:</span>
+</span><span id="__span-24-10"><a href="#__codelineno-24-10" id="__codelineno-24-10" name="__codelineno-24-10"></a><span class="w">  </span><span class="nt">inventory</span><span class="p">:</span>
+</span><span id="__span-24-11"><a href="#__codelineno-24-11" id="__codelineno-24-11" name="__codelineno-24-11"></a><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+</span><span id="__span-24-12"><a href="#__codelineno-24-12" id="__codelineno-24-12" name="__codelineno-24-12"></a><span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+</span><span id="__span-24-13"><a href="#__codelineno-24-13" id="__codelineno-24-13" name="__codelineno-24-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+</span><span id="__span-24-14"><a href="#__codelineno-24-14" id="__codelineno-24-14" name="__codelineno-24-14"></a>
+</span><span id="__span-24-15"><a href="#__codelineno-24-15" id="__codelineno-24-15" name="__codelineno-24-15"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup Python</span>
+</span><span id="__span-24-16"><a href="#__codelineno-24-16" id="__codelineno-24-16" name="__codelineno-24-16"></a><span class="w">      </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v4</span>
+</span><span id="__span-24-17"><a href="#__codelineno-24-17" id="__codelineno-24-17" name="__codelineno-24-17"></a><span class="w">      </span><span class="nt">with</span><span class="p">:</span>
+</span><span id="__span-24-18"><a href="#__codelineno-24-18" id="__codelineno-24-18" name="__codelineno-24-18"></a><span class="w">        </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="s">'3.10'</span>
+</span><span id="__span-24-19"><a href="#__codelineno-24-19" id="__codelineno-24-19" name="__codelineno-24-19"></a>
+</span><span id="__span-24-20"><a href="#__codelineno-24-20" id="__codelineno-24-20" name="__codelineno-24-20"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install k8s-datamodel</span>
+</span><span id="__span-24-21"><a href="#__codelineno-24-21" id="__codelineno-24-21" name="__codelineno-24-21"></a><span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pipx install k8s-datamodel</span>
+</span><span id="__span-24-22"><a href="#__codelineno-24-22" id="__codelineno-24-22" name="__codelineno-24-22"></a>
+</span><span id="__span-24-23"><a href="#__codelineno-24-23" id="__codelineno-24-23" name="__codelineno-24-23"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure kubectl</span>
+</span><span id="__span-24-24"><a href="#__codelineno-24-24" id="__codelineno-24-24" name="__codelineno-24-24"></a><span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-24-25"><a href="#__codelineno-24-25" id="__codelineno-24-25" name="__codelineno-24-25"></a><span class="w">        </span><span class="no">echo "${{ secrets.KUBECONFIG }}" | base64 -d &gt; kubeconfig</span>
+</span><span id="__span-24-26"><a href="#__codelineno-24-26" id="__codelineno-24-26" name="__codelineno-24-26"></a><span class="w">        </span><span class="no">export KUBECONFIG=./kubeconfig</span>
+</span><span id="__span-24-27"><a href="#__codelineno-24-27" id="__codelineno-24-27" name="__codelineno-24-27"></a>
+</span><span id="__span-24-28"><a href="#__codelineno-24-28" id="__codelineno-24-28" name="__codelineno-24-28"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Store inventory snapshot</span>
+</span><span id="__span-24-29"><a href="#__codelineno-24-29" id="__codelineno-24-29" name="__codelineno-24-29"></a><span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-24-30"><a href="#__codelineno-24-30" id="__codelineno-24-30" name="__codelineno-24-30"></a><span class="w">        </span><span class="no">k8s-datamodel database store --notes "CI/CD automated snapshot - $(date)"</span>
+</span><span id="__span-24-31"><a href="#__codelineno-24-31" id="__codelineno-24-31" name="__codelineno-24-31"></a>
+</span><span id="__span-24-32"><a href="#__codelineno-24-32" id="__codelineno-24-32" name="__codelineno-24-32"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload database</span>
+</span><span id="__span-24-33"><a href="#__codelineno-24-33" id="__codelineno-24-33" name="__codelineno-24-33"></a><span class="w">      </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v4</span>
+</span><span id="__span-24-34"><a href="#__codelineno-24-34" id="__codelineno-24-34" name="__codelineno-24-34"></a><span class="w">      </span><span class="nt">with</span><span class="p">:</span>
+</span><span id="__span-24-35"><a href="#__codelineno-24-35" id="__codelineno-24-35" name="__codelineno-24-35"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">inventory-database</span>
+</span><span id="__span-24-36"><a href="#__codelineno-24-36" id="__codelineno-24-36" name="__codelineno-24-36"></a><span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">~/.k8s-inventory/inventory.db</span>
+</span></code></pre></div>
+<h3 id="terraform-integration">Terraform Integration<a class="headerlink" href="#terraform-integration" title="Permanent link">¶</a></h3>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-25-1"><a href="#__codelineno-25-1" id="__codelineno-25-1" name="__codelineno-25-1"></a><span class="c1"># terraform/inventory-snapshot.tf</span>
+</span><span id="__span-25-2"><a href="#__codelineno-25-2" id="__codelineno-25-2" name="__codelineno-25-2"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"null_resource"</span><span class="w"> </span><span class="nv">"inventory_snapshot"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-3"><a href="#__codelineno-25-3" id="__codelineno-25-3" name="__codelineno-25-3"></a><span class="w">  </span><span class="nb">triggers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-4"><a href="#__codelineno-25-4" id="__codelineno-25-4" name="__codelineno-25-4"></a><span class="w">    </span><span class="na">cluster_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">var.cluster_version</span>
+</span><span id="__span-25-5"><a href="#__codelineno-25-5" id="__codelineno-25-5" name="__codelineno-25-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-25-6"><a href="#__codelineno-25-6" id="__codelineno-25-6" name="__codelineno-25-6"></a>
+</span><span id="__span-25-7"><a href="#__codelineno-25-7" id="__codelineno-25-7" name="__codelineno-25-7"></a><span class="w">  </span><span class="kr">provisioner</span><span class="w"> </span><span class="nv">"local-exec"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-8"><a href="#__codelineno-25-8" id="__codelineno-25-8" name="__codelineno-25-8"></a><span class="w">    </span><span class="na">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;&lt;-</span><span class="dl">EOT</span>
+</span><span id="__span-25-9"><a href="#__codelineno-25-9" id="__codelineno-25-9" name="__codelineno-25-9"></a><span class="sh">      k8s-datamodel database store --notes "Terraform deployment - ${var.environment} - ${timestamp()}"</span>
+</span><span id="__span-25-10"><a href="#__codelineno-25-10" id="__codelineno-25-10" name="__codelineno-25-10"></a><span class="dl">    EOT</span>
+</span><span id="__span-25-11"><a href="#__codelineno-25-11" id="__codelineno-25-11" name="__codelineno-25-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-25-12"><a href="#__codelineno-25-12" id="__codelineno-25-12" name="__codelineno-25-12"></a>
+</span><span id="__span-25-13"><a href="#__codelineno-25-13" id="__codelineno-25-13" name="__codelineno-25-13"></a><span class="w">  </span><span class="na">depends_on</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">kubernetes_deployment.applications</span><span class="p">]</span>
+</span><span id="__span-25-14"><a href="#__codelineno-25-14" id="__codelineno-25-14" name="__codelineno-25-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
+<h3 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">¶</a></h3>
+<p><strong>Database locked errors:</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a href="#__codelineno-26-1" id="__codelineno-26-1" name="__codelineno-26-1"></a><span class="c1"># Check for running processes</span>
+</span><span id="__span-26-2"><a href="#__codelineno-26-2" id="__codelineno-26-2" name="__codelineno-26-2"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>k8s-inventory
+</span><span id="__span-26-3"><a href="#__codelineno-26-3" id="__codelineno-26-3" name="__codelineno-26-3"></a>
+</span><span id="__span-26-4"><a href="#__codelineno-26-4" id="__codelineno-26-4" name="__codelineno-26-4"></a><span class="c1"># Use different database file</span>
+</span><span id="__span-26-5"><a href="#__codelineno-26-5" id="__codelineno-26-5" name="__codelineno-26-5"></a>k8s-datamodel<span class="w"> </span>--db-path<span class="w"> </span>./temp.db<span class="w"> </span>database<span class="w"> </span>list
+</span></code></pre></div></p>
+<p><strong>Large database size:</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a href="#__codelineno-27-1" id="__codelineno-27-1" name="__codelineno-27-1"></a><span class="c1"># Check database size</span>
+</span><span id="__span-27-2"><a href="#__codelineno-27-2" id="__codelineno-27-2" name="__codelineno-27-2"></a>du<span class="w"> </span>-h<span class="w"> </span>~/.k8s-inventory/inventory.db
+</span><span id="__span-27-3"><a href="#__codelineno-27-3" id="__codelineno-27-3" name="__codelineno-27-3"></a>
+</span><span id="__span-27-4"><a href="#__codelineno-27-4" id="__codelineno-27-4" name="__codelineno-27-4"></a><span class="c1"># Clean up old snapshots</span>
+</span><span id="__span-27-5"><a href="#__codelineno-27-5" id="__codelineno-27-5" name="__codelineno-27-5"></a>k8s-datamodel<span class="w"> </span>database<span class="w"> </span>cleanup<span class="w"> </span>--keep<span class="w"> </span><span class="m">10</span>
+</span><span id="__span-27-6"><a href="#__codelineno-27-6" id="__codelineno-27-6" name="__codelineno-27-6"></a>
+</span><span id="__span-27-7"><a href="#__codelineno-27-7" id="__codelineno-27-7" name="__codelineno-27-7"></a><span class="c1"># Vacuum database to reclaim space</span>
+</span><span id="__span-27-8"><a href="#__codelineno-27-8" id="__codelineno-27-8" name="__codelineno-27-8"></a>sqlite3<span class="w"> </span>~/.k8s-inventory/inventory.db<span class="w"> </span><span class="s2">"VACUUM;"</span>
+</span></code></pre></div></p>
+<p><strong>Missing snapshots:</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a href="#__codelineno-28-1" id="__codelineno-28-1" name="__codelineno-28-1"></a><span class="c1"># Verify database integrity</span>
+</span><span id="__span-28-2"><a href="#__codelineno-28-2" id="__codelineno-28-2" name="__codelineno-28-2"></a>sqlite3<span class="w"> </span>~/.k8s-inventory/inventory.db<span class="w"> </span><span class="s2">"PRAGMA integrity_check;"</span>
+</span><span id="__span-28-3"><a href="#__codelineno-28-3" id="__codelineno-28-3" name="__codelineno-28-3"></a>
+</span><span id="__span-28-4"><a href="#__codelineno-28-4" id="__codelineno-28-4" name="__codelineno-28-4"></a><span class="c1"># Check database schema</span>
+</span><span id="__span-28-5"><a href="#__codelineno-28-5" id="__codelineno-28-5" name="__codelineno-28-5"></a>sqlite3<span class="w"> </span>~/.k8s-inventory/inventory.db<span class="w"> </span><span class="s2">".schema"</span>
+</span></code></pre></div></p>
+<h3 id="performance-considerations">Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Large Clusters</strong>: For clusters with hundreds of CRDs/operators, consider using namespace filters</li>
+<li><strong>Storage Space</strong>: Monitor database growth and implement regular cleanup</li>
+<li><strong>Query Performance</strong>: Database includes indexes for common query patterns</li>
+<li><strong>Concurrent Access</strong>: SQLite handles concurrent reads but not concurrent writes</li>
+</ul>
+<h3 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Regular Snapshots</strong>: Set up automated daily/weekly snapshots</li>
+<li><strong>Meaningful Notes</strong>: Always include descriptive notes for snapshots</li>
+<li><strong>Cleanup Strategy</strong>: Implement regular cleanup to manage database size</li>
+<li><strong>Backup Strategy</strong>: Regular database backups for important environments</li>
+<li><strong>Environment Separation</strong>: Consider separate databases for different environments</li>
+<li><strong>Security</strong>: Protect database files containing cluster information</li>
+</ol>
+<p><citations>
+<document>
+<document_type>RULE</document_type>
+<document_id>9aelDXM62tUDmHUQUL8XlE</document_id>
+</document>
+<document>
+<document_type>RULE</document_type>
+<document_id>FtUk1rgWdKE6veAClNpAqC</document_id>
+</document>
+<document>
+<document_type>RULE</document_type>
+<document_id>mHRxidOov0WLb90jeiS2uG</document_id>
+</document>
+</citations></p>
+</article>
+</div>
+<script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/brun-s" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.indexes", "toc.follow", "search.highlight", "search.share", "content.code.copy", "content.code.select", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "0.4.0", "provider": "mike"}}</script>
+<script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
+</body>
+</html>

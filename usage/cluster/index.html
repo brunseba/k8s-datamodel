@@ -1,0 +1,1776 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="A CLI tool to model and analyze Kubernetes cluster data including CRDs, operators, and OLM components" name="description"/>
+<meta content="brunseba" name="author"/>
+<link href="https://brunseba.github.io/k8s-datamodel/usage/cluster/" rel="canonical"/>
+<link href="../operators/" rel="prev"/>
+<link href="../database/" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.15" name="generator"/>
+<title>Cluster Operations - K8s DataModel</title>
+<link href="../../assets/stylesheets/main.342714a4.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="blue" data-md-color-primary="blue" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#cluster-operations">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<div data-md-color-scheme="default" data-md-component="outdated" hidden="">
+</div>
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="K8s DataModel" class="md-header__button md-logo" data-md-component="logo" href="../.." title="K8s DataModel">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            K8s DataModel
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Cluster Operations
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="blue" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="blue" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="blue" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="blue" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<a aria-label="Share" class="md-search__icon md-icon" data-clipboard="" data-clipboard-text="" data-md-component="search-share" href="javascript:void(0)" tabindex="-1" title="Share">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+</a>
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/brunseba/k8s-datamodel" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
+    brunseba/k8s-datamodel
+  </div>
+</a>
+</div>
+</nav>
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../PROJECT_SUMMARY/">
+        
+  
+  
+    
+  
+  Project Overview
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../CRD_EXPORT_EXAMPLES/">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../quick-start/">
+          
+  
+  
+    
+  
+  Usage
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../examples/">
+          
+  
+  
+    
+  
+  Examples
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../api/cli/">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../contributing/">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../RELEASE_NOTES/">
+        
+  
+  
+    
+  
+  Release Notes
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../changelog/">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="K8s DataModel" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="K8s DataModel">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    K8s DataModel
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/brunseba/k8s-datamodel" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
+    brunseba/k8s-datamodel
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+<span class="md-ellipsis">
+    Home
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../PROJECT_SUMMARY/">
+<span class="md-ellipsis">
+    Project Overview
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Features
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../CRD_EXPORT_EXAMPLES/">
+<span class="md-ellipsis">
+    CRD Export Examples
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../OLM_FEATURE_SUMMARY/">
+<span class="md-ellipsis">
+    OLM Integration
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+<span class="md-ellipsis">
+    Usage
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Usage
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../quick-start/">
+<span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../crds/">
+<span class="md-ellipsis">
+    CRDs
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../operators/">
+<span class="md-ellipsis">
+    Operators
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Cluster Operations
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Cluster Operations
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      Overview
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#available-commands">
+<span class="md-ellipsis">
+      Available Commands
+    </span>
+</a>
+<nav aria-label="Available Commands" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#test-connection">
+<span class="md-ellipsis">
+      Test Connection
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-information">
+<span class="md-ellipsis">
+      Cluster Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-summary">
+<span class="md-ellipsis">
+      Cluster Summary
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-complete-inventory">
+<span class="md-ellipsis">
+      Export Complete Inventory
+    </span>
+</a>
+<nav aria-label="Export Complete Inventory" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-options">
+<span class="md-ellipsis">
+      Export Options
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-analysis-workflow">
+<span class="md-ellipsis">
+      Cluster Analysis Workflow
+    </span>
+</a>
+<nav aria-label="Cluster Analysis Workflow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-data-structure">
+<span class="md-ellipsis">
+      Export Data Structure
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-cluster-data">
+<span class="md-ellipsis">
+      Understanding Cluster Data
+    </span>
+</a>
+<nav aria-label="Understanding Cluster Data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-contents">
+<span class="md-ellipsis">
+      Export Contents
+    </span>
+</a>
+<nav aria-label="Export Contents" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crd-information">
+<span class="md-ellipsis">
+      CRD Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#operator-details">
+<span class="md-ellipsis">
+      Operator Details
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-metadata">
+<span class="md-ellipsis">
+      Cluster Metadata
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-relationships">
+<span class="md-ellipsis">
+      Data Relationships
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#output-formats">
+<span class="md-ellipsis">
+      Output Formats
+    </span>
+</a>
+<nav aria-label="Output Formats" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#json-format-default">
+<span class="md-ellipsis">
+      JSON Format (Default)
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#yaml-format">
+<span class="md-ellipsis">
+      YAML Format
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#use-cases">
+<span class="md-ellipsis">
+      Use Cases
+    </span>
+</a>
+<nav aria-label="Use Cases" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-migration">
+<span class="md-ellipsis">
+      Cluster Migration
+    </span>
+</a>
+<nav aria-label="Cluster Migration" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-migration-assessment">
+<span class="md-ellipsis">
+      Pre-Migration Assessment
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#migration-validation">
+<span class="md-ellipsis">
+      Migration Validation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#compliance-and-auditing">
+<span class="md-ellipsis">
+      Compliance and Auditing
+    </span>
+</a>
+<nav aria-label="Compliance and Auditing" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regular-compliance-exports">
+<span class="md-ellipsis">
+      Regular Compliance Exports
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#audit-trail-generation">
+<span class="md-ellipsis">
+      Audit Trail Generation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#disaster-recovery-planning">
+<span class="md-ellipsis">
+      Disaster Recovery Planning
+    </span>
+</a>
+<nav aria-label="Disaster Recovery Planning" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#backup-essential-data">
+<span class="md-ellipsis">
+      Backup Essential Data
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#recovery-validation">
+<span class="md-ellipsis">
+      Recovery Validation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-assessment">
+<span class="md-ellipsis">
+      Security Assessment
+    </span>
+</a>
+<nav aria-label="Security Assessment" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-audit-export">
+<span class="md-ellipsis">
+      Security Audit Export
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#privileged-resource-identification">
+<span class="md-ellipsis">
+      Privileged Resource Identification
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integration-patterns">
+<span class="md-ellipsis">
+      Integration Patterns
+    </span>
+</a>
+<nav aria-label="Integration Patterns" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cicd-pipeline-integration">
+<span class="md-ellipsis">
+      CI/CD Pipeline Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#monitoring-integration">
+<span class="md-ellipsis">
+      Monitoring Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#gitops-workflow">
+<span class="md-ellipsis">
+      GitOps Workflow
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#advanced-usage">
+<span class="md-ellipsis">
+      Advanced Usage
+    </span>
+</a>
+<nav aria-label="Advanced Usage" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-cluster-management">
+<span class="md-ellipsis">
+      Multi-Cluster Management
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#comparative-analysis">
+<span class="md-ellipsis">
+      Comparative Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-monitoring">
+<span class="md-ellipsis">
+      Performance Monitoring
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#troubleshooting">
+<span class="md-ellipsis">
+      Troubleshooting
+    </span>
+</a>
+<nav aria-label="Troubleshooting" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#connection-issues">
+<span class="md-ellipsis">
+      Connection Issues
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#permission-problems">
+<span class="md-ellipsis">
+      Permission Problems
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#large-cluster-performance">
+<span class="md-ellipsis">
+      Large Cluster Performance
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-validation">
+<span class="md-ellipsis">
+      Export Validation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#best-practices">
+<span class="md-ellipsis">
+      Best Practices
+    </span>
+</a>
+<nav aria-label="Best Practices" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regular-health-checks">
+<span class="md-ellipsis">
+      Regular Health Checks
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-management">
+<span class="md-ellipsis">
+      Data Management
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-practices">
+<span class="md-ellipsis">
+      Security Practices
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#related-commands">
+<span class="md-ellipsis">
+      Related Commands
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../database/">
+<span class="md-ellipsis">
+    Database Operations
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../output-formats/">
+<span class="md-ellipsis">
+    Output Formats
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Examples
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/">
+<span class="md-ellipsis">
+    Overview
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/database-workflows/">
+<span class="md-ellipsis">
+    Database Workflows
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/olm-workflows/">
+<span class="md-ellipsis">
+    OLM Management
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../examples/security-compliance/">
+<span class="md-ellipsis">
+    Security &amp; Compliance
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/cli/">
+<span class="md-ellipsis">
+    CLI Commands
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../api/core/">
+<span class="md-ellipsis">
+    Core Modules
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../contributing/">
+<span class="md-ellipsis">
+    Contributing
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../RELEASE_NOTES/">
+<span class="md-ellipsis">
+    Release Notes
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../changelog/">
+<span class="md-ellipsis">
+    Changelog
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      Overview
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#available-commands">
+<span class="md-ellipsis">
+      Available Commands
+    </span>
+</a>
+<nav aria-label="Available Commands" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#test-connection">
+<span class="md-ellipsis">
+      Test Connection
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-information">
+<span class="md-ellipsis">
+      Cluster Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-summary">
+<span class="md-ellipsis">
+      Cluster Summary
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-complete-inventory">
+<span class="md-ellipsis">
+      Export Complete Inventory
+    </span>
+</a>
+<nav aria-label="Export Complete Inventory" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-options">
+<span class="md-ellipsis">
+      Export Options
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-analysis-workflow">
+<span class="md-ellipsis">
+      Cluster Analysis Workflow
+    </span>
+</a>
+<nav aria-label="Cluster Analysis Workflow" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-data-structure">
+<span class="md-ellipsis">
+      Export Data Structure
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-cluster-data">
+<span class="md-ellipsis">
+      Understanding Cluster Data
+    </span>
+</a>
+<nav aria-label="Understanding Cluster Data" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-contents">
+<span class="md-ellipsis">
+      Export Contents
+    </span>
+</a>
+<nav aria-label="Export Contents" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#crd-information">
+<span class="md-ellipsis">
+      CRD Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#operator-details">
+<span class="md-ellipsis">
+      Operator Details
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-metadata">
+<span class="md-ellipsis">
+      Cluster Metadata
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-relationships">
+<span class="md-ellipsis">
+      Data Relationships
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#output-formats">
+<span class="md-ellipsis">
+      Output Formats
+    </span>
+</a>
+<nav aria-label="Output Formats" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#json-format-default">
+<span class="md-ellipsis">
+      JSON Format (Default)
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#yaml-format">
+<span class="md-ellipsis">
+      YAML Format
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#use-cases">
+<span class="md-ellipsis">
+      Use Cases
+    </span>
+</a>
+<nav aria-label="Use Cases" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cluster-migration">
+<span class="md-ellipsis">
+      Cluster Migration
+    </span>
+</a>
+<nav aria-label="Cluster Migration" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-migration-assessment">
+<span class="md-ellipsis">
+      Pre-Migration Assessment
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#migration-validation">
+<span class="md-ellipsis">
+      Migration Validation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#compliance-and-auditing">
+<span class="md-ellipsis">
+      Compliance and Auditing
+    </span>
+</a>
+<nav aria-label="Compliance and Auditing" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regular-compliance-exports">
+<span class="md-ellipsis">
+      Regular Compliance Exports
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#audit-trail-generation">
+<span class="md-ellipsis">
+      Audit Trail Generation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#disaster-recovery-planning">
+<span class="md-ellipsis">
+      Disaster Recovery Planning
+    </span>
+</a>
+<nav aria-label="Disaster Recovery Planning" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#backup-essential-data">
+<span class="md-ellipsis">
+      Backup Essential Data
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#recovery-validation">
+<span class="md-ellipsis">
+      Recovery Validation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-assessment">
+<span class="md-ellipsis">
+      Security Assessment
+    </span>
+</a>
+<nav aria-label="Security Assessment" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-audit-export">
+<span class="md-ellipsis">
+      Security Audit Export
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#privileged-resource-identification">
+<span class="md-ellipsis">
+      Privileged Resource Identification
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integration-patterns">
+<span class="md-ellipsis">
+      Integration Patterns
+    </span>
+</a>
+<nav aria-label="Integration Patterns" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cicd-pipeline-integration">
+<span class="md-ellipsis">
+      CI/CD Pipeline Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#monitoring-integration">
+<span class="md-ellipsis">
+      Monitoring Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#gitops-workflow">
+<span class="md-ellipsis">
+      GitOps Workflow
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#advanced-usage">
+<span class="md-ellipsis">
+      Advanced Usage
+    </span>
+</a>
+<nav aria-label="Advanced Usage" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-cluster-management">
+<span class="md-ellipsis">
+      Multi-Cluster Management
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#comparative-analysis">
+<span class="md-ellipsis">
+      Comparative Analysis
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#performance-monitoring">
+<span class="md-ellipsis">
+      Performance Monitoring
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#troubleshooting">
+<span class="md-ellipsis">
+      Troubleshooting
+    </span>
+</a>
+<nav aria-label="Troubleshooting" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#connection-issues">
+<span class="md-ellipsis">
+      Connection Issues
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#permission-problems">
+<span class="md-ellipsis">
+      Permission Problems
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#large-cluster-performance">
+<span class="md-ellipsis">
+      Large Cluster Performance
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#export-validation">
+<span class="md-ellipsis">
+      Export Validation
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#best-practices">
+<span class="md-ellipsis">
+      Best Practices
+    </span>
+</a>
+<nav aria-label="Best Practices" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#regular-health-checks">
+<span class="md-ellipsis">
+      Regular Health Checks
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-management">
+<span class="md-ellipsis">
+      Data Management
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-practices">
+<span class="md-ellipsis">
+      Security Practices
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#related-commands">
+<span class="md-ellipsis">
+      Related Commands
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="cluster-operations">Cluster Operations<a class="headerlink" href="#cluster-operations" title="Permanent link">¶</a></h1>
+<p>Comprehensive guide for cluster-wide operations and analysis using K8s Inventory CLI.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>Cluster operations provide high-level commands to analyze, test, and export complete inventory data from your Kubernetes cluster.</p>
+<h2 id="available-commands">Available Commands<a class="headerlink" href="#available-commands" title="Permanent link">¶</a></h2>
+<h3 id="test-connection">Test Connection<a class="headerlink" href="#test-connection" title="Permanent link">¶</a></h3>
+<p>Verify connectivity to your Kubernetes cluster:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>test-connection
+</span></code></pre></div>
+<p>This command:
+- Tests API server connectivity
+- Validates authentication credentials<br/>
+- Checks basic RBAC permissions
+- Reports cluster version and status
+- Identifies connection issues</p>
+<h3 id="cluster-information">Cluster Information<a class="headerlink" href="#cluster-information" title="Permanent link">¶</a></h3>
+<p>Get detailed information about your cluster:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>info
+</span></code></pre></div>
+<p>Provides:
+- Kubernetes version information
+- API server endpoint details
+- Node count and status summary
+- Available API resources
+- Cluster configuration overview</p>
+<h3 id="cluster-summary">Cluster Summary<a class="headerlink" href="#cluster-summary" title="Permanent link">¶</a></h3>
+<p>Generate a comprehensive statistical overview:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>summary
+</span></code></pre></div>
+<p>Includes:
+- <strong>CRD Statistics</strong>: Total count, groups, scopes
+- <strong>Operator Analysis</strong>: Framework breakdown, health status
+- <strong>Resource Utilization</strong>: Instance counts, usage patterns
+- <strong>Deployment Patterns</strong>: Framework distribution
+- <strong>Health Overview</strong>: Cluster-wide health indicators</p>
+<h3 id="export-complete-inventory">Export Complete Inventory<a class="headerlink" href="#export-complete-inventory" title="Permanent link">¶</a></h3>
+<p>Export comprehensive cluster inventory data:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span>
+</span></code></pre></div>
+<h4 id="export-options">Export Options<a class="headerlink" href="#export-options" title="Permanent link">¶</a></h4>
+<p>Specify output file:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>cluster-inventory.json
+</span></code></pre></div></p>
+<p>Choose output format:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span>--file<span class="w"> </span>inventory.json
+</span><span id="__span-5-2"><a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--output<span class="w"> </span>yaml<span class="w"> </span>--file<span class="w"> </span>inventory.yaml
+</span></code></pre></div></p>
+<p>Export to specific directory:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>exports/full-inventory.json
+</span></code></pre></div></p>
+<h2 id="cluster-analysis-workflow">Cluster Analysis Workflow<a class="headerlink" href="#cluster-analysis-workflow" title="Permanent link">¶</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph "Initialization"
+        START(["🚀 Start"]) --&gt; AUTH["🔓 Authenticate"]
+        AUTH --&gt; CONNECT["🔗 Connect to Cluster"]
+    end
+
+    CONNECT --&gt; TEST{"Connection OK?"}
+    TEST --&gt;|"❌ Failed"| ERROR["⚠️ Connection Error"]
+    TEST --&gt;|"✅ Success"| INFO["ℹ️ Gather Cluster Info"]
+
+    subgraph "Data Collection"
+        INFO --&gt; PARALLEL_START["🔄 Start Parallel Collection"]
+
+        PARALLEL_START --&gt; CRD_COLLECT["📦 Collect CRDs"]
+        PARALLEL_START --&gt; OP_COLLECT["🤖 Collect Operators"]
+        PARALLEL_START --&gt; NODE_COLLECT["💻 Collect Nodes"]
+        PARALLEL_START --&gt; NS_COLLECT["🏷️ Collect Namespaces"]
+    end
+
+    subgraph "Analysis Phase"
+        CRD_COLLECT --&gt; CRD_ANALYZE["🔍 Analyze CRDs"]
+        OP_COLLECT --&gt; OP_ANALYZE["🔍 Analyze Operators"]
+        NODE_COLLECT --&gt; HEALTH_CHECK["💚 Health Assessment"]
+        NS_COLLECT --&gt; RESOURCE_COUNT["🔢 Resource Count"]
+    end
+
+    subgraph "Synthesis"
+        CRD_ANALYZE --&gt; MERGE["🔀 Merge Results"]
+        OP_ANALYZE --&gt; MERGE
+        HEALTH_CHECK --&gt; MERGE
+        RESOURCE_COUNT --&gt; MERGE
+
+        MERGE --&gt; SUMMARY["📊 Generate Summary"]
+        SUMMARY --&gt; RELATIONSHIPS["🔗 Map Relationships"]
+    end
+
+    subgraph "Output Generation"
+        RELATIONSHIPS --&gt; FORMAT{"🎨 Choose Format"}
+
+        FORMAT --&gt;|"📋 Table"| TABLE_OUT["📋 Table Output"]
+        FORMAT --&gt;|"📄 JSON"| JSON_OUT["📄 JSON Export"]
+        FORMAT --&gt;|"📝 YAML"| YAML_OUT["📝 YAML Export"]
+        FORMAT --&gt;|"🌈 Rich"| RICH_OUT["🌈 Rich Display"]
+    end
+
+    TABLE_OUT --&gt; END(["✅ Complete"])
+    JSON_OUT --&gt; END
+    YAML_OUT --&gt; END
+    RICH_OUT --&gt; END
+    ERROR --&gt; END
+
+    style START fill:#e3f2fd
+    style END fill:#e8f5e8
+    style ERROR fill:#ffebee
+    style PARALLEL_START fill:#fff3e0</code></pre>
+<h3 id="export-data-structure">Export Data Structure<a class="headerlink" href="#export-data-structure" title="Permanent link">¶</a></h3>
+<pre class="mermaid"><code>graph LR
+    subgraph "Cluster Export Schema"
+        ROOT["🏗️ Cluster Export"]
+
+        ROOT --&gt; METADATA["📄 Export Metadata"]
+        ROOT --&gt; CLUSTER_INFO["ℹ️ Cluster Info"]
+        ROOT --&gt; CRDS["📦 CRDs Array"]
+        ROOT --&gt; OPERATORS["🤖 Operators Array"]
+        ROOT --&gt; SUMMARY["📊 Summary Stats"]
+
+        METADATA --&gt; TIMESTAMP["🕰️ Timestamp"]
+        METADATA --&gt; VERSION["🏷️ Tool Version"]
+        METADATA --&gt; CONTEXT["🔗 K8s Context"]
+
+        CLUSTER_INFO --&gt; K8S_VERSION["🏷️ K8s Version"]
+        CLUSTER_INFO --&gt; NODES["💻 Node Count"]
+        CLUSTER_INFO --&gt; NAMESPACES["🏷️ Namespace Count"]
+
+        CRDS --&gt; CRD_ITEM["📦 CRD Item"]
+        CRD_ITEM --&gt; CRD_META["📄 CRD Metadata"]
+        CRD_ITEM --&gt; CRD_SPEC["📝 CRD Spec"]
+        CRD_ITEM --&gt; CRD_INSTANCES["🔢 Instance Count"]
+
+        OPERATORS --&gt; OP_ITEM["🤖 Operator Item"]
+        OP_ITEM --&gt; OP_META["📄 Operator Metadata"]
+        OP_ITEM --&gt; OP_HEALTH["💚 Health Status"]
+        OP_ITEM --&gt; OP_CRDS["🔗 Managed CRDs"]
+
+        SUMMARY --&gt; TOTALS["🔢 Resource Totals"]
+        SUMMARY --&gt; FRAMEWORKS["🏗️ Framework Stats"]
+        SUMMARY --&gt; HEALTH_SUMMARY["💚 Health Summary"]
+    end
+
+    style ROOT fill:#e3f2fd
+    style METADATA fill:#f3e5f5
+    style CLUSTER_INFO fill:#e8f5e8
+    style CRDS fill:#fff3e0
+    style OPERATORS fill:#fce4ec
+    style SUMMARY fill:#f1f8e9</code></pre>
+<h2 id="understanding-cluster-data">Understanding Cluster Data<a class="headerlink" href="#understanding-cluster-data" title="Permanent link">¶</a></h2>
+<h3 id="export-contents">Export Contents<a class="headerlink" href="#export-contents" title="Permanent link">¶</a></h3>
+<p>The cluster export includes:</p>
+<h4 id="crd-information">CRD Information<a class="headerlink" href="#crd-information" title="Permanent link">¶</a></h4>
+<ul>
+<li>Complete CRD definitions and metadata</li>
+<li>Instance counts and distribution</li>
+<li>Framework classification</li>
+<li>Version and compatibility data</li>
+<li>Categories and capabilities</li>
+</ul>
+<h4 id="operator-details">Operator Details<a class="headerlink" href="#operator-details" title="Permanent link">¶</a></h4>
+<ul>
+<li>All detected operators and controllers</li>
+<li>Health status and replica information</li>
+<li>Image versions and deployment patterns</li>
+<li>Managed CRD relationships</li>
+<li>Resource requirements and constraints</li>
+</ul>
+<h4 id="cluster-metadata">Cluster Metadata<a class="headerlink" href="#cluster-metadata" title="Permanent link">¶</a></h4>
+<ul>
+<li>Kubernetes version and build information</li>
+<li>Node architecture and capacity</li>
+<li>Available API groups and versions</li>
+<li>Authentication and authorization details</li>
+<li>Network and storage capabilities</li>
+</ul>
+<h3 id="data-relationships">Data Relationships<a class="headerlink" href="#data-relationships" title="Permanent link">¶</a></h3>
+<p>The exported data maintains relationships between:
+- Operators and their managed CRDs
+- CRDs and their custom resource instances
+- Namespaces and their contained resources
+- Framework classifications and deployment patterns</p>
+<h2 id="output-formats">Output Formats<a class="headerlink" href="#output-formats" title="Permanent link">¶</a></h2>
+<h3 id="json-format-default">JSON Format (Default)<a class="headerlink" href="#json-format-default" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--output<span class="w"> </span>json
+</span></code></pre></div>
+<p>Produces machine-readable JSON with complete structured data:
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="w">  </span><span class="nt">"cluster_info"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span>
+</span><span id="__span-8-3"><a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="w">  </span><span class="nt">"crds"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">...</span><span class="p">],</span>
+</span><span id="__span-8-4"><a href="#__codelineno-8-4" id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="w">  </span><span class="nt">"operators"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">...</span><span class="p">],</span>
+</span><span id="__span-8-5"><a href="#__codelineno-8-5" id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="w">  </span><span class="nt">"summary"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span>
+</span><span id="__span-8-6"><a href="#__codelineno-8-6" id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="w">  </span><span class="nt">"export_metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span>
+</span><span id="__span-8-7"><a href="#__codelineno-8-7" id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="yaml-format">YAML Format<a class="headerlink" href="#yaml-format" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--output<span class="w"> </span>yaml
+</span></code></pre></div>
+<p>Human-readable YAML format suitable for configuration management and GitOps workflows.</p>
+<h2 id="use-cases">Use Cases<a class="headerlink" href="#use-cases" title="Permanent link">¶</a></h2>
+<h3 id="cluster-migration">Cluster Migration<a class="headerlink" href="#cluster-migration" title="Permanent link">¶</a></h3>
+<h4 id="pre-migration-assessment">Pre-Migration Assessment<a class="headerlink" href="#pre-migration-assessment" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="c1"># Export complete inventory for migration planning</span>
+</span><span id="__span-10-2"><a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>pre-migration-inventory.json
+</span><span id="__span-10-3"><a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="c1"># Test connectivity to target cluster</span>
+</span><span id="__span-10-5"><a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>test-connection
+</span><span id="__span-10-6"><a href="#__codelineno-10-6" id="__codelineno-10-6" name="__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a href="#__codelineno-10-7" id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="c1"># Compare cluster versions</span>
+</span><span id="__span-10-8"><a href="#__codelineno-10-8" id="__codelineno-10-8" name="__codelineno-10-8"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>info
+</span></code></pre></div>
+<h4 id="migration-validation">Migration Validation<a class="headerlink" href="#migration-validation" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="c1"># Export post-migration inventory</span>
+</span><span id="__span-11-2"><a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>post-migration-inventory.json
+</span><span id="__span-11-3"><a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="c1"># Compare inventories</span>
+</span><span id="__span-11-5"><a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a>diff<span class="w"> </span>&lt;<span class="o">(</span>jq<span class="w"> </span><span class="s1">'.crds | sort_by(.name)'</span><span class="w"> </span>pre-migration-inventory.json<span class="o">)</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-6"><a href="#__codelineno-11-6" id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="w">     </span>&lt;<span class="o">(</span>jq<span class="w"> </span><span class="s1">'.crds | sort_by(.name)'</span><span class="w"> </span>post-migration-inventory.json<span class="o">)</span>
+</span></code></pre></div>
+<h3 id="compliance-and-auditing">Compliance and Auditing<a class="headerlink" href="#compliance-and-auditing" title="Permanent link">¶</a></h3>
+<h4 id="regular-compliance-exports">Regular Compliance Exports<a class="headerlink" href="#regular-compliance-exports" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-12-2"><a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d<span class="k">)</span>
+</span><span id="__span-12-3"><a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span><span class="s2">"compliance/inventory-</span><span class="nv">$DATE</span><span class="s2">.json"</span>
+</span></code></pre></div>
+<h4 id="audit-trail-generation">Audit Trail Generation<a class="headerlink" href="#audit-trail-generation" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="c1"># Generate audit summary</span>
+</span><span id="__span-13-2"><a href="#__codelineno-13-2" id="__codelineno-13-2" name="__codelineno-13-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>summary<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><a href="#__codelineno-13-3" id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">'{</span>
+</span><span id="__span-13-4"><a href="#__codelineno-13-4" id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="s1">    audit_date: now | strftime("%Y-%m-%d %H:%M:%S"),</span>
+</span><span id="__span-13-5"><a href="#__codelineno-13-5" id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="s1">    crd_count: .crds.total,</span>
+</span><span id="__span-13-6"><a href="#__codelineno-13-6" id="__codelineno-13-6" name="__codelineno-13-6"></a><span class="s1">    operator_count: .operators.total,</span>
+</span><span id="__span-13-7"><a href="#__codelineno-13-7" id="__codelineno-13-7" name="__codelineno-13-7"></a><span class="s1">    frameworks: .deployment_frameworks</span>
+</span><span id="__span-13-8"><a href="#__codelineno-13-8" id="__codelineno-13-8" name="__codelineno-13-8"></a><span class="s1">  }'</span>
+</span></code></pre></div>
+<h3 id="disaster-recovery-planning">Disaster Recovery Planning<a class="headerlink" href="#disaster-recovery-planning" title="Permanent link">¶</a></h3>
+<h4 id="backup-essential-data">Backup Essential Data<a class="headerlink" href="#backup-essential-data" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="c1"># Export cluster inventory for DR documentation</span>
+</span><span id="__span-14-2"><a href="#__codelineno-14-2" id="__codelineno-14-2" name="__codelineno-14-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>dr-inventory.yaml<span class="w"> </span>--output<span class="w"> </span>yaml
+</span><span id="__span-14-3"><a href="#__codelineno-14-3" id="__codelineno-14-3" name="__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a href="#__codelineno-14-4" id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="c1"># Document critical operators</span>
+</span><span id="__span-14-5"><a href="#__codelineno-14-5" id="__codelineno-14-5" name="__codelineno-14-5"></a>k8s-datamodel<span class="w"> </span>operators<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>dr-operators.yaml
+</span></code></pre></div>
+<h4 id="recovery-validation">Recovery Validation<a class="headerlink" href="#recovery-validation" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a href="#__codelineno-15-1" id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="c1"># Test cluster connectivity after recovery</span>
+</span><span id="__span-15-2"><a href="#__codelineno-15-2" id="__codelineno-15-2" name="__codelineno-15-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>test-connection
+</span><span id="__span-15-3"><a href="#__codelineno-15-3" id="__codelineno-15-3" name="__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a href="#__codelineno-15-4" id="__codelineno-15-4" name="__codelineno-15-4"></a><span class="c1"># Validate operator health</span>
+</span><span id="__span-15-5"><a href="#__codelineno-15-5" id="__codelineno-15-5" name="__codelineno-15-5"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>summary<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s2">"Operator Health"</span>
+</span></code></pre></div>
+<h3 id="security-assessment">Security Assessment<a class="headerlink" href="#security-assessment" title="Permanent link">¶</a></h3>
+<h4 id="security-audit-export">Security Audit Export<a class="headerlink" href="#security-audit-export" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a href="#__codelineno-16-1" id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="c1"># Export for security analysis</span>
+</span><span id="__span-16-2"><a href="#__codelineno-16-2" id="__codelineno-16-2" name="__codelineno-16-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>security-audit.json
+</span><span id="__span-16-3"><a href="#__codelineno-16-3" id="__codelineno-16-3" name="__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a href="#__codelineno-16-4" id="__codelineno-16-4" name="__codelineno-16-4"></a><span class="c1"># Extract security-relevant information</span>
+</span><span id="__span-16-5"><a href="#__codelineno-16-5" id="__codelineno-16-5" name="__codelineno-16-5"></a>jq<span class="w"> </span><span class="s1">'.operators[] | {</span>
+</span><span id="__span-16-6"><a href="#__codelineno-16-6" id="__codelineno-16-6" name="__codelineno-16-6"></a><span class="s1">  name: .name,</span>
+</span><span id="__span-16-7"><a href="#__codelineno-16-7" id="__codelineno-16-7" name="__codelineno-16-7"></a><span class="s1">  namespace: .namespace,</span>
+</span><span id="__span-16-8"><a href="#__codelineno-16-8" id="__codelineno-16-8" name="__codelineno-16-8"></a><span class="s1">  privileged: .security_context.privileged,</span>
+</span><span id="__span-16-9"><a href="#__codelineno-16-9" id="__codelineno-16-9" name="__codelineno-16-9"></a><span class="s1">  cluster_admin: .rbac.cluster_admin</span>
+</span><span id="__span-16-10"><a href="#__codelineno-16-10" id="__codelineno-16-10" name="__codelineno-16-10"></a><span class="s1">}'</span><span class="w"> </span>security-audit.json
+</span></code></pre></div>
+<h4 id="privileged-resource-identification">Privileged Resource Identification<a class="headerlink" href="#privileged-resource-identification" title="Permanent link">¶</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a href="#__codelineno-17-1" id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="c1"># Find operators with elevated privileges</span>
+</span><span id="__span-17-2"><a href="#__codelineno-17-2" id="__codelineno-17-2" name="__codelineno-17-2"></a>k8s-datamodel<span class="w"> </span>operators<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-17-3"><a href="#__codelineno-17-3" id="__codelineno-17-3" name="__codelineno-17-3"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">'.[] | select(.security_context.privileged == true)'</span>
+</span></code></pre></div>
+<h2 id="integration-patterns">Integration Patterns<a class="headerlink" href="#integration-patterns" title="Permanent link">¶</a></h2>
+<h3 id="cicd-pipeline-integration">CI/CD Pipeline Integration<a class="headerlink" href="#cicd-pipeline-integration" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a href="#__codelineno-18-1" id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-18-2"><a href="#__codelineno-18-2" id="__codelineno-18-2" name="__codelineno-18-2"></a><span class="c1"># CI/CD cluster validation script</span>
+</span><span id="__span-18-3"><a href="#__codelineno-18-3" id="__codelineno-18-3" name="__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a href="#__codelineno-18-4" id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Testing cluster connectivity..."</span>
+</span><span id="__span-18-5"><a href="#__codelineno-18-5" id="__codelineno-18-5" name="__codelineno-18-5"></a><span class="k">if</span><span class="w"> </span>!<span class="w"> </span>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>test-connection<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-18-6"><a href="#__codelineno-18-6" id="__codelineno-18-6" name="__codelineno-18-6"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Cluster connectivity failed"</span>
+</span><span id="__span-18-7"><a href="#__codelineno-18-7" id="__codelineno-18-7" name="__codelineno-18-7"></a><span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+</span><span id="__span-18-8"><a href="#__codelineno-18-8" id="__codelineno-18-8" name="__codelineno-18-8"></a><span class="k">fi</span>
+</span><span id="__span-18-9"><a href="#__codelineno-18-9" id="__codelineno-18-9" name="__codelineno-18-9"></a>
+</span><span id="__span-18-10"><a href="#__codelineno-18-10" id="__codelineno-18-10" name="__codelineno-18-10"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Exporting cluster inventory..."</span>
+</span><span id="__span-18-11"><a href="#__codelineno-18-11" id="__codelineno-18-11" name="__codelineno-18-11"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span><span class="s2">"artifacts/cluster-inventory-</span><span class="si">${</span><span class="nv">BUILD_ID</span><span class="si">}</span><span class="s2">.json"</span>
+</span><span id="__span-18-12"><a href="#__codelineno-18-12" id="__codelineno-18-12" name="__codelineno-18-12"></a>
+</span><span id="__span-18-13"><a href="#__codelineno-18-13" id="__codelineno-18-13" name="__codelineno-18-13"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Validating critical operators..."</span>
+</span><span id="__span-18-14"><a href="#__codelineno-18-14" id="__codelineno-18-14" name="__codelineno-18-14"></a><span class="nv">FAILED_OPERATORS</span><span class="o">=</span><span class="k">$(</span>k8s-datamodel<span class="w"> </span>operators<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-15"><a href="#__codelineno-18-15" id="__codelineno-18-15" name="__codelineno-18-15"></a><span class="w">  </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.[] | select(.replicas.ready != .replicas.desired) | .name'</span><span class="k">)</span>
+</span><span id="__span-18-16"><a href="#__codelineno-18-16" id="__codelineno-18-16" name="__codelineno-18-16"></a>
+</span><span id="__span-18-17"><a href="#__codelineno-18-17" id="__codelineno-18-17" name="__codelineno-18-17"></a><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$FAILED_OPERATORS</span><span class="s2">"</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-18-18"><a href="#__codelineno-18-18" id="__codelineno-18-18" name="__codelineno-18-18"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Failed operators detected: </span><span class="nv">$FAILED_OPERATORS</span><span class="s2">"</span>
+</span><span id="__span-18-19"><a href="#__codelineno-18-19" id="__codelineno-18-19" name="__codelineno-18-19"></a><span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+</span><span id="__span-18-20"><a href="#__codelineno-18-20" id="__codelineno-18-20" name="__codelineno-18-20"></a><span class="k">fi</span>
+</span><span id="__span-18-21"><a href="#__codelineno-18-21" id="__codelineno-18-21" name="__codelineno-18-21"></a>
+</span><span id="__span-18-22"><a href="#__codelineno-18-22" id="__codelineno-18-22" name="__codelineno-18-22"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Cluster validation successful"</span>
+</span></code></pre></div>
+<h3 id="monitoring-integration">Monitoring Integration<a class="headerlink" href="#monitoring-integration" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a href="#__codelineno-19-1" id="__codelineno-19-1" name="__codelineno-19-1"></a><span class="c1"># Generate cluster metrics for monitoring</span>
+</span><span id="__span-19-2"><a href="#__codelineno-19-2" id="__codelineno-19-2" name="__codelineno-19-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>summary<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-3"><a href="#__codelineno-19-3" id="__codelineno-19-3" name="__codelineno-19-3"></a><span class="w">  </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'</span>
+</span><span id="__span-19-4"><a href="#__codelineno-19-4" id="__codelineno-19-4" name="__codelineno-19-4"></a><span class="s1">    "cluster_crd_count " + (.crds.total | tostring),</span>
+</span><span id="__span-19-5"><a href="#__codelineno-19-5" id="__codelineno-19-5" name="__codelineno-19-5"></a><span class="s1">    "cluster_operator_count " + (.operators.total | tostring),</span>
+</span><span id="__span-19-6"><a href="#__codelineno-19-6" id="__codelineno-19-6" name="__codelineno-19-6"></a><span class="s1">    "cluster_healthy_operators " + (.operators.healthy | tostring),</span>
+</span><span id="__span-19-7"><a href="#__codelineno-19-7" id="__codelineno-19-7" name="__codelineno-19-7"></a><span class="s1">    "cluster_failed_operators " + (.operators.failed | tostring)</span>
+</span><span id="__span-19-8"><a href="#__codelineno-19-8" id="__codelineno-19-8" name="__codelineno-19-8"></a><span class="s1">  '</span>
+</span></code></pre></div>
+<h3 id="gitops-workflow">GitOps Workflow<a class="headerlink" href="#gitops-workflow" title="Permanent link">¶</a></h3>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-20-1"><a href="#__codelineno-20-1" id="__codelineno-20-1" name="__codelineno-20-1"></a><span class="c1"># .github/workflows/cluster-inventory.yml</span>
+</span><span id="__span-20-2"><a href="#__codelineno-20-2" id="__codelineno-20-2" name="__codelineno-20-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cluster Inventory Export</span>
+</span><span id="__span-20-3"><a href="#__codelineno-20-3" id="__codelineno-20-3" name="__codelineno-20-3"></a><span class="nt">on</span><span class="p">:</span>
+</span><span id="__span-20-4"><a href="#__codelineno-20-4" id="__codelineno-20-4" name="__codelineno-20-4"></a><span class="w">  </span><span class="nt">schedule</span><span class="p">:</span>
+</span><span id="__span-20-5"><a href="#__codelineno-20-5" id="__codelineno-20-5" name="__codelineno-20-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">cron</span><span class="p">:</span><span class="w"> </span><span class="s">'0</span><span class="nv"> </span><span class="s">6</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*'</span><span class="w">  </span><span class="c1"># Daily at 6 AM</span>
+</span><span id="__span-20-6"><a href="#__codelineno-20-6" id="__codelineno-20-6" name="__codelineno-20-6"></a><span class="w">  </span><span class="nt">workflow_dispatch</span><span class="p">:</span>
+</span><span id="__span-20-7"><a href="#__codelineno-20-7" id="__codelineno-20-7" name="__codelineno-20-7"></a>
+</span><span id="__span-20-8"><a href="#__codelineno-20-8" id="__codelineno-20-8" name="__codelineno-20-8"></a><span class="nt">jobs</span><span class="p">:</span>
+</span><span id="__span-20-9"><a href="#__codelineno-20-9" id="__codelineno-20-9" name="__codelineno-20-9"></a><span class="w">  </span><span class="nt">export-inventory</span><span class="p">:</span>
+</span><span id="__span-20-10"><a href="#__codelineno-20-10" id="__codelineno-20-10" name="__codelineno-20-10"></a><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+</span><span id="__span-20-11"><a href="#__codelineno-20-11" id="__codelineno-20-11" name="__codelineno-20-11"></a><span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+</span><span id="__span-20-12"><a href="#__codelineno-20-12" id="__codelineno-20-12" name="__codelineno-20-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+</span><span id="__span-20-13"><a href="#__codelineno-20-13" id="__codelineno-20-13" name="__codelineno-20-13"></a>
+</span><span id="__span-20-14"><a href="#__codelineno-20-14" id="__codelineno-20-14" name="__codelineno-20-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup kubectl</span>
+</span><span id="__span-20-15"><a href="#__codelineno-20-15" id="__codelineno-20-15" name="__codelineno-20-15"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure/setup-kubectl@v3</span>
+</span><span id="__span-20-16"><a href="#__codelineno-20-16" id="__codelineno-20-16" name="__codelineno-20-16"></a>
+</span><span id="__span-20-17"><a href="#__codelineno-20-17" id="__codelineno-20-17" name="__codelineno-20-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test cluster connection</span>
+</span><span id="__span-20-18"><a href="#__codelineno-20-18" id="__codelineno-20-18" name="__codelineno-20-18"></a><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s-datamodel cluster test-connection</span>
+</span><span id="__span-20-19"><a href="#__codelineno-20-19" id="__codelineno-20-19" name="__codelineno-20-19"></a>
+</span><span id="__span-20-20"><a href="#__codelineno-20-20" id="__codelineno-20-20" name="__codelineno-20-20"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Export cluster inventory</span>
+</span><span id="__span-20-21"><a href="#__codelineno-20-21" id="__codelineno-20-21" name="__codelineno-20-21"></a><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-20-22"><a href="#__codelineno-20-22" id="__codelineno-20-22" name="__codelineno-20-22"></a><span class="w">          </span><span class="no">k8s-datamodel cluster export --file "inventory/$(date +%Y-%m-%d)-inventory.json"</span>
+</span><span id="__span-20-23"><a href="#__codelineno-20-23" id="__codelineno-20-23" name="__codelineno-20-23"></a>
+</span><span id="__span-20-24"><a href="#__codelineno-20-24" id="__codelineno-20-24" name="__codelineno-20-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Commit inventory</span>
+</span><span id="__span-20-25"><a href="#__codelineno-20-25" id="__codelineno-20-25" name="__codelineno-20-25"></a><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-20-26"><a href="#__codelineno-20-26" id="__codelineno-20-26" name="__codelineno-20-26"></a><span class="w">          </span><span class="no">git config --local user.email "action@github.com"</span>
+</span><span id="__span-20-27"><a href="#__codelineno-20-27" id="__codelineno-20-27" name="__codelineno-20-27"></a><span class="w">          </span><span class="no">git config --local user.name "GitHub Action"</span>
+</span><span id="__span-20-28"><a href="#__codelineno-20-28" id="__codelineno-20-28" name="__codelineno-20-28"></a><span class="w">          </span><span class="no">git add inventory/</span>
+</span><span id="__span-20-29"><a href="#__codelineno-20-29" id="__codelineno-20-29" name="__codelineno-20-29"></a><span class="w">          </span><span class="no">git commit -m "chore: update cluster inventory $(date +%Y-%m-%d)" || exit 0</span>
+</span><span id="__span-20-30"><a href="#__codelineno-20-30" id="__codelineno-20-30" name="__codelineno-20-30"></a><span class="w">          </span><span class="no">git push</span>
+</span></code></pre></div>
+<h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">¶</a></h2>
+<h3 id="multi-cluster-management">Multi-Cluster Management<a class="headerlink" href="#multi-cluster-management" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a href="#__codelineno-21-1" id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="c1"># Export from multiple clusters</span>
+</span><span id="__span-21-2"><a href="#__codelineno-21-2" id="__codelineno-21-2" name="__codelineno-21-2"></a><span class="k">for</span><span class="w"> </span>context<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts<span class="w"> </span>-o<span class="w"> </span>name<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-21-3"><a href="#__codelineno-21-3" id="__codelineno-21-3" name="__codelineno-21-3"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Exporting from context: </span><span class="nv">$context</span><span class="s2">"</span>
+</span><span id="__span-21-4"><a href="#__codelineno-21-4" id="__codelineno-21-4" name="__codelineno-21-4"></a><span class="w">  </span><span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$HOME</span>/.kube/config<span class="w"> </span>kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span><span class="nv">$context</span>
+</span><span id="__span-21-5"><a href="#__codelineno-21-5" id="__codelineno-21-5" name="__codelineno-21-5"></a><span class="w">  </span>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span><span class="s2">"exports/</span><span class="nv">$context</span><span class="s2">-inventory.json"</span>
+</span><span id="__span-21-6"><a href="#__codelineno-21-6" id="__codelineno-21-6" name="__codelineno-21-6"></a><span class="k">done</span>
+</span></code></pre></div>
+<h3 id="comparative-analysis">Comparative Analysis<a class="headerlink" href="#comparative-analysis" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a href="#__codelineno-22-1" id="__codelineno-22-1" name="__codelineno-22-1"></a><span class="c1"># Compare two cluster inventories</span>
+</span><span id="__span-22-2"><a href="#__codelineno-22-2" id="__codelineno-22-2" name="__codelineno-22-2"></a>jq<span class="w"> </span>-n<span class="w"> </span>--slurpfile<span class="w"> </span>a<span class="w"> </span>cluster1.json<span class="w"> </span>--slurpfile<span class="w"> </span>b<span class="w"> </span>cluster2.json<span class="w"> </span><span class="s1">'</span>
+</span><span id="__span-22-3"><a href="#__codelineno-22-3" id="__codelineno-22-3" name="__codelineno-22-3"></a><span class="s1">{</span>
+</span><span id="__span-22-4"><a href="#__codelineno-22-4" id="__codelineno-22-4" name="__codelineno-22-4"></a><span class="s1">  cluster1_crds: $a[0].crds | length,</span>
+</span><span id="__span-22-5"><a href="#__codelineno-22-5" id="__codelineno-22-5" name="__codelineno-22-5"></a><span class="s1">  cluster2_crds: $b[0].crds | length,</span>
+</span><span id="__span-22-6"><a href="#__codelineno-22-6" id="__codelineno-22-6" name="__codelineno-22-6"></a><span class="s1">  common_crds: [$a[0].crds[].name] as $a_names |</span>
+</span><span id="__span-22-7"><a href="#__codelineno-22-7" id="__codelineno-22-7" name="__codelineno-22-7"></a><span class="s1">               [$b[0].crds[].name] as $b_names |</span>
+</span><span id="__span-22-8"><a href="#__codelineno-22-8" id="__codelineno-22-8" name="__codelineno-22-8"></a><span class="s1">               [$a_names[], $b_names[]] | group_by(.) | map(select(length &gt; 1)) | flatten | unique,</span>
+</span><span id="__span-22-9"><a href="#__codelineno-22-9" id="__codelineno-22-9" name="__codelineno-22-9"></a><span class="s1">  unique_to_cluster1: [$a[0].crds[].name] - [$b[0].crds[].name],</span>
+</span><span id="__span-22-10"><a href="#__codelineno-22-10" id="__codelineno-22-10" name="__codelineno-22-10"></a><span class="s1">  unique_to_cluster2: [$b[0].crds[].name] - [$a[0].crds[].name]</span>
+</span><span id="__span-22-11"><a href="#__codelineno-22-11" id="__codelineno-22-11" name="__codelineno-22-11"></a><span class="s1">}'</span>
+</span></code></pre></div>
+<h3 id="performance-monitoring">Performance Monitoring<a class="headerlink" href="#performance-monitoring" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a href="#__codelineno-23-1" id="__codelineno-23-1" name="__codelineno-23-1"></a><span class="c1"># Monitor export performance</span>
+</span><span id="__span-23-2"><a href="#__codelineno-23-2" id="__codelineno-23-2" name="__codelineno-23-2"></a><span class="nb">time</span><span class="w"> </span>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>perf-test.json
+</span><span id="__span-23-3"><a href="#__codelineno-23-3" id="__codelineno-23-3" name="__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a href="#__codelineno-23-4" id="__codelineno-23-4" name="__codelineno-23-4"></a><span class="c1"># Analyze export size and content</span>
+</span><span id="__span-23-5"><a href="#__codelineno-23-5" id="__codelineno-23-5" name="__codelineno-23-5"></a>ls<span class="w"> </span>-lh<span class="w"> </span>perf-test.json
+</span><span id="__span-23-6"><a href="#__codelineno-23-6" id="__codelineno-23-6" name="__codelineno-23-6"></a>jq<span class="w"> </span><span class="s1">'keys'</span><span class="w"> </span>perf-test.json
+</span></code></pre></div>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
+<h3 id="connection-issues">Connection Issues<a class="headerlink" href="#connection-issues" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a href="#__codelineno-24-1" id="__codelineno-24-1" name="__codelineno-24-1"></a><span class="c1"># Debug connection problems</span>
+</span><span id="__span-24-2"><a href="#__codelineno-24-2" id="__codelineno-24-2" name="__codelineno-24-2"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span>test-connection<span class="w"> </span>--verbose
+</span><span id="__span-24-3"><a href="#__codelineno-24-3" id="__codelineno-24-3" name="__codelineno-24-3"></a>
+</span><span id="__span-24-4"><a href="#__codelineno-24-4" id="__codelineno-24-4" name="__codelineno-24-4"></a><span class="c1"># Check kubeconfig</span>
+</span><span id="__span-24-5"><a href="#__codelineno-24-5" id="__codelineno-24-5" name="__codelineno-24-5"></a>kubectl<span class="w"> </span>config<span class="w"> </span>current-context
+</span><span id="__span-24-6"><a href="#__codelineno-24-6" id="__codelineno-24-6" name="__codelineno-24-6"></a>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--minify
+</span></code></pre></div>
+<h3 id="permission-problems">Permission Problems<a class="headerlink" href="#permission-problems" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a href="#__codelineno-25-1" id="__codelineno-25-1" name="__codelineno-25-1"></a><span class="c1"># Test required permissions</span>
+</span><span id="__span-25-2"><a href="#__codelineno-25-2" id="__codelineno-25-2" name="__codelineno-25-2"></a>kubectl<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>get<span class="w"> </span>customresourcedefinitions
+</span><span id="__span-25-3"><a href="#__codelineno-25-3" id="__codelineno-25-3" name="__codelineno-25-3"></a>kubectl<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>get<span class="w"> </span>deployments<span class="w"> </span>--all-namespaces
+</span><span id="__span-25-4"><a href="#__codelineno-25-4" id="__codelineno-25-4" name="__codelineno-25-4"></a>kubectl<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>get<span class="w"> </span>statefulsets<span class="w"> </span>--all-namespaces
+</span></code></pre></div>
+<h3 id="large-cluster-performance">Large Cluster Performance<a class="headerlink" href="#large-cluster-performance" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a href="#__codelineno-26-1" id="__codelineno-26-1" name="__codelineno-26-1"></a><span class="c1"># For clusters with many resources, consider filtering</span>
+</span><span id="__span-26-2"><a href="#__codelineno-26-2" id="__codelineno-26-2" name="__codelineno-26-2"></a>k8s-datamodel<span class="w"> </span>operators<span class="w"> </span>list<span class="w"> </span>--namespace<span class="w"> </span>specific-namespace
+</span><span id="__span-26-3"><a href="#__codelineno-26-3" id="__codelineno-26-3" name="__codelineno-26-3"></a>k8s-datamodel<span class="w"> </span>crd<span class="w"> </span>list<span class="w"> </span>--group<span class="w"> </span>specific.domain.com
+</span><span id="__span-26-4"><a href="#__codelineno-26-4" id="__codelineno-26-4" name="__codelineno-26-4"></a>
+</span><span id="__span-26-5"><a href="#__codelineno-26-5" id="__codelineno-26-5" name="__codelineno-26-5"></a><span class="c1"># Monitor memory usage during export</span>
+</span><span id="__span-26-6"><a href="#__codelineno-26-6" id="__codelineno-26-6" name="__codelineno-26-6"></a><span class="nv">memory_before</span><span class="o">=</span><span class="k">$(</span>ps<span class="w"> </span>-o<span class="w"> </span><span class="nv">rss</span><span class="o">=</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">$$</span><span class="k">)</span>
+</span><span id="__span-26-7"><a href="#__codelineno-26-7" id="__codelineno-26-7" name="__codelineno-26-7"></a>k8s-datamodel<span class="w"> </span>cluster<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--file<span class="w"> </span>large-cluster.json
+</span><span id="__span-26-8"><a href="#__codelineno-26-8" id="__codelineno-26-8" name="__codelineno-26-8"></a><span class="nv">memory_after</span><span class="o">=</span><span class="k">$(</span>ps<span class="w"> </span>-o<span class="w"> </span><span class="nv">rss</span><span class="o">=</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">$$</span><span class="k">)</span>
+</span><span id="__span-26-9"><a href="#__codelineno-26-9" id="__codelineno-26-9" name="__codelineno-26-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Memory used: </span><span class="k">$((</span><span class="nv">memory_after</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nv">memory_before</span><span class="k">))</span><span class="s2"> KB"</span>
+</span></code></pre></div>
+<h3 id="export-validation">Export Validation<a class="headerlink" href="#export-validation" title="Permanent link">¶</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a href="#__codelineno-27-1" id="__codelineno-27-1" name="__codelineno-27-1"></a><span class="c1"># Validate export integrity</span>
+</span><span id="__span-27-2"><a href="#__codelineno-27-2" id="__codelineno-27-2" name="__codelineno-27-2"></a><span class="k">if</span><span class="w"> </span>!<span class="w"> </span>jq<span class="w"> </span>empty<span class="w"> </span>large-export.json<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-27-3"><a href="#__codelineno-27-3" id="__codelineno-27-3" name="__codelineno-27-3"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Export JSON is invalid"</span>
+</span><span id="__span-27-4"><a href="#__codelineno-27-4" id="__codelineno-27-4" name="__codelineno-27-4"></a><span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+</span><span id="__span-27-5"><a href="#__codelineno-27-5" id="__codelineno-27-5" name="__codelineno-27-5"></a><span class="k">fi</span>
+</span><span id="__span-27-6"><a href="#__codelineno-27-6" id="__codelineno-27-6" name="__codelineno-27-6"></a>
+</span><span id="__span-27-7"><a href="#__codelineno-27-7" id="__codelineno-27-7" name="__codelineno-27-7"></a><span class="c1"># Check export completeness</span>
+</span><span id="__span-27-8"><a href="#__codelineno-27-8" id="__codelineno-27-8" name="__codelineno-27-8"></a><span class="nv">EXPECTED_SECTIONS</span><span class="o">=(</span><span class="s2">"cluster_info"</span><span class="w"> </span><span class="s2">"crds"</span><span class="w"> </span><span class="s2">"operators"</span><span class="w"> </span><span class="s2">"summary"</span><span class="o">)</span>
+</span><span id="__span-27-9"><a href="#__codelineno-27-9" id="__codelineno-27-9" name="__codelineno-27-9"></a><span class="k">for</span><span class="w"> </span>section<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">EXPECTED_SECTIONS</span><span class="p">[@]</span><span class="si">}</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-27-10"><a href="#__codelineno-27-10" id="__codelineno-27-10" name="__codelineno-27-10"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span>jq<span class="w"> </span>-e<span class="w"> </span><span class="s2">".</span><span class="nv">$section</span><span class="s2">"</span><span class="w"> </span>large-export.json<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-27-11"><a href="#__codelineno-27-11" id="__codelineno-27-11" name="__codelineno-27-11"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Missing section: </span><span class="nv">$section</span><span class="s2">"</span>
+</span><span id="__span-27-12"><a href="#__codelineno-27-12" id="__codelineno-27-12" name="__codelineno-27-12"></a><span class="w">  </span><span class="k">fi</span>
+</span><span id="__span-27-13"><a href="#__codelineno-27-13" id="__codelineno-27-13" name="__codelineno-27-13"></a><span class="k">done</span>
+</span></code></pre></div>
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">¶</a></h2>
+<h3 id="regular-health-checks">Regular Health Checks<a class="headerlink" href="#regular-health-checks" title="Permanent link">¶</a></h3>
+<ul>
+<li>Schedule daily connection tests</li>
+<li>Monitor cluster summary trends over time</li>
+<li>Set up alerts for operator health changes</li>
+<li>Track CRD growth and deprecation patterns</li>
+</ul>
+<h3 id="data-management">Data Management<a class="headerlink" href="#data-management" title="Permanent link">¶</a></h3>
+<ul>
+<li>Implement retention policies for export files</li>
+<li>Compress large export files for storage</li>
+<li>Version control important inventory snapshots</li>
+<li>Archive pre-migration and post-migration exports</li>
+</ul>
+<h3 id="security-practices">Security Practices<a class="headerlink" href="#security-practices" title="Permanent link">¶</a></h3>
+<ul>
+<li>Secure export files containing sensitive cluster data</li>
+<li>Review RBAC permissions regularly</li>
+<li>Audit operator privilege escalations</li>
+<li>Monitor for unauthorized CRD installations</li>
+</ul>
+<h2 id="related-commands">Related Commands<a class="headerlink" href="#related-commands" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="../crds/">CRDs</a>: Detailed CRD analysis and filtering</li>
+<li><a href="../operators/">Operators</a>: Comprehensive operator management</li>
+<li><a href="../output-formats/">Output Formats</a>: Format specifications and examples</li>
+</ul>
+</article>
+</div>
+<script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/brun-s" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.indexes", "toc.follow", "search.highlight", "search.share", "content.code.copy", "content.code.select", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "0.4.0", "provider": "mike"}}</script>
+<script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
+</body>
+</html>
