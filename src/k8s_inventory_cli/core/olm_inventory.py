@@ -6,6 +6,7 @@ from kubernetes.client.rest import ApiException
 import logging
 
 from .k8s_client import K8sClient
+from .models import ClusterServiceVersion
 
 logger = logging.getLogger(__name__)
 
@@ -176,7 +177,15 @@ class OLMInventory:
             skips = spec.get('skips', [])
             min_kube_version = spec.get('minKubeVersion', '')
             
-            return CSVInfo(
+            # Extract complete CSV spec for database storage
+            # Convert any datetime objects to strings for JSON serialization
+            csv_spec = self._convert_datetime_in_dict({
+                'metadata': metadata,
+                'spec': spec,
+                'status': status
+            })
+            
+            return ClusterServiceVersion(
                 name=name,
                 namespace=namespace,
                 display_name=display_name,
@@ -194,12 +203,40 @@ class OLMInventory:
                 cluster_permissions=cluster_permissions,
                 replaces=replaces,
                 skips=skips,
-                min_kube_version=min_kube_version
+                min_kube_version=min_kube_version,
+                spec=csv_spec
             )
         
         except Exception as e:
             logger.error(f"Failed to convert CSV to CSVInfo: {e}")
             return None
+    
+    def _convert_datetime_in_dict(self, obj, depth=0, max_depth=10):
+        """Recursively convert datetime objects to strings in nested data structures.
+        
+        Args:
+            obj: The object to convert datetime objects in
+            depth: Current recursion depth
+            max_depth: Maximum recursion depth to prevent infinite loops
+        
+        Returns:
+            Object with all datetime objects converted to ISO format strings
+        """
+        from datetime import datetime
+        
+        if depth > max_depth:
+            return obj
+        
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        
+        if isinstance(obj, dict):
+            return {k: self._convert_datetime_in_dict(v, depth + 1, max_depth) for k, v in obj.items()}
+        
+        if isinstance(obj, list):
+            return [self._convert_datetime_in_dict(item, depth + 1, max_depth) for item in obj]
+        
+        return obj
 
     def filter_csvs(self, csvs: List[CSVInfo], 
                     namespace_filter: Optional[str] = None,

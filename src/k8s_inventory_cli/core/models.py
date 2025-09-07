@@ -57,6 +57,7 @@ class CRD:
     description: Optional[str] = None
     instance_count: int = 0
     schemas: Dict[str, CRDSchema] = None  # Schema for each version
+    spec: Optional[Dict[str, Any]] = None  # Complete CRD spec from Kubernetes
 
     def __post_init__(self):
         """Initialize default values for mutable fields."""
@@ -72,6 +73,8 @@ class CRD:
             self.short_names = []
         if self.schemas is None:
             self.schemas = {}
+        if self.spec is None:
+            self.spec = {}
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -95,6 +98,7 @@ class Operator:
     managed_crds: List[str] = None  # CRDs this operator manages
     managed_resources: List[str] = None  # Other resources this operator manages
     operator_framework: Optional[str] = None  # OLM, Helm, manual, etc.
+    spec: Optional[Dict[str, Any]] = None  # Complete operator spec from Kubernetes
 
     def __post_init__(self):
         """Initialize default values for mutable fields."""
@@ -108,6 +112,8 @@ class Operator:
             self.managed_crds = []
         if self.managed_resources is None:
             self.managed_resources = []
+        if self.spec is None:
+            self.spec = {}
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -135,6 +141,7 @@ class ClusterServiceVersion:
     replaces: Optional[str] = None  # Previous version replaced
     skips: List[str] = None  # Versions skipped
     min_kube_version: Optional[str] = None
+    spec: Optional[Dict[str, Any]] = None  # Complete CSV spec from Kubernetes
 
     def __post_init__(self):
         """Initialize default values for mutable fields."""
@@ -152,6 +159,8 @@ class ClusterServiceVersion:
             self.cluster_permissions = []
         if self.skips is None:
             self.skips = []
+        if self.spec is None:
+            self.spec = {}
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""

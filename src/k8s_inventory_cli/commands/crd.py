@@ -211,10 +211,12 @@ def count_crds(ctx: click.Context, group: Optional[str], scope: Optional[str]) -
               help='Filter by scope')
 @click.option('--include-toc', is_flag=True, default=True, 
               help='Include table of contents (default: true)')
+@click.option('--split', is_flag=True, 
+              help='Generate separate files for each API group plus a summary')
 @click.pass_context
 def export_all_crds(ctx: click.Context, output_file: str, max_depth: int, 
                    required_only: bool, group: Optional[str], scope: Optional[str], 
-                   include_toc: bool) -> None:
+                   include_toc: bool, split: bool) -> None:
     """Export all CRDs with their properties to a Markdown file."""
     try:
         # Initialize Kubernetes client
@@ -246,18 +248,22 @@ def export_all_crds(ctx: click.Context, output_file: str, max_depth: int,
         if ctx.obj.get('verbose'):
             click.echo(f"Found {len(crds)} CRDs to export...")
         
-        # Generate comprehensive markdown with relationship matrices
-        markdown_content = inventory.generate_comprehensive_markdown(crds, group_filter=group)
-        
-        # Ensure output directory exists
-        output_path = Path(output_file)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Write to file
-        with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(markdown_content)
-        
-        click.echo(f"✓ Exported {len(crds)} CRDs to '{output_file}'")
+        if split:
+            # Generate split files - one per API group plus summary
+            _export_split_files(inventory, crds, output_file, group, ctx.obj.get('verbose', False))
+        else:
+            # Generate single comprehensive markdown file
+            markdown_content = inventory.generate_comprehensive_markdown(crds, group_filter=group)
+            
+            # Ensure output directory exists
+            output_path = Path(output_file)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # Write to file
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(markdown_content)
+            
+            click.echo(f"✓ Exported {len(crds)} CRDs to '{output_file}'")
         
         # Show summary
         total_properties = sum(len(crd.schemas.get(crd.stored_version, crd.schemas[list(crd.schemas.keys())[0]] if crd.schemas else {}).properties or {}) 
@@ -393,6 +399,173 @@ def generate_diagram(ctx: click.Context, group: Optional[str], scope: Optional[s
         logger.error(f"Failed to generate diagram: {e}")
         click.echo(f"Error: {e}", err=True)
         ctx.exit(1)
+
+
+def _export_split_files(inventory, crds, base_output_file: str, group_filter: Optional[str], verbose: bool) -> None:
+    """Export CRDs as split files - one per API group plus a summary.
+    
+    Args:
+        inventory: CRDInventory instance
+        crds: List of CRDs to export
+        base_output_file: Base output filename to determine directory and naming
+        group_filter: Optional group filter for comprehensive exports
+        verbose: Whether to show verbose output
+    """
+    # Extract directory and base name from output file
+    output_path = Path(base_output_file)
+    output_dir = output_path.parent
+    base_name = output_path.stem
+    
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Group CRDs by API group
+    groups = {}
+    for crd in crds:
+        group_name = crd.group or 'core'
+        if group_name not in groups:
+            groups[group_name] = []
+        groups[group_name].append(crd)
+    
+    if verbose:
+        click.echo(f"Exporting {len(groups)} API groups to separate files...")
+    
+    # Generate individual group files
+    group_files = []
+    total_files = 0
+    total_group_crds = 0
+    
+    for group_name in sorted(groups.keys()):
+        group_crds = groups[group_name]
+        
+        # Sanitize group name for filename
+        safe_group_name = group_name.replace('.', '_').replace('/', '_').replace(':', '_')
+        group_filename = f"{base_name}_{safe_group_name}.md"
+        group_filepath = output_dir / group_filename
+        
+        # Generate comprehensive markdown for this group only
+        group_content = inventory.generate_comprehensive_markdown(group_crds, group_filter=group_name)
+        
+        # Write group file
+        with open(group_filepath, 'w', encoding='utf-8') as f:
+            f.write(group_content)
+        
+        group_files.append((group_name, group_filename, len(group_crds)))
+        total_files += 1
+        total_group_crds += len(group_crds)
+        
+        if verbose:
+            click.echo(f"  Created {group_filename} ({len(group_crds)} CRDs)")
+    
+    # Generate summary file
+    summary_filename = f"{base_name}_summary.md"
+    summary_filepath = output_dir / summary_filename
+    
+    # Generate summary content
+    summary_content = _generate_split_summary(groups, group_files, crds, group_filter)
+    
+    # Write summary file
+    with open(summary_filepath, 'w', encoding='utf-8') as f:
+        f.write(summary_content)
+    
+    # Report results
+    click.echo(f"✓ Split export completed:")
+    click.echo(f"  Generated {total_files} group files ({total_group_crds} CRDs total)")
+    click.echo(f"  Created summary: {summary_filename}")
+    click.echo(f"  Output directory: {output_dir}")
+
+
+def _generate_split_summary(groups: Dict[str, list], group_files: list, all_crds: list, group_filter: Optional[str]) -> str:
+    """Generate summary markdown for split export.
+    
+    Args:
+        groups: Dictionary of API groups and their CRDs
+        group_files: List of (group_name, filename, crd_count) tuples
+        all_crds: Complete list of CRDs for statistics
+        group_filter: Optional group filter used
+        
+    Returns:
+        Markdown content for summary file
+    """
+    from datetime import datetime
+    
+    # Calculate statistics
+    total_crds = len(all_crds)
+    total_groups = len(groups)
+    namespaced_count = len([crd for crd in all_crds if crd.scope == "Namespaced"])
+    cluster_count = len([crd for crd in all_crds if crd.scope == "Cluster"])
+    total_instances = sum(crd.instance_count for crd in all_crds)
+    
+    # Build summary content
+    summary = f"""# CRD Export Summary
+
+> **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+> 
+> **Export Type:** Split files (one per API group)
+> **Total CRDs:** {total_crds}
+> **API Groups:** {total_groups}
+{f"> **Group Filter:** {group_filter}" if group_filter else ""}
+>
+> This summary provides an overview of the split CRD export. Each API group has been exported to a separate markdown file with comprehensive documentation.
+
+---
+
+## 📊 Export Statistics
+
+| Metric | Value |
+|--------|-------|
+| **Total CRDs** | {total_crds} |
+| **API Groups** | {total_groups} |
+| **Total Instances** | {total_instances:,} |
+| **Namespaced CRDs** | {namespaced_count} ({namespaced_count/total_crds*100:.1f}%) |
+| **Cluster-scoped CRDs** | {cluster_count} ({cluster_count/total_crds*100:.1f}%) |
+| **Generated Files** | {len(group_files)} group files + this summary |
+
+## 📂 Generated Files
+
+The following files were generated, one for each API group:
+
+| API Group | File | CRDs | Description |
+|-----------|------|------|-------------|
+"""
+    
+    # Add file listing
+    for group_name, filename, crd_count in sorted(group_files):
+        group_description = f"Complete documentation for {group_name} API group"
+        summary += f"| `{group_name}` | [{filename}](./{filename}) | {crd_count} | {group_description} |\n"
+    
+    # Add API group overview
+    summary += "\n## 🗂️ API Groups Overview\n\n"
+    
+    # Sort groups by CRD count
+    sorted_groups = sorted(groups.items(), key=lambda x: len(x[1]), reverse=True)
+    
+    for group_name, group_crds in sorted_groups:
+        crd_count = len(group_crds)
+        instances = sum(crd.instance_count for crd in group_crds)
+        
+        # Count scopes
+        ns_crds = len([crd for crd in group_crds if crd.scope == "Namespaced"])
+        cluster_crds = len([crd for crd in group_crds if crd.scope == "Cluster"])
+        
+        summary += f"### {group_name}\n\n"
+        summary += f"- **CRDs:** {crd_count}\n"
+        summary += f"- **Instances:** {instances:,}\n"
+        summary += f"- **Scope:** {ns_crds} Namespaced, {cluster_crds} Cluster-scoped\n"
+        
+        # List CRD kinds
+        kinds = [crd.kind for crd in sorted(group_crds, key=lambda x: x.kind)]
+        if len(kinds) <= 5:
+            summary += f"- **Kinds:** {', '.join(f'`{kind}`' for kind in kinds)}\n"
+        else:
+            summary += f"- **Kinds:** {', '.join(f'`{kind}`' for kind in kinds[:5])}, and {len(kinds)-5} more\n"
+        
+        summary += "\n"
+    
+    # Add footer
+    summary += f"\n---\n\n*Split export generated by k8s-inventory-cli on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n"
+    
+    return summary
 
 
 class CRDGroupFormatter(OutputFormatter):

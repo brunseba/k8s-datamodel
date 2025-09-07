@@ -8,6 +8,7 @@ import re
 
 from .k8s_client import K8sClient
 from .olm_inventory import OLMInventory
+from .models import Operator
 
 logger = logging.getLogger(__name__)
 
@@ -202,17 +203,25 @@ class OperatorInventory:
         # Build conditions
         conditions = []
         if deployment.status and deployment.status.conditions:
-            conditions = [
-                {
+            conditions = []
+            for condition in deployment.status.conditions:
+                condition_dict = {
                     'type': condition.type,
                     'status': condition.status,
                     'reason': condition.reason,
                     'message': condition.message
                 }
-                for condition in deployment.status.conditions
-            ]
+                # Handle datetime fields in conditions
+                if hasattr(condition, 'last_transition_time') and condition.last_transition_time:
+                    condition_dict['last_transition_time'] = condition.last_transition_time.isoformat()
+                if hasattr(condition, 'last_update_time') and condition.last_update_time:
+                    condition_dict['last_update_time'] = condition.last_update_time.isoformat()
+                conditions.append(condition_dict)
 
-        return OperatorInfo(
+        # Extract complete deployment spec for database storage
+        deployment_spec = self._extract_deployment_spec(deployment)
+        
+        return Operator(
             name=deployment.metadata.name,
             namespace=deployment.metadata.namespace,
             operator_type="deployment",
@@ -226,7 +235,8 @@ class OperatorInventory:
             conditions=conditions,
             managed_crds=[],
             managed_resources=[],
-            operator_framework=framework
+            operator_framework=framework,
+            spec=deployment_spec
         )
 
     def _statefulset_to_operator_info(self, statefulset) -> OperatorInfo:
@@ -255,17 +265,25 @@ class OperatorInventory:
 
         conditions = []
         if statefulset.status and statefulset.status.conditions:
-            conditions = [
-                {
+            conditions = []
+            for condition in statefulset.status.conditions:
+                condition_dict = {
                     'type': condition.type,
                     'status': condition.status,
                     'reason': condition.reason,
                     'message': condition.message
                 }
-                for condition in statefulset.status.conditions
-            ]
+                # Handle datetime fields in conditions
+                if hasattr(condition, 'last_transition_time') and condition.last_transition_time:
+                    condition_dict['last_transition_time'] = condition.last_transition_time.isoformat()
+                if hasattr(condition, 'last_update_time') and condition.last_update_time:
+                    condition_dict['last_update_time'] = condition.last_update_time.isoformat()
+                conditions.append(condition_dict)
 
-        return OperatorInfo(
+        # Extract complete statefulset spec for database storage
+        statefulset_spec = self._extract_statefulset_spec(statefulset)
+        
+        return Operator(
             name=statefulset.metadata.name,
             namespace=statefulset.metadata.namespace,
             operator_type="statefulset",
@@ -279,7 +297,8 @@ class OperatorInventory:
             conditions=conditions,
             managed_crds=[],
             managed_resources=[],
-            operator_framework=framework
+            operator_framework=framework,
+            spec=statefulset_spec
         )
 
     def _detect_operator_framework(self, labels: Dict[str, str], annotations: Dict[str, str]) -> Optional[str]:
@@ -443,3 +462,117 @@ class OperatorInventory:
                 
         except Exception as e:
             logger.debug(f"Could not enhance with OLM info: {e}")
+    
+    def _extract_deployment_spec(self, deployment) -> Dict[str, Any]:
+        """Extract complete deployment specification for storage.
+        
+        Args:
+            deployment: The deployment object from Kubernetes API
+        
+        Returns:
+            Dictionary containing the complete deployment spec
+        """
+        try:
+            # Use our robust conversion method that handles datetime objects
+            deployment_dict = self._k8s_obj_to_dict(deployment)
+            
+            # Return the complete deployment specification
+            return {
+                'metadata': deployment_dict.get('metadata', {}),
+                'spec': deployment_dict.get('spec', {}),
+                'status': deployment_dict.get('status', {}),
+                'api_version': deployment_dict.get('api_version', ''),
+                'kind': deployment_dict.get('kind', '')
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to extract spec from deployment {deployment.metadata.name}: {e}")
+            return {}
+    
+    def _extract_statefulset_spec(self, statefulset) -> Dict[str, Any]:
+        """Extract complete statefulset specification for storage.
+        
+        Args:
+            statefulset: The statefulset object from Kubernetes API
+        
+        Returns:
+            Dictionary containing the complete statefulset spec
+        """
+        try:
+            # Use our robust conversion method that handles datetime objects
+            statefulset_dict = self._k8s_obj_to_dict(statefulset)
+            
+            # Return the complete statefulset specification
+            return {
+                'metadata': statefulset_dict.get('metadata', {}),
+                'spec': statefulset_dict.get('spec', {}),
+                'status': statefulset_dict.get('status', {}),
+                'api_version': statefulset_dict.get('api_version', ''),
+                'kind': statefulset_dict.get('kind', '')
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to extract spec from statefulset {statefulset.metadata.name}: {e}")
+            return {}
+    
+    def _k8s_obj_to_dict(self, obj) -> Dict[str, Any]:
+        """Convert Kubernetes object to dictionary recursively.
+        
+        Args:
+            obj: Kubernetes object
+        
+        Returns:
+            Dictionary representation
+        """
+        from datetime import datetime
+        
+        if obj is None:
+            return None
+        elif hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        elif isinstance(obj, datetime):
+            return obj.isoformat()
+        elif hasattr(obj, '__dict__'):
+            result = {}
+            for key, value in obj.__dict__.items():
+                if key.startswith('_'):
+                    continue
+                if hasattr(value, 'to_dict'):
+                    result[key] = value.to_dict()
+                elif hasattr(value, '__dict__'):
+                    result[key] = self._k8s_obj_to_dict(value)
+                elif isinstance(value, (list, tuple)):
+                    result[key] = []
+                    for item in value:
+                        if isinstance(item, datetime):
+                            result[key].append(item.isoformat())
+                        elif hasattr(item, '__dict__'):
+                            result[key].append(self._k8s_obj_to_dict(item))
+                        else:
+                            result[key].append(item)
+                elif isinstance(value, datetime):
+                    result[key] = value.isoformat()
+                elif isinstance(value, dict):
+                    result[key] = {}
+                    for k, v in value.items():
+                        if isinstance(v, datetime):
+                            result[key][k] = v.isoformat()
+                        elif hasattr(v, '__dict__'):
+                            result[key][k] = self._k8s_obj_to_dict(v)
+                        else:
+                            result[key][k] = v
+                else:
+                    result[key] = value
+            return result
+        elif isinstance(obj, dict):
+            result = {}
+            for k, v in obj.items():
+                if isinstance(v, datetime):
+                    result[k] = v.isoformat()
+                elif hasattr(v, '__dict__'):
+                    result[k] = self._k8s_obj_to_dict(v)
+                else:
+                    result[k] = v
+            return result
+        else:
+            return str(obj) if not isinstance(obj, (int, float, bool, str, list, dict)) else obj

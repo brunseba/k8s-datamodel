@@ -87,6 +87,9 @@ class CRDInventory:
                 # Extract schemas for each version
                 schemas = self._extract_schemas(crd)
                 
+                # Extract complete CRD spec for database storage
+                crd_spec = self._extract_crd_spec(crd)
+                
                 crd_info = CRD(
                     name=name,
                     group=group,
@@ -103,7 +106,8 @@ class CRDInventory:
                     categories=categories,
                     short_names=short_names,
                     instance_count=instance_count,
-                    schemas=schemas
+                    schemas=schemas,
+                    spec=crd_spec
                 )
                 
                 crd_list.append(crd_info)
@@ -152,6 +156,9 @@ class CRDInventory:
             # Extract schemas for each version
             schemas = self._extract_schemas(crd)
             
+            # Extract complete CRD spec for database storage
+            crd_spec = self._extract_crd_spec(crd)
+            
             return CRD(
                 name=name,
                 group=group,
@@ -168,7 +175,8 @@ class CRDInventory:
                 categories=categories,
                 short_names=short_names,
                 instance_count=instance_count,
-                schemas=schemas
+                schemas=schemas,
+                spec=crd_spec
             )
         
         except ApiException as e:
@@ -240,7 +248,7 @@ class CRDInventory:
                             schema_dict = self._k8s_obj_to_dict(schema_dict)
                         
                         if schema_dict and isinstance(schema_dict, dict):
-                            logger.debug(f"Found schema for version {version.name}, keys: {list(schema_dict.keys())}")
+                            logger.debug(f"Found schema for version {version.name}, keys: {list(schema_dict.keys()) if schema_dict else 'None'}")
                             
                             # Extract the main properties from the schema
                             # The schema contains properties like 'apiVersion', 'kind', 'metadata', 'spec', 'status'
@@ -275,6 +283,8 @@ class CRDInventory:
                                         )
                             else:
                                 logger.debug(f"Schema properties is not a dict for version {version.name}: {type(root_props)}")
+                        elif schema_dict is None:
+                            logger.debug(f"Schema dict is None for version {version.name}")
                         else:
                             logger.debug(f"Schema dict is invalid for version {version.name}: {type(schema_dict)}")
                     else:
@@ -290,52 +300,93 @@ class CRDInventory:
         logger.debug(f"Extracted schemas for CRD {crd.metadata.name}: {list(schemas.keys())}")
         return schemas
     
-    def _k8s_obj_to_dict(self, obj: Any) -> Dict[str, Any]:
-        """Convert a Kubernetes client object to a dictionary.
+    def _extract_crd_spec(self, crd) -> Dict[str, Any]:
+        """Extract complete CRD specification for storage.
         
         Args:
-            obj: Kubernetes client object
-            
+            crd: The CRD object from Kubernetes API
+        
         Returns:
-            Dictionary representation of the object
+            Dictionary containing the complete CRD spec
         """
         try:
-            # First, try the standard to_dict method
-            if hasattr(obj, 'to_dict'):
-                return obj.to_dict()
+            # Use our robust conversion method that handles datetime objects
+            crd_dict = self._k8s_obj_to_dict(crd)
             
-            # If that doesn't work, try to access attributes directly
-            result = {}
-            if hasattr(obj, '__dict__'):
-                for key, value in obj.__dict__.items():
-                    if key.startswith('_'):
-                        continue
-                    
-                    # Handle nested objects recursively
-                    if hasattr(value, '__dict__') and not isinstance(value, (str, int, float, bool, list, dict)):
-                        result[key] = self._k8s_obj_to_dict(value)
-                    elif isinstance(value, list):
-                        result[key] = []
-                        for item in value:
-                            if hasattr(item, '__dict__') and not isinstance(item, (str, int, float, bool)):
-                                result[key].append(self._k8s_obj_to_dict(item))
-                            else:
-                                result[key].append(item)
-                    elif isinstance(value, dict):
-                        result[key] = {}
-                        for k, v in value.items():
-                            if hasattr(v, '__dict__') and not isinstance(v, (str, int, float, bool)):
-                                result[key][k] = self._k8s_obj_to_dict(v)
-                            else:
-                                result[key][k] = v
-                    else:
-                        result[key] = value
-            
-            return result
+            # Return the complete CRD specification
+            return {
+                'metadata': crd_dict.get('metadata', {}),
+                'spec': crd_dict.get('spec', {}),
+                'status': crd_dict.get('status', {}),
+                'api_version': crd_dict.get('api_version', ''),
+                'kind': crd_dict.get('kind', '')
+            }
             
         except Exception as e:
-            logger.warning(f"Failed to convert Kubernetes object to dict: {e}")
+            logger.error(f"Failed to extract spec from CRD {crd.metadata.name}: {e}")
             return {}
+    
+    def _k8s_obj_to_dict(self, obj) -> Dict[str, Any]:
+        """Convert Kubernetes object to dictionary recursively.
+        
+        Args:
+            obj: Kubernetes object
+        
+        Returns:
+            Dictionary representation
+        """
+        from datetime import datetime
+        
+        if obj is None:
+            return None
+        elif hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        elif isinstance(obj, datetime):
+            return obj.isoformat()
+        elif hasattr(obj, '__dict__'):
+            result = {}
+            for key, value in obj.__dict__.items():
+                if key.startswith('_'):
+                    continue
+                if hasattr(value, 'to_dict'):
+                    result[key] = value.to_dict()
+                elif hasattr(value, '__dict__'):
+                    result[key] = self._k8s_obj_to_dict(value)
+                elif isinstance(value, (list, tuple)):
+                    result[key] = []
+                    for item in value:
+                        if isinstance(item, datetime):
+                            result[key].append(item.isoformat())
+                        elif hasattr(item, '__dict__'):
+                            result[key].append(self._k8s_obj_to_dict(item))
+                        else:
+                            result[key].append(item)
+                elif isinstance(value, datetime):
+                    result[key] = value.isoformat()
+                elif isinstance(value, dict):
+                    result[key] = {}
+                    for k, v in value.items():
+                        if isinstance(v, datetime):
+                            result[key][k] = v.isoformat()
+                        elif hasattr(v, '__dict__'):
+                            result[key][k] = self._k8s_obj_to_dict(v)
+                        else:
+                            result[key][k] = v
+                else:
+                    result[key] = value
+            return result
+        elif isinstance(obj, dict):
+            result = {}
+            for k, v in obj.items():
+                if isinstance(v, datetime):
+                    result[k] = v.isoformat()
+                elif hasattr(v, '__dict__'):
+                    result[k] = self._k8s_obj_to_dict(v)
+                else:
+                    result[k] = v
+            return result
+        else:
+            return str(obj) if not isinstance(obj, (int, float, bool, str, list, dict)) else obj
     
     def _parse_schema_properties(self, properties_dict: Dict[str, Any]) -> Dict[str, CRDProperty]:
         """Parse OpenAPI schema properties into CRDProperty objects.

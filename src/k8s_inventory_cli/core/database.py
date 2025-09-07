@@ -9,6 +9,38 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 from contextlib import contextmanager
 
+class DateTimeEncoder(json.JSONEncoder):
+    """JSON encoder that handles datetime objects."""
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+def convert_datetime_in_dict(obj, depth=0, max_depth=10):
+    """Recursively convert datetime objects to strings in nested data structures.
+    
+    Args:
+        obj: The object to convert datetime objects in
+        depth: Current recursion depth
+        max_depth: Maximum recursion depth to prevent infinite loops
+    
+    Returns:
+        Object with all datetime objects converted to ISO format strings
+    """
+    if depth > max_depth:
+        return obj
+    
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    
+    if isinstance(obj, dict):
+        return {k: convert_datetime_in_dict(v, depth + 1, max_depth) for k, v in obj.items()}
+    
+    if isinstance(obj, list):
+        return [convert_datetime_in_dict(item, depth + 1, max_depth) for item in obj]
+    
+    return obj
+
 from .models import CRD, Operator, ClusterServiceVersion
 
 logger = logging.getLogger(__name__)
@@ -36,7 +68,7 @@ class DatabaseManager:
     """Manages SQLite database operations for k8s inventory data."""
     
     # Database schema version for migrations
-    SCHEMA_VERSION = 1
+    SCHEMA_VERSION = 2
     
     def __init__(self, db_path: Optional[str] = None):
         """Initialize database manager.
@@ -56,6 +88,9 @@ class DatabaseManager:
         
         # Initialize database
         self._initialize_database()
+        
+        # Handle migrations if needed
+        self._handle_migrations()
 
     @contextmanager
     def get_connection(self):
@@ -121,6 +156,7 @@ class DatabaseManager:
                     categories TEXT,
                     short_names TEXT,
                     instance_count INTEGER DEFAULT 0,
+                    spec TEXT,
                     FOREIGN KEY (snapshot_id) REFERENCES inventory_snapshots (id)
                 )
             """)
@@ -144,6 +180,7 @@ class DatabaseManager:
                     managed_crds TEXT,
                     managed_resources TEXT,
                     operator_framework TEXT,
+                    spec TEXT,
                     FOREIGN KEY (snapshot_id) REFERENCES inventory_snapshots (id)
                 )
             """)
@@ -171,6 +208,7 @@ class DatabaseManager:
                     replaces TEXT,
                     skips TEXT,
                     min_kube_version TEXT,
+                    spec TEXT,
                     FOREIGN KEY (snapshot_id) REFERENCES inventory_snapshots (id)
                 )
             """)
@@ -191,7 +229,52 @@ class DatabaseManager:
             
             conn.commit()
 
-    def store_inventory_snapshot(self, 
+    def _handle_migrations(self):
+        """Handle database schema migrations."""
+        with self.get_connection() as conn:
+            # Get current schema version
+            cursor = conn.execute(
+                "SELECT value FROM db_metadata WHERE key = 'schema_version'"
+            )
+            result = cursor.fetchone()
+            current_version = int(result['value']) if result else 1
+            
+            # Apply migrations if needed
+            if current_version < 2:
+                self._migrate_to_version_2(conn)
+                logger.info("Database migrated to schema version 2")
+            
+            # Update schema version
+            conn.execute(
+                "INSERT OR REPLACE INTO db_metadata (key, value) VALUES (?, ?)",
+                ("schema_version", str(self.SCHEMA_VERSION))
+            )
+            conn.commit()
+    
+    def _migrate_to_version_2(self, conn):
+        """Migrate database from version 1 to version 2 (add spec columns)."""
+        try:
+            # Add spec column to crds table if it doesn't exist
+            conn.execute("ALTER TABLE crds ADD COLUMN spec TEXT")
+        except sqlite3.OperationalError:
+            # Column already exists, ignore
+            pass
+        
+        try:
+            # Add spec column to operators table if it doesn't exist
+            conn.execute("ALTER TABLE operators ADD COLUMN spec TEXT")
+        except sqlite3.OperationalError:
+            # Column already exists, ignore
+            pass
+        
+        try:
+            # Add spec column to csvs table if it doesn't exist
+            conn.execute("ALTER TABLE csvs ADD COLUMN spec TEXT")
+        except sqlite3.OperationalError:
+            # Column already exists, ignore
+            pass
+
+    def store_inventory_snapshot(self,
                                 cluster_context: str,
                                 cluster_info: Dict[str, Any],
                                 crds: List[CRD] = None,
@@ -226,7 +309,7 @@ class DatabaseManager:
             """, (
                 datetime.utcnow().isoformat(),
                 cluster_context,
-                json.dumps(cluster_info),
+                json.dumps(cluster_info, cls=DateTimeEncoder),
                 len(crds),
                 len(operators),
                 len(csvs),
@@ -238,55 +321,82 @@ class DatabaseManager:
             
             # Store CRDs
             for crd in crds:
-                conn.execute("""
-                    INSERT INTO crds (
-                        snapshot_id, name, group_name, version, kind, plural, singular, scope,
-                        creation_timestamp, labels, annotations, served_versions, stored_version,
-                        categories, short_names, instance_count
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    snapshot_id, crd.name, crd.group, crd.version, crd.kind, crd.plural,
-                    crd.singular, crd.scope, crd.creation_timestamp,
-                    json.dumps(crd.labels), json.dumps(crd.annotations),
-                    json.dumps(crd.served_versions), crd.stored_version,
-                    json.dumps(crd.categories), json.dumps(crd.short_names),
-                    crd.instance_count
-                ))
+                try:
+                    # Convert datetime objects in spec before JSON serialization
+                    crd_spec_converted = convert_datetime_in_dict(crd.spec) if crd.spec else None
+                    
+                    conn.execute("""
+                        INSERT INTO crds (
+                            snapshot_id, name, group_name, version, kind, plural, singular, scope,
+                            creation_timestamp, labels, annotations, served_versions, stored_version,
+                            categories, short_names, instance_count, spec
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        snapshot_id, crd.name, crd.group, crd.version, crd.kind, crd.plural,
+                        crd.singular, crd.scope, crd.creation_timestamp,
+                        json.dumps(crd.labels, cls=DateTimeEncoder), json.dumps(crd.annotations, cls=DateTimeEncoder),
+                        json.dumps(crd.served_versions, cls=DateTimeEncoder), crd.stored_version,
+                        json.dumps(crd.categories, cls=DateTimeEncoder), json.dumps(crd.short_names, cls=DateTimeEncoder),
+                        crd.instance_count, json.dumps(crd_spec_converted, cls=DateTimeEncoder)
+                    ))
+                except Exception as e:
+                    logger.error(f"Failed to store CRD {crd.name}: {e}")
+                    logger.debug(f"CRD spec type: {type(crd.spec)}, content: {str(crd.spec)[:200]}...")
+                    raise
             
             # Store Operators
             for operator in operators:
-                conn.execute("""
-                    INSERT INTO operators (
-                        snapshot_id, name, namespace, operator_type, image, version,
-                        creation_timestamp, labels, annotations, replicas, ready_replicas,
-                        conditions, managed_crds, managed_resources, operator_framework
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    snapshot_id, operator.name, operator.namespace, operator.operator_type,
-                    operator.image, operator.version, operator.creation_timestamp,
-                    json.dumps(operator.labels), json.dumps(operator.annotations),
-                    operator.replicas, operator.ready_replicas,
-                    json.dumps(operator.conditions), json.dumps(operator.managed_crds),
-                    json.dumps(operator.managed_resources), operator.operator_framework
-                ))
+                try:
+                    # Convert datetime objects in spec and conditions before JSON serialization
+                    operator_spec_converted = convert_datetime_in_dict(operator.spec) if operator.spec else None
+                    operator_conditions_converted = convert_datetime_in_dict(operator.conditions) if operator.conditions else []
+                    
+                    conn.execute("""
+                        INSERT INTO operators (
+                            snapshot_id, name, namespace, operator_type, image, version,
+                            creation_timestamp, labels, annotations, replicas, ready_replicas,
+                            conditions, managed_crds, managed_resources, operator_framework, spec
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        snapshot_id, operator.name, operator.namespace, operator.operator_type,
+                        operator.image, operator.version, operator.creation_timestamp,
+                        json.dumps(operator.labels, cls=DateTimeEncoder), json.dumps(operator.annotations, cls=DateTimeEncoder),
+                        operator.replicas, operator.ready_replicas,
+                        json.dumps(operator_conditions_converted, cls=DateTimeEncoder), json.dumps(operator.managed_crds, cls=DateTimeEncoder),
+                        json.dumps(operator.managed_resources, cls=DateTimeEncoder), operator.operator_framework,
+                        json.dumps(operator_spec_converted, cls=DateTimeEncoder)
+                    ))
+                except Exception as e:
+                    logger.error(f"Failed to store operator {operator.name}: {e}")
+                    logger.debug(f"Operator spec type: {type(operator.spec)}, content: {str(operator.spec)[:200]}...")
+                    raise
             
             # Store CSVs
             for csv in csvs:
-                conn.execute("""
-                    INSERT INTO csvs (
-                        snapshot_id, name, namespace, display_name, version, phase, description,
-                        provider, install_strategy, creation_timestamp, labels, annotations,
-                        owned_crds, required_crds, permissions, cluster_permissions,
-                        replaces, skips, min_kube_version
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    snapshot_id, csv.name, csv.namespace, csv.display_name, csv.version,
-                    csv.phase, csv.description, csv.provider, csv.install_strategy,
-                    csv.creation_timestamp, json.dumps(csv.labels), json.dumps(csv.annotations),
-                    json.dumps(csv.owned_crds), json.dumps(csv.required_crds),
-                    json.dumps(csv.permissions), json.dumps(csv.cluster_permissions),
-                    csv.replaces, json.dumps(csv.skips), csv.min_kube_version
-                ))
+                try:
+                    # Convert datetime objects in spec before JSON serialization
+                    csv_spec_converted = convert_datetime_in_dict(csv.spec) if csv.spec else None
+                    
+                    conn.execute("""
+                        INSERT INTO csvs (
+                            snapshot_id, name, namespace, display_name, version, phase, description,
+                            provider, install_strategy, creation_timestamp, labels, annotations,
+                            owned_crds, required_crds, permissions, cluster_permissions,
+                            replaces, skips, min_kube_version, spec
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        snapshot_id, csv.name, csv.namespace, csv.display_name, csv.version,
+                        csv.phase, csv.description, csv.provider, csv.install_strategy,
+                        csv.creation_timestamp, json.dumps(csv.labels, cls=DateTimeEncoder), json.dumps(csv.annotations, cls=DateTimeEncoder),
+                        json.dumps(csv.owned_crds, cls=DateTimeEncoder), json.dumps(csv.required_crds, cls=DateTimeEncoder),
+                        json.dumps(csv.permissions, cls=DateTimeEncoder), json.dumps(csv.cluster_permissions, cls=DateTimeEncoder),
+                        csv.replaces, json.dumps(csv.skips, cls=DateTimeEncoder), csv.min_kube_version,
+                        json.dumps(csv_spec_converted, cls=DateTimeEncoder)
+                    ))
+                except Exception as e:
+                    logger.error(f"Failed to store CSV {csv.name}: {e}")
+                    logger.debug(f"CSV spec type: {type(csv.spec)}, content: {str(csv.spec)[:200]}...")
+                    raise
             
             conn.commit()
             logger.info(f"Stored inventory snapshot {snapshot_id} with {len(crds)} CRDs, "

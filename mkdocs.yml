@@ -47,18 +47,27 @@ theme:
 
 nav:
   - Home: index.md
-  - Installation: installation.md
+  - Project Overview: PROJECT_SUMMARY.md
+  - Features:
+    - CRD Export Examples: CRD_EXPORT_EXAMPLES.md
+    - OLM Integration: OLM_FEATURE_SUMMARY.md
   - Usage:
     - Quick Start: usage/quick-start.md
     - CRDs: usage/crds.md
     - Operators: usage/operators.md
     - Cluster Operations: usage/cluster.md
+    - Database Operations: usage/database.md
     - Output Formats: usage/output-formats.md
-  - Examples: examples.md
+  - Examples:
+    - Overview: examples.md
+    - Database Workflows: examples/database-workflows.md
+    - OLM Management: examples/olm-workflows.md
+    - Security & Compliance: examples/security-compliance.md
   - API Reference:
     - CLI Commands: api/cli.md
     - Core Modules: api/core.md
   - Contributing: contributing.md
+  - Release Notes: RELEASE_NOTES.md
   - Changelog: changelog.md
 
 markdown_extensions:

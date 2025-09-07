@@ -9,17 +9,20 @@ A comprehensive CLI tool to inventory Custom Resource Definitions (CRDs) and ope
 
 ## Features
 
-- 🔍 **CRD Discovery**: List and analyze all Custom Resource Definitions
+- 🔍 **CRD Discovery**: List and analyze all Custom Resource Definitions with complete specs
 - 🗂️ **CRD Group Synthesis**: Aggregate and analyze CRDs by API groups with detailed statistics
-- 🤖 **Operator Detection**: Automatically identify and inventory operators
+- 🤖 **Operator Detection**: Automatically identify and inventory operators with full specifications
 - 🏷️ **Framework Detection**: Detect operator frameworks (OLM, Helm, Manual)
-- 🔍 **OLM Integration**: Full support for Operator Lifecycle Manager ClusterServiceVersions
-- 💾 **Database Storage**: Persistent SQLite storage for historical tracking
-- 📸 **Snapshot Management**: Store and manage cluster inventory snapshots
+- 📂 **OLM Integration**: Complete ClusterServiceVersion management and analysis
+- 💾 **Database Storage**: SQLite database with complete resource specification storage
+- 📸 **Snapshot Management**: Historical cluster inventory with datetime serialization
+- 🔄 **Configuration Drift**: Compare cluster specifications across snapshots
 - 📊 **Multiple Output Formats**: Table, JSON, YAML, and rich terminal output
 - 🔎 **Advanced Filtering**: Filter by namespace, group, framework, and more
-- 📤 **Export Capabilities**: Export complete inventories for analysis
+- 📤 **Export Capabilities**: Export complete inventories with full specs for analysis
 - 📈 **Cluster Analytics**: Comprehensive cluster summaries and statistics
+- 🔒 **Security Analysis**: Deep inspection of RBAC, security contexts, and permissions
+- 🕐 **Historical Tracking**: Track cluster evolution over time with persistent storage
 
 ## Installation
 
@@ -63,6 +66,15 @@ k8s-inventory crd list
 
 # List all operators
 k8s-inventory operators list
+
+# List OLM ClusterServiceVersions
+k8s-inventory olm list
+
+# Store complete cluster inventory
+k8s-inventory database store --notes "My first snapshot"
+
+# List stored snapshots
+k8s-inventory database list
 
 # Get cluster summary
 k8s-inventory cluster summary
