@@ -2,7 +2,7 @@
 
 ## 🎯 Feature Added: OLM (Operator Lifecycle Manager) Support
 
-I've successfully added comprehensive OLM support to the k8s-inventory-cli, enabling users to inventory and manage ClusterServiceVersions (CSVs) alongside CRDs and operators.
+I've successfully added comprehensive OLM support to the k8s-datamodel, enabling users to inventory and manage ClusterServiceVersions (CSVs) alongside CRDs and operators.
 
 ## ✨ New Capabilities
 
@@ -17,19 +17,19 @@ I've successfully added comprehensive OLM support to the k8s-inventory-cli, enab
 
 ```bash
 # OLM command group
-k8s-inventory olm --help
+k8s-datamodel olm --help
 
 # List all ClusterServiceVersions
-k8s-inventory olm list [--phase] [--provider] [--namespace] [--output table|json|yaml|rich]
+k8s-datamodel olm list [--phase] [--provider] [--namespace] [--output table|json|yaml|rich]
 
 # Get specific CSV details  
-k8s-inventory olm get <csv-name> --namespace <namespace>
+k8s-datamodel olm get <csv-name> --namespace <namespace>
 
 # Show OLM status and statistics
-k8s-inventory olm status [--namespace] [--output rich|table|json|yaml]
+k8s-datamodel olm status [--namespace] [--output rich|table|json|yaml]
 
 # Count CSVs with breakdown
-k8s-inventory olm count [--phase] [--namespace] [--verbose]
+k8s-datamodel olm count [--phase] [--namespace] [--verbose]
 ```
 
 ### 📊 Enhanced Cluster Summary
@@ -117,25 +117,25 @@ Successfully tested against live cluster with OLM:
 
 ### Discover OLM Operators
 ```bash
-$ k8s-inventory olm list --output rich
+$ k8s-datamodel olm list --output rich
 # Shows beautifully formatted table with phase colors and provider info
 ```
 
 ### Monitor OLM Health
 ```bash
-$ k8s-inventory olm status
+$ k8s-datamodel olm status
 # Rich panels showing CSV counts, success rates, and breakdowns
 ```
 
 ### Export for Analysis
 ```bash
-$ k8s-inventory cluster export --include-olm --file cluster-with-olm.json
+$ k8s-datamodel cluster export --include-olm --file cluster-with-olm.json
 # Complete cluster inventory including all OLM data
 ```
 
 ### Enhanced Cluster Overview
 ```bash
-$ k8s-inventory cluster summary
+$ k8s-datamodel cluster summary
 # Now includes OLM Status panel alongside CRDs and Operators
 ```
 
@@ -147,4 +147,4 @@ $ k8s-inventory cluster summary
 - **Production-ready OLM support**
 - **Seamless integration with existing features**
 
-The OLM integration makes k8s-inventory-cli a truly comprehensive tool for understanding and managing the complete operator ecosystem in Kubernetes clusters, whether operators are deployed via OLM, Helm, or manually.
+The OLM integration makes k8s-datamodel a truly comprehensive tool for understanding and managing the complete operator ecosystem in Kubernetes clusters, whether operators are deployed via OLM, Helm, or manually.

@@ -1,6 +1,6 @@
 # OLM (Operator Lifecycle Manager) Workflow Examples
 
-This document provides comprehensive examples for managing and analyzing OLM-deployed operators using k8s-inventory-cli.
+This document provides comprehensive examples for managing and analyzing OLM-deployed operators using k8s-datamodel.
 
 ## Table of Contents
 
@@ -19,18 +19,18 @@ This document provides comprehensive examples for managing and analyzing OLM-dep
 
 ```bash
 # List all ClusterServiceVersions
-k8s-inventory olm list
+k8s-datamodel olm list
 
 # List with rich formatting for better readability
-k8s-inventory olm list --output rich
+k8s-datamodel olm list --output rich
 
 # Filter by installation status
-k8s-inventory olm list --phase Succeeded
-k8s-inventory olm list --phase Failed
-k8s-inventory olm list --phase Installing
+k8s-datamodel olm list --phase Succeeded
+k8s-datamodel olm list --phase Failed
+k8s-datamodel olm list --phase Installing
 
 # List OLM operators in specific namespace
-k8s-inventory olm list --namespace operators
+k8s-datamodel olm list --namespace operators
 ```
 
 **Expected Output:**
@@ -49,26 +49,26 @@ k8s-inventory olm list --namespace operators
 
 ```bash
 # Get detailed information about a specific CSV
-k8s-inventory olm get azure-service-operator.v1.0.28631 --namespace operators
+k8s-datamodel olm get azure-service-operator.v1.0.28631 --namespace operators
 
 # Get CSV details in JSON format for processing
-k8s-inventory olm get cloudnative-pg.v1.27.0 --namespace operators --output json
+k8s-datamodel olm get cloudnative-pg.v1.27.0 --namespace operators --output json
 
 # Get CSV details in YAML format for human readability
-k8s-inventory olm get mariadb-operator.v25.8.3 --namespace operators --output yaml
+k8s-datamodel olm get mariadb-operator.v25.8.3 --namespace operators --output yaml
 ```
 
 ### OLM Statistics and Health
 
 ```bash
 # Get comprehensive OLM statistics
-k8s-inventory olm stats
+k8s-datamodel olm stats
 
 # Get statistics with rich formatting
-k8s-inventory olm stats --output rich
+k8s-datamodel olm stats --output rich
 
 # Get statistics in JSON format for monitoring
-k8s-inventory olm stats --output json
+k8s-datamodel olm stats --output json
 ```
 
 **Expected Output:**
@@ -93,10 +93,10 @@ k8s-inventory olm stats --output json
 
 ```bash
 # Store current OLM state for analysis
-k8s-inventory database store --notes "OLM Analysis - $(date +%Y-%m-%d)"
+k8s-datamodel database store --notes "OLM Analysis - $(date +%Y-%m-%d)"
 
 # Export OLM data for detailed analysis
-k8s-inventory database export 1 --file olm-analysis.json
+k8s-datamodel database export 1 --file olm-analysis.json
 
 # Analyze CSV providers
 echo "=== OLM Provider Analysis ==="
@@ -185,12 +185,12 @@ echo "=== OLM Health Check - $(date) ===" | tee $LOG_FILE
 
 # Check overall OLM status
 echo "## Overall OLM Status" | tee -a $LOG_FILE
-k8s-inventory olm stats --output table | tee -a $LOG_FILE
+k8s-datamodel olm stats --output table | tee -a $LOG_FILE
 echo "" | tee -a $LOG_FILE
 
 # Check failed CSVs
 echo "## Failed ClusterServiceVersions" | tee -a $LOG_FILE
-FAILED_CSVS=$(k8s-inventory olm list --phase Failed --output json)
+FAILED_CSVS=$(k8s-datamodel olm list --phase Failed --output json)
 if [ "$(echo "$FAILED_CSVS" | jq '. | length')" -gt 0 ]; then
     echo "$FAILED_CSVS" | jq -r '.[] | "❌ \(.name) in \(.namespace) - \(.phase)"' | tee -a $LOG_FILE
 else
@@ -200,7 +200,7 @@ echo "" | tee -a $LOG_FILE
 
 # Check installing CSVs (potential stuck installations)
 echo "## Installing ClusterServiceVersions" | tee -a $LOG_FILE  
-INSTALLING_CSVS=$(k8s-inventory olm list --phase Installing --output json)
+INSTALLING_CSVS=$(k8s-datamodel olm list --phase Installing --output json)
 if [ "$(echo "$INSTALLING_CSVS" | jq '. | length')" -gt 0 ]; then
     echo "⚠️ CSVs currently installing:" | tee -a $LOG_FILE
     echo "$INSTALLING_CSVS" | jq -r '.[] | "   \(.name) in \(.namespace)"' | tee -a $LOG_FILE
@@ -211,7 +211,7 @@ echo "" | tee -a $LOG_FILE
 
 # Check for version mismatches
 echo "## Version Consistency Check" | tee -a $LOG_FILE
-k8s-inventory database export $(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id') --file current-olm.json
+k8s-datamodel database export $(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id') --file current-olm.json
 jq -r '.csvs[] | select(.replaces != null and .replaces != "") | 
        "Upgrade detected: \(.name) replaces \(.replaces)"' current-olm.json | tee -a $LOG_FILE
 
@@ -235,11 +235,11 @@ echo "# OLM Upgrade Plan - $(date)" > $UPGRADE_PLAN_FILE
 echo "" >> $UPGRADE_PLAN_FILE
 
 # Store pre-upgrade snapshot
-k8s-inventory database store --notes "Pre-upgrade baseline - $(date +%Y-%m-%d)"
-BASELINE_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database store --notes "Pre-upgrade baseline - $(date +%Y-%m-%d)"
+BASELINE_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
 
 # Export current state
-k8s-inventory database export $BASELINE_ID --file pre-upgrade-olm.json
+k8s-datamodel database export $BASELINE_ID --file pre-upgrade-olm.json
 
 echo "## Current OLM State" >> $UPGRADE_PLAN_FILE
 echo "- Total CSVs: $(jq '.csvs | length' pre-upgrade-olm.json)" >> $UPGRADE_PLAN_FILE
@@ -295,12 +295,12 @@ echo "# OLM Upgrade Verification Report - $(date)" > $VERIFICATION_REPORT
 echo "" >> $VERIFICATION_REPORT
 
 # Store post-upgrade snapshot
-k8s-inventory database store --notes "Post-upgrade verification - $(date +%Y-%m-%d)"
-POST_UPGRADE_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database store --notes "Post-upgrade verification - $(date +%Y-%m-%d)"
+POST_UPGRADE_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
 
 # Export both snapshots
-k8s-inventory database export $BASELINE_ID --file pre-upgrade.json
-k8s-inventory database export $POST_UPGRADE_ID --file post-upgrade.json
+k8s-datamodel database export $BASELINE_ID --file pre-upgrade.json
+k8s-datamodel database export $POST_UPGRADE_ID --file post-upgrade.json
 
 echo "## Upgrade Summary" >> $VERIFICATION_REPORT
 echo "- Baseline Snapshot: $BASELINE_ID" >> $VERIFICATION_REPORT
@@ -376,9 +376,9 @@ echo "# OLM RBAC Security Analysis - $(date)" > $REPORT_FILE
 echo "" >> $REPORT_FILE
 
 # Store current state for analysis
-k8s-inventory database store --notes "RBAC Security Analysis - $(date +%Y-%m-%d)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file rbac-analysis.json
+k8s-datamodel database store --notes "RBAC Security Analysis - $(date +%Y-%m-%d)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file rbac-analysis.json
 
 echo "## Executive Summary" >> $REPORT_FILE
 TOTAL_CSVS=$(jq '.csvs | length' rbac-analysis.json)
@@ -449,9 +449,9 @@ echo "# OLM Security Context Analysis - $(date)" > $REPORT_FILE
 echo "" >> $REPORT_FILE
 
 # Get current cluster state
-k8s-inventory database store --notes "Security Context Analysis - $(date +%Y-%m-%d)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file security-context-analysis.json
+k8s-datamodel database store --notes "Security Context Analysis - $(date +%Y-%m-%d)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file security-context-analysis.json
 
 echo "## Security Context Summary" >> $REPORT_FILE
 
@@ -533,9 +533,9 @@ echo "# OLM Version Tracking Report - $(date)" > $REPORT_FILE
 echo "" >> $REPORT_FILE
 
 # Store current state
-k8s-inventory database store --notes "Version tracking - $(date +%Y-%m-%d)"
-CURRENT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $CURRENT_ID --file current-versions.json
+k8s-datamodel database store --notes "Version tracking - $(date +%Y-%m-%d)"
+CURRENT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $CURRENT_ID --file current-versions.json
 
 echo "## Current Version Inventory" >> $REPORT_FILE
 echo "| Operator | Current Version | Replaces | Min Kube Version |" >> $REPORT_FILE
@@ -558,12 +558,12 @@ jq -r '.csvs[] | select(.skips | length > 0) |
        "- **\(.display_name)**: skips versions \(.skips | join(\", \"))"' current-versions.json >> $REPORT_FILE
 
 # Compare with previous snapshot if available
-PREVIOUS_ID=$(k8s-inventory database list --offset 1 --limit 1 --output json | jq -r '.[0].id // empty')
+PREVIOUS_ID=$(k8s-datamodel database list --offset 1 --limit 1 --output json | jq -r '.[0].id // empty')
 if [ -n "$PREVIOUS_ID" ]; then
     echo "" >> $REPORT_FILE
     echo "## Changes Since Last Snapshot (ID: $PREVIOUS_ID)" >> $REPORT_FILE
     
-    k8s-inventory database export $PREVIOUS_ID --file previous-versions.json
+    k8s-datamodel database export $PREVIOUS_ID --file previous-versions.json
     
     echo "### Version Updates" >> $REPORT_FILE
     comm -13 <(jq -r '.csvs[] | "\(.name) \(.version)"' previous-versions.json | sort) \
@@ -609,9 +609,9 @@ echo "" >> $REPORT_FILE
 declare -A ENV_SNAPSHOTS
 for env in "${ENVIRONMENTS[@]}"; do
     echo "Collecting OLM data for $env..."
-    k8s-inventory --context $env database store --notes "Multi-env comparison - $env - $(date +%Y-%m-%d)"
-    ENV_SNAPSHOTS[$env]=$(k8s-inventory database list --cluster-context $env --limit 1 --output json | jq -r '.[0].id')
-    k8s-inventory database export ${ENV_SNAPSHOTS[$env]} --file "olm-$env.json"
+    k8s-datamodel --context $env database store --notes "Multi-env comparison - $env - $(date +%Y-%m-%d)"
+    ENV_SNAPSHOTS[$env]=$(k8s-datamodel database list --cluster-context $env --limit 1 --output json | jq -r '.[0].id')
+    k8s-datamodel database export ${ENV_SNAPSHOTS[$env]} --file "olm-$env.json"
 done
 
 echo "## Environment Summary" >> $REPORT_FILE
@@ -736,12 +736,12 @@ case $ISSUE_TYPE in
         
         # Check installing CSVs
         echo "### CSVs in Installing State" | tee -a $REPORT_FILE
-        k8s-inventory olm list --phase Installing | tee -a $REPORT_FILE
+        k8s-datamodel olm list --phase Installing | tee -a $REPORT_FILE
         
         # Check for resource conflicts
         echo "### Checking for Resource Conflicts" | tee -a $REPORT_FILE
         if [ -n "$OPERATOR_NAME" ]; then
-            CSV_INFO=$(k8s-inventory olm get "$OPERATOR_NAME" --namespace "$NAMESPACE" --output json 2>/dev/null)
+            CSV_INFO=$(k8s-datamodel olm get "$OPERATOR_NAME" --namespace "$NAMESPACE" --output json 2>/dev/null)
             if [ $? -eq 0 ]; then
                 echo "Owned CRDs:" | tee -a $REPORT_FILE
                 echo "$CSV_INFO" | jq -r '.owned_crds[]? // "None"' | sed 's/^/  /' | tee -a $REPORT_FILE
@@ -757,11 +757,11 @@ case $ISSUE_TYPE in
         
         # List all failed CSVs
         echo "### Failed CSVs" | tee -a $REPORT_FILE
-        k8s-inventory olm list --phase Failed | tee -a $REPORT_FILE
+        k8s-datamodel olm list --phase Failed | tee -a $REPORT_FILE
         
         if [ -n "$OPERATOR_NAME" ]; then
             echo "### Specific CSV Analysis: $OPERATOR_NAME" | tee -a $REPORT_FILE
-            CSV_DETAILS=$(k8s-inventory olm get "$OPERATOR_NAME" --namespace "$NAMESPACE" --output json 2>/dev/null)
+            CSV_DETAILS=$(k8s-datamodel olm get "$OPERATOR_NAME" --namespace "$NAMESPACE" --output json 2>/dev/null)
             if [ $? -eq 0 ]; then
                 echo "Display Name: $(echo "$CSV_DETAILS" | jq -r '.display_name')" | tee -a $REPORT_FILE
                 echo "Version: $(echo "$CSV_DETAILS" | jq -r '.version')" | tee -a $REPORT_FILE
@@ -775,9 +775,9 @@ case $ISSUE_TYPE in
         echo "## Diagnosing Permission Issues" | tee -a $REPORT_FILE
         
         # Store current state for RBAC analysis
-        k8s-inventory database store --notes "Permission troubleshooting - $(date)"
-        SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-        k8s-inventory database export $SNAPSHOT_ID --file troubleshoot-rbac.json
+        k8s-datamodel database store --notes "Permission troubleshooting - $(date)"
+        SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+        k8s-datamodel database export $SNAPSHOT_ID --file troubleshoot-rbac.json
         
         if [ -n "$OPERATOR_NAME" ]; then
             echo "### RBAC Analysis for $OPERATOR_NAME" | tee -a $REPORT_FILE
@@ -806,15 +806,15 @@ case $ISSUE_TYPE in
         
         # Overall OLM statistics
         echo "### OLM Statistics" | tee -a $REPORT_FILE
-        k8s-inventory olm stats | tee -a $REPORT_FILE
+        k8s-datamodel olm stats | tee -a $REPORT_FILE
         
         # Check for problematic CSVs
         echo "### Problematic CSVs" | tee -a $REPORT_FILE
         echo "Failed CSVs:" | tee -a $REPORT_FILE
-        k8s-inventory olm list --phase Failed --output table | tee -a $REPORT_FILE
+        k8s-datamodel olm list --phase Failed --output table | tee -a $REPORT_FILE
         
         echo "Installing CSVs (potential stuck installations):" | tee -a $REPORT_FILE
-        k8s-inventory olm list --phase Installing --output table | tee -a $REPORT_FILE
+        k8s-datamodel olm list --phase Installing --output table | tee -a $REPORT_FILE
         ;;
 esac
 
@@ -842,7 +842,7 @@ case $ISSUE_TYPE in
         ;;
     *)
         echo "1. Monitor CSV phases for state changes" | tee -a $REPORT_FILE
-        echo "2. Regular health checks with 'k8s-inventory olm stats'" | tee -a $REPORT_FILE
+        echo "2. Regular health checks with 'k8s-datamodel olm stats'" | tee -a $REPORT_FILE
         echo "3. Keep snapshots for historical analysis" | tee -a $REPORT_FILE
         echo "4. Implement automated monitoring for failed CSVs" | tee -a $REPORT_FILE
         ;;
@@ -873,9 +873,9 @@ cat > olm-metrics-exporter.sh << 'EOF'
 METRICS_FILE="/var/lib/node_exporter/olm_metrics.prom"
 
 # Store current OLM state
-k8s-inventory database store --notes "Metrics collection - $(date)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file metrics-olm.json
+k8s-datamodel database store --notes "Metrics collection - $(date)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file metrics-olm.json
 
 # Generate Prometheus metrics
 cat > $METRICS_FILE << METRICS
@@ -980,4 +980,4 @@ This comprehensive collection of OLM examples provides:
 6. **Troubleshooting**: Diagnostic tools for common OLM issues
 7. **Monitoring**: Prometheus metrics and alerting integration
 
-These examples enable comprehensive OLM management with the k8s-inventory-cli tool, supporting enterprise-grade operator lifecycle management workflows.
+These examples enable comprehensive OLM management with the k8s-datamodel tool, supporting enterprise-grade operator lifecycle management workflows.

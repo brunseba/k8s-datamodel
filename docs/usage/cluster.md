@@ -13,7 +13,7 @@ Cluster operations provide high-level commands to analyze, test, and export comp
 Verify connectivity to your Kubernetes cluster:
 
 ```bash
-k8s-inventory cluster test-connection
+k8s-datamodel cluster test-connection
 ```
 
 This command:
@@ -28,7 +28,7 @@ This command:
 Get detailed information about your cluster:
 
 ```bash
-k8s-inventory cluster info
+k8s-datamodel cluster info
 ```
 
 Provides:
@@ -43,7 +43,7 @@ Provides:
 Generate a comprehensive statistical overview:
 
 ```bash
-k8s-inventory cluster summary
+k8s-datamodel cluster summary
 ```
 
 Includes:
@@ -58,25 +58,25 @@ Includes:
 Export comprehensive cluster inventory data:
 
 ```bash
-k8s-inventory cluster export
+k8s-datamodel cluster export
 ```
 
 #### Export Options
 
 Specify output file:
 ```bash
-k8s-inventory cluster export --file cluster-inventory.json
+k8s-datamodel cluster export --file cluster-inventory.json
 ```
 
 Choose output format:
 ```bash
-k8s-inventory cluster export --output json --file inventory.json
-k8s-inventory cluster export --output yaml --file inventory.yaml
+k8s-datamodel cluster export --output json --file inventory.json
+k8s-datamodel cluster export --output yaml --file inventory.yaml
 ```
 
 Export to specific directory:
 ```bash
-k8s-inventory cluster export --file exports/full-inventory.json
+k8s-datamodel cluster export --file exports/full-inventory.json
 ```
 
 ## Cluster Analysis Workflow
@@ -222,7 +222,7 @@ The exported data maintains relationships between:
 
 ### JSON Format (Default)
 ```bash
-k8s-inventory cluster export --output json
+k8s-datamodel cluster export --output json
 ```
 
 Produces machine-readable JSON with complete structured data:
@@ -238,7 +238,7 @@ Produces machine-readable JSON with complete structured data:
 
 ### YAML Format
 ```bash
-k8s-inventory cluster export --output yaml
+k8s-datamodel cluster export --output yaml
 ```
 
 Human-readable YAML format suitable for configuration management and GitOps workflows.
@@ -250,19 +250,19 @@ Human-readable YAML format suitable for configuration management and GitOps work
 #### Pre-Migration Assessment
 ```bash
 # Export complete inventory for migration planning
-k8s-inventory cluster export --file pre-migration-inventory.json
+k8s-datamodel cluster export --file pre-migration-inventory.json
 
 # Test connectivity to target cluster
-k8s-inventory cluster test-connection
+k8s-datamodel cluster test-connection
 
 # Compare cluster versions
-k8s-inventory cluster info
+k8s-datamodel cluster info
 ```
 
 #### Migration Validation
 ```bash
 # Export post-migration inventory
-k8s-inventory cluster export --file post-migration-inventory.json
+k8s-datamodel cluster export --file post-migration-inventory.json
 
 # Compare inventories
 diff <(jq '.crds | sort_by(.name)' pre-migration-inventory.json) \
@@ -275,13 +275,13 @@ diff <(jq '.crds | sort_by(.name)' pre-migration-inventory.json) \
 ```bash
 #!/bin/bash
 DATE=$(date +%Y-%m-%d)
-k8s-inventory cluster export --file "compliance/inventory-$DATE.json"
+k8s-datamodel cluster export --file "compliance/inventory-$DATE.json"
 ```
 
 #### Audit Trail Generation
 ```bash
 # Generate audit summary
-k8s-inventory cluster summary --output json | \
+k8s-datamodel cluster summary --output json | \
   jq '{
     audit_date: now | strftime("%Y-%m-%d %H:%M:%S"),
     crd_count: .crds.total,
@@ -295,19 +295,19 @@ k8s-inventory cluster summary --output json | \
 #### Backup Essential Data
 ```bash
 # Export cluster inventory for DR documentation
-k8s-inventory cluster export --file dr-inventory.yaml --output yaml
+k8s-datamodel cluster export --file dr-inventory.yaml --output yaml
 
 # Document critical operators
-k8s-inventory operators list --output yaml > dr-operators.yaml
+k8s-datamodel operators list --output yaml > dr-operators.yaml
 ```
 
 #### Recovery Validation
 ```bash
 # Test cluster connectivity after recovery
-k8s-inventory cluster test-connection
+k8s-datamodel cluster test-connection
 
 # Validate operator health
-k8s-inventory cluster summary | grep -A 10 "Operator Health"
+k8s-datamodel cluster summary | grep -A 10 "Operator Health"
 ```
 
 ### Security Assessment
@@ -315,7 +315,7 @@ k8s-inventory cluster summary | grep -A 10 "Operator Health"
 #### Security Audit Export
 ```bash
 # Export for security analysis
-k8s-inventory cluster export --file security-audit.json
+k8s-datamodel cluster export --file security-audit.json
 
 # Extract security-relevant information
 jq '.operators[] | {
@@ -329,7 +329,7 @@ jq '.operators[] | {
 #### Privileged Resource Identification
 ```bash
 # Find operators with elevated privileges
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq '.[] | select(.security_context.privileged == true)'
 ```
 
@@ -342,16 +342,16 @@ k8s-inventory operators list --output json | \
 # CI/CD cluster validation script
 
 echo "Testing cluster connectivity..."
-if ! k8s-inventory cluster test-connection; then
+if ! k8s-datamodel cluster test-connection; then
   echo "Cluster connectivity failed"
   exit 1
 fi
 
 echo "Exporting cluster inventory..."
-k8s-inventory cluster export --file "artifacts/cluster-inventory-${BUILD_ID}.json"
+k8s-datamodel cluster export --file "artifacts/cluster-inventory-${BUILD_ID}.json"
 
 echo "Validating critical operators..."
-FAILED_OPERATORS=$(k8s-inventory operators list --output json | \
+FAILED_OPERATORS=$(k8s-datamodel operators list --output json | \
   jq -r '.[] | select(.replicas.ready != .replicas.desired) | .name')
 
 if [[ -n "$FAILED_OPERATORS" ]]; then
@@ -366,7 +366,7 @@ echo "Cluster validation successful"
 
 ```bash
 # Generate cluster metrics for monitoring
-k8s-inventory cluster summary --output json | \
+k8s-datamodel cluster summary --output json | \
   jq -r '
     "cluster_crd_count " + (.crds.total | tostring),
     "cluster_operator_count " + (.operators.total | tostring),
@@ -395,11 +395,11 @@ jobs:
         uses: azure/setup-kubectl@v3
         
       - name: Test cluster connection
-        run: k8s-inventory cluster test-connection
+        run: k8s-datamodel cluster test-connection
         
       - name: Export cluster inventory
         run: |
-          k8s-inventory cluster export --file "inventory/$(date +%Y-%m-%d)-inventory.json"
+          k8s-datamodel cluster export --file "inventory/$(date +%Y-%m-%d)-inventory.json"
           
       - name: Commit inventory
         run: |
@@ -419,7 +419,7 @@ jobs:
 for context in $(kubectl config get-contexts -o name); do
   echo "Exporting from context: $context"
   KUBECONFIG=$HOME/.kube/config kubectl config use-context $context
-  k8s-inventory cluster export --file "exports/$context-inventory.json"
+  k8s-datamodel cluster export --file "exports/$context-inventory.json"
 done
 ```
 
@@ -443,7 +443,7 @@ jq -n --slurpfile a cluster1.json --slurpfile b cluster2.json '
 
 ```bash
 # Monitor export performance
-time k8s-inventory cluster export --file perf-test.json
+time k8s-datamodel cluster export --file perf-test.json
 
 # Analyze export size and content
 ls -lh perf-test.json
@@ -456,7 +456,7 @@ jq 'keys' perf-test.json
 
 ```bash
 # Debug connection problems
-k8s-inventory cluster test-connection --verbose
+k8s-datamodel cluster test-connection --verbose
 
 # Check kubeconfig
 kubectl config current-context
@@ -476,12 +476,12 @@ kubectl auth can-i get statefulsets --all-namespaces
 
 ```bash
 # For clusters with many resources, consider filtering
-k8s-inventory operators list --namespace specific-namespace
-k8s-inventory crd list --group specific.domain.com
+k8s-datamodel operators list --namespace specific-namespace
+k8s-datamodel crd list --group specific.domain.com
 
 # Monitor memory usage during export
 memory_before=$(ps -o rss= -p $$)
-k8s-inventory cluster export --file large-cluster.json
+k8s-datamodel cluster export --file large-cluster.json
 memory_after=$(ps -o rss= -p $$)
 echo "Memory used: $((memory_after - memory_before)) KB"
 ```

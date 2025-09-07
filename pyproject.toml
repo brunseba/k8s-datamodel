@@ -1,7 +1,7 @@
 [project]
-name = "k8s-inventory-cli"
+name = "k8s-datamodel"
 version = "0.3.0"
-description = "A CLI tool to inventory CRDs and operators in Kubernetes clusters"
+description = "A CLI tool to model and analyze Kubernetes cluster data including CRDs, operators, and OLM components"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{name = "brun_s"}]
@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 [project.scripts]
-k8s-inventory = "k8s_inventory_cli.main:cli"
+k8s-datamodel = "k8s_inventory_cli.main:cli"
 
 [project.optional-dependencies]
 dev = [

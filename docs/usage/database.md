@@ -1,6 +1,6 @@
 # Database Operations
 
-The k8s-inventory-cli includes powerful database functionality for persistent storage and historical tracking of Kubernetes cluster inventories. This allows you to store complete snapshots of your cluster state, including the full specifications of all resources, compare changes over time, and maintain a comprehensive historical record of your Kubernetes resources.
+The k8s-datamodel includes powerful database functionality for persistent storage and historical tracking of Kubernetes cluster inventories. This allows you to store complete snapshots of your cluster state, including the full specifications of all resources, compare changes over time, and maintain a comprehensive historical record of your Kubernetes resources.
 
 ## Overview
 
@@ -18,7 +18,7 @@ The database functionality provides:
 
 ### Database Schema
 
-The k8s-inventory database uses SQLite and consists of the following main tables:
+The k8s-datamodel database uses SQLite and consists of the following main tables:
 
 ```mermaid
 erDiagram
@@ -104,15 +104,15 @@ The primary way to store data is using the `database store` command, which creat
 
 ```bash
 # Store complete inventory snapshot
-k8s-inventory database store
+k8s-datamodel database store
 
 # Store with descriptive notes
-k8s-inventory database store --notes "Production cluster before upgrade"
+k8s-datamodel database store --notes "Production cluster before upgrade"
 
 # Store only specific components
-k8s-inventory database store --no-crds --notes "Operators only"
-k8s-inventory database store --no-operators --no-olm --notes "CRDs only"
-k8s-inventory database store --no-crds --no-operators --notes "OLM CSVs only"
+k8s-datamodel database store --no-crds --notes "Operators only"
+k8s-datamodel database store --no-operators --no-olm --notes "CRDs only"
+k8s-datamodel database store --no-crds --no-operators --notes "OLM CSVs only"
 ```
 
 ### Storing from Individual Commands
@@ -121,13 +121,13 @@ You can also store data while running individual inventory commands:
 
 ```bash
 # Store CRDs while listing them
-k8s-inventory crd list --store-db --notes "CRD inventory snapshot"
+k8s-datamodel crd list --store-db --notes "CRD inventory snapshot"
 
 # Store operators while listing them
-k8s-inventory operators list --store-db --notes "Operator inventory"
+k8s-datamodel operators list --store-db --notes "Operator inventory"
 
 # Store OLM CSVs while listing them
-k8s-inventory olm list --store-db --notes "OLM snapshot"
+k8s-datamodel olm list --store-db --notes "OLM snapshot"
 ```
 
 ### Custom Database Location
@@ -136,10 +136,10 @@ Use a custom database file:
 
 ```bash
 # Use specific database file
-k8s-inventory --db-path /path/to/custom.db database store
+k8s-datamodel --db-path /path/to/custom.db database store
 
 # Store with custom location
-k8s-inventory crd list --store-db --db-path ./cluster-snapshots.db
+k8s-datamodel crd list --store-db --db-path ./cluster-snapshots.db
 ```
 
 ### Multi-Cluster Storage
@@ -148,13 +148,13 @@ Store inventories from different clusters:
 
 ```bash
 # Store from production cluster
-k8s-inventory --context prod-cluster database store --notes "Production inventory"
+k8s-datamodel --context prod-cluster database store --notes "Production inventory"
 
 # Store from development cluster
-k8s-inventory --context dev-cluster database store --notes "Development inventory"
+k8s-datamodel --context dev-cluster database store --notes "Development inventory"
 
 # Store from staging with specific namespace
-k8s-inventory --context staging --namespace app-namespace database store --notes "Staging app namespace"
+k8s-datamodel --context staging --namespace app-namespace database store --notes "Staging app namespace"
 ```
 
 ## Querying and Viewing Data
@@ -165,19 +165,19 @@ View all stored snapshots:
 
 ```bash
 # List all snapshots
-k8s-inventory database list
+k8s-datamodel database list
 
 # List with rich formatting
-k8s-inventory database list --output rich
+k8s-datamodel database list --output rich
 
 # Filter by cluster context
-k8s-inventory database list --cluster-context prod-cluster
+k8s-datamodel database list --cluster-context prod-cluster
 
 # Limit number of results
-k8s-inventory database list --limit 10
+k8s-datamodel database list --limit 10
 
 # JSON output for scripting
-k8s-inventory database list --output json
+k8s-datamodel database list --output json
 ```
 
 Example output:
@@ -197,10 +197,10 @@ Get detailed information about a specific snapshot:
 
 ```bash
 # Show snapshot details in YAML
-k8s-inventory database show 1
+k8s-datamodel database show 1
 
 # Show in JSON format
-k8s-inventory database show 1 --output json
+k8s-datamodel database show 1 --output json
 ```
 
 Example output:
@@ -249,14 +249,14 @@ Export snapshots to files for external analysis:
 
 ```bash
 # Export snapshot to JSON file
-k8s-inventory database export 1 --file snapshot-1.json
+k8s-datamodel database export 1 --file snapshot-1.json
 
 # Export to YAML
-k8s-inventory database export 1 --output yaml --file snapshot-1.yaml
+k8s-datamodel database export 1 --output yaml --file snapshot-1.yaml
 
 # Export only specific components
-k8s-inventory database export 1 --crds-only --file crds-snapshot-1.json
-k8s-inventory database export 1 --operators-only --file operators-snapshot-1.json
+k8s-datamodel database export 1 --crds-only --file crds-snapshot-1.json
+k8s-datamodel database export 1 --operators-only --file operators-snapshot-1.json
 ```
 
 ## Database Management
@@ -267,13 +267,13 @@ View database statistics and storage information:
 
 ```bash
 # Show database stats
-k8s-inventory database stats
+k8s-datamodel database stats
 
 # Rich formatted stats
-k8s-inventory database stats --output rich
+k8s-datamodel database stats --output rich
 
 # JSON output for monitoring
-k8s-inventory database stats --output json
+k8s-datamodel database stats --output json
 ```
 
 Example output:
@@ -311,19 +311,19 @@ Manage database size by removing old snapshots:
 
 ```bash
 # Delete specific snapshot
-k8s-inventory database delete 1
+k8s-datamodel database delete 1
 
 # Delete with confirmation skip
-k8s-inventory database delete 1 --yes
+k8s-datamodel database delete 1 --yes
 
 # Clean up old snapshots (keep most recent N)
-k8s-inventory database cleanup --keep 10
+k8s-datamodel database cleanup --keep 10
 
 # Clean up by date
-k8s-inventory database cleanup --older-than "30 days"
+k8s-datamodel database cleanup --older-than "30 days"
 
 # Clean up specific cluster
-k8s-inventory database cleanup --cluster-context dev-cluster --keep 5
+k8s-datamodel database cleanup --cluster-context dev-cluster --keep 5
 ```
 
 ### Database Backup and Restore
@@ -336,7 +336,7 @@ cp ~/.k8s-inventory/inventory.db ~/backups/inventory-backup-$(date +%Y%m%d).db
 cp ~/backups/inventory-backup-20240315.db ~/.k8s-inventory/inventory.db
 
 # Use custom database location for backup testing
-k8s-inventory --db-path ./test-restore.db database list
+k8s-datamodel --db-path ./test-restore.db database list
 ```
 
 ## Advanced Usage Patterns
@@ -350,13 +350,13 @@ Set up automated snapshot collection using cron or scheduled tasks:
 # daily-inventory.sh - Collect daily inventory snapshots
 
 # Production cluster
-k8s-inventory --context prod-cluster database store --notes "Daily production snapshot - $(date)"
+k8s-datamodel --context prod-cluster database store --notes "Daily production snapshot - $(date)"
 
 # Development cluster  
-k8s-inventory --context dev-cluster database store --notes "Daily development snapshot - $(date)"
+k8s-datamodel --context dev-cluster database store --notes "Daily development snapshot - $(date)"
 
 # Cleanup old snapshots (keep 30 days)
-k8s-inventory database cleanup --keep 30
+k8s-datamodel database cleanup --keep 30
 ```
 
 Add to crontab:
@@ -371,13 +371,13 @@ Extract metrics for monitoring systems:
 
 ```bash
 # Get snapshot counts for monitoring
-SNAPSHOT_COUNT=$(k8s-inventory database stats --output json | jq '.total_snapshots')
+SNAPSHOT_COUNT=$(k8s-datamodel database stats --output json | jq '.total_snapshots')
 
 # Get latest snapshot info
-LATEST_SNAPSHOT=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0]')
+LATEST_SNAPSHOT=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0]')
 
 # Check for recent snapshots (alert if none in 24 hours)
-LATEST_TIME=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].timestamp')
+LATEST_TIME=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].timestamp')
 ```
 
 ### Compliance and Auditing
@@ -386,10 +386,10 @@ Use database for compliance reporting:
 
 ```bash
 # Generate compliance report for date range
-k8s-inventory database list --output json | jq '[.[] | select(.timestamp >= "2024-03-01" and .timestamp <= "2024-03-31")]' > march-compliance-report.json
+k8s-datamodel database list --output json | jq '[.[] | select(.timestamp >= "2024-03-01" and .timestamp <= "2024-03-31")]' > march-compliance-report.json
 
 # Export security-relevant operators
-k8s-inventory database show 1 --output json | jq '.operators[] | select(.framework == "OLM" and (.managed_crds | contains("security")))' > security-operators.json
+k8s-datamodel database show 1 --output json | jq '.operators[] | select(.framework == "OLM" and (.managed_crds | contains("security")))' > security-operators.json
 ```
 
 ### Multi-Environment Comparison
@@ -398,14 +398,14 @@ Compare inventories across environments:
 
 ```bash
 # Store snapshots from different environments
-k8s-inventory --context prod database store --notes "Production baseline"
-k8s-inventory --context staging database store --notes "Staging baseline"
-k8s-inventory --context dev database store --notes "Development baseline"
+k8s-datamodel --context prod database store --notes "Production baseline"
+k8s-datamodel --context staging database store --notes "Staging baseline"
+k8s-datamodel --context dev database store --notes "Development baseline"
 
 # Export for comparison
-k8s-inventory database export 1 --file prod-inventory.json
-k8s-inventory database export 2 --file staging-inventory.json  
-k8s-inventory database export 3 --file dev-inventory.json
+k8s-datamodel database export 1 --file prod-inventory.json
+k8s-datamodel database export 2 --file staging-inventory.json  
+k8s-datamodel database export 3 --file dev-inventory.json
 
 # Use external tools to diff the JSON files
 diff <(jq -S . prod-inventory.json) <(jq -S . staging-inventory.json)
@@ -419,7 +419,7 @@ With complete resource specifications stored in the database, you can perform de
 
 ```bash
 # Export snapshot with full specifications
-k8s-inventory database export 1 --include-specs --file full-snapshot.json
+k8s-datamodel database export 1 --include-specs --file full-snapshot.json
 
 # Query CRD specifications from exported data
 jq '.crds[] | select(.name == "certificates.cert-manager.io") | .spec' full-snapshot.json
@@ -435,8 +435,8 @@ jq '.operators[] | {name: .name, security_context: .spec.spec.template.spec.cont
 
 ```bash
 # Compare operator configurations between snapshots
-k8s-inventory database export 1 --file snapshot1.json
-k8s-inventory database export 2 --file snapshot2.json
+k8s-datamodel database export 1 --file snapshot1.json
+k8s-datamodel database export 2 --file snapshot2.json
 
 # Extract and compare specific operator specs
 jq '.operators[] | select(.name == "cert-manager") | .spec' snapshot1.json > op1.json
@@ -453,15 +453,15 @@ diff crd1.json crd2.json
 
 ```bash
 # Find operators with privileged security contexts
-k8s-inventory database export-all --output json | \
+k8s-datamodel database export-all --output json | \
   jq '.[] | .operators[] | select(.spec.spec.template.spec.containers[0].securityContext.privileged == true)'
 
 # Extract RBAC permissions from CSVs
-k8s-inventory database export 1 --output json | \
+k8s-datamodel database export 1 --output json | \
   jq '.csvs[] | {name: .name, permissions: .spec.spec.install.spec.permissions}'
 
 # Find operators with host network access
-k8s-inventory database export 1 --output json | \
+k8s-datamodel database export 1 --output json | \
   jq '.operators[] | select(.spec.spec.template.spec.hostNetwork == true)'
 ```
 
@@ -469,19 +469,19 @@ k8s-inventory database export 1 --output json | \
 
 ```bash
 # Analyze resource requests and limits
-k8s-inventory database export 1 --output json | \
+k8s-datamodel database export 1 --output json | \
   jq '.operators[] | {name: .name, resources: .spec.spec.template.spec.containers[0].resources}'
 
 # Find operators without resource limits
-k8s-inventory database export 1 --output json | \
+k8s-datamodel database export 1 --output json | \
   jq '.operators[] | select(.spec.spec.template.spec.containers[0].resources.limits == null) | .name'
 
 # Calculate total resource requests across snapshots
-k8s-inventory database list --output json | \
+k8s-datamodel database list --output json | \
   jq -r '.[] | "\(.id) \(.timestamp)"' | \
   while read id timestamp; do
     echo "Snapshot $id ($timestamp):"
-    k8s-inventory database export $id --output json | \
+    k8s-datamodel database export $id --output json | \
       jq '[.operators[] | .spec.spec.template.spec.containers[0].resources.requests] | add'
   done
 ```
@@ -496,11 +496,11 @@ Create custom analysis scripts using the stored specifications:
 
 SNAPSHOT_ID=${1:-"latest"}
 if [ "$SNAPSHOT_ID" = "latest" ]; then
-  SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
+  SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
 fi
 
 echo "Analyzing operator images in snapshot $SNAPSHOT_ID"
-k8s-inventory database export $SNAPSHOT_ID --output json | \
+k8s-datamodel database export $SNAPSHOT_ID --output json | \
   jq -r '.operators[] | "\(.name),\(.namespace),\(.spec.spec.template.spec.containers[0].image)"' | \
   while IFS=, read name namespace image; do
     registry=$(echo $image | cut -d'/' -f1)
@@ -579,8 +579,8 @@ jobs:
       with:
         python-version: '3.10'
     
-    - name: Install k8s-inventory-cli
-      run: pipx install k8s-inventory-cli
+    - name: Install k8s-datamodel
+      run: pipx install k8s-datamodel
     
     - name: Configure kubectl
       run: |
@@ -589,7 +589,7 @@ jobs:
     
     - name: Store inventory snapshot
       run: |
-        k8s-inventory database store --notes "CI/CD automated snapshot - $(date)"
+        k8s-datamodel database store --notes "CI/CD automated snapshot - $(date)"
     
     - name: Upload database
       uses: actions/upload-artifact@v4
@@ -609,7 +609,7 @@ resource "null_resource" "inventory_snapshot" {
   
   provisioner "local-exec" {
     command = <<-EOT
-      k8s-inventory database store --notes "Terraform deployment - ${var.environment} - ${timestamp()}"
+      k8s-datamodel database store --notes "Terraform deployment - ${var.environment} - ${timestamp()}"
     EOT
   }
   
@@ -627,7 +627,7 @@ resource "null_resource" "inventory_snapshot" {
 ps aux | grep k8s-inventory
 
 # Use different database file
-k8s-inventory --db-path ./temp.db database list
+k8s-datamodel --db-path ./temp.db database list
 ```
 
 **Large database size:**
@@ -636,7 +636,7 @@ k8s-inventory --db-path ./temp.db database list
 du -h ~/.k8s-inventory/inventory.db
 
 # Clean up old snapshots
-k8s-inventory database cleanup --keep 10
+k8s-datamodel database cleanup --keep 10
 
 # Vacuum database to reclaim space
 sqlite3 ~/.k8s-inventory/inventory.db "VACUUM;"

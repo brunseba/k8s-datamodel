@@ -1,6 +1,6 @@
-# K8s Inventory CLI
+# K8s DataModel
 
-A comprehensive CLI tool to inventory Custom Resource Definitions (CRDs) and operators in Kubernetes clusters.
+A comprehensive CLI tool to model and analyze Kubernetes cluster data including CRDs, operators, and OLM components.
 
 ## Features
 
@@ -152,32 +152,32 @@ flowchart LR
 
 ```bash
 # Install with pipx (recommended)
-pipx install k8s-inventory-cli
+pipx install k8s-datamodel
 
 # Or install with pip
-pip install k8s-inventory-cli
+pip install k8s-datamodel
 ```
 
 ### Basic Usage
 
 ```bash
 # List all CRDs in the cluster
-k8s-inventory crd list
+k8s-datamodel crd list
 
 # List all operators
-k8s-inventory operators list
+k8s-datamodel operators list
 
 # Get cluster summary
-k8s-inventory cluster summary
+k8s-datamodel cluster summary
 
 # Export complete inventory
-k8s-inventory cluster export --file inventory.json
+k8s-datamodel cluster export --file inventory.json
 
 # Store inventory snapshot in database
-k8s-inventory database store --notes "Production cluster snapshot"
+k8s-datamodel database store --notes "Production cluster snapshot"
 
 # List stored snapshots
-k8s-inventory database list
+k8s-datamodel database list
 ```
 
 ## Common Workflows
@@ -371,19 +371,19 @@ Each section includes ready-to-use scripts, detailed explanations, and enterpris
 ### CRD Listing
 
 ```bash
-$ k8s-inventory crd list --output rich
+$ k8s-datamodel crd list --output rich
 ```
 
 ### Operator Inventory
 
 ```bash
-$ k8s-inventory operators list --framework OLM
+$ k8s-datamodel operators list --framework OLM
 ```
 
 ### Cluster Summary
 
 ```bash
-$ k8s-inventory cluster summary
+$ k8s-datamodel cluster summary
 ```
 
 ## Requirements

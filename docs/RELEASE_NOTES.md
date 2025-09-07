@@ -3,7 +3,7 @@
 ## 🎉 Major Features Added
 
 ### 📊 Complete Database Functionality
-The k8s-inventory-cli now includes comprehensive SQLite database support for persistent storage of complete cluster inventories.
+The k8s-datamodel now includes comprehensive SQLite database support for persistent storage of complete cluster inventories.
 
 **Key Features:**
 - **Complete Spec Storage**: Store full Kubernetes resource specifications (CRDs, Operators, CSVs)
@@ -55,37 +55,37 @@ Previously, storing cluster inventories failed with `"Object of type datetime is
 ### Database Operations
 ```bash
 # Store complete cluster inventory
-k8s-inventory database store --notes "Production cluster snapshot"
+k8s-datamodel database store --notes "Production cluster snapshot"
 
 # List all stored snapshots  
-k8s-inventory database list --cluster-context prod
+k8s-datamodel database list --cluster-context prod
 
 # View detailed snapshot information
-k8s-inventory database show 1
+k8s-datamodel database show 1
 
 # Export snapshot for external analysis
-k8s-inventory database export 1 --file cluster-snapshot.json
+k8s-datamodel database export 1 --file cluster-snapshot.json
 
 # Database statistics and analytics
-k8s-inventory database stats
+k8s-datamodel database stats
 
 # Cleanup old snapshots
-k8s-inventory database cleanup --keep 10
+k8s-datamodel database cleanup --keep 10
 
 # Delete specific snapshot
-k8s-inventory database delete 2
+k8s-datamodel database delete 2
 ```
 
 ### OLM Operations
 ```bash
 # List ClusterServiceVersions
-k8s-inventory olm list --phase Succeeded
+k8s-datamodel olm list --phase Succeeded
 
 # Get CSV details
-k8s-inventory olm get cert-manager.v1.12.0 --namespace operators
+k8s-datamodel olm get cert-manager.v1.12.0 --namespace operators
 
 # OLM statistics
-k8s-inventory olm stats
+k8s-datamodel olm stats
 ```
 
 ## 🔍 Advanced Analysis Capabilities
@@ -95,7 +95,7 @@ With complete resource specifications now stored, you can perform deep analysis:
 
 ```bash
 # Export with full specifications
-k8s-inventory database export 1 --include-specs --file full-snapshot.json
+k8s-datamodel database export 1 --include-specs --file full-snapshot.json
 
 # Query security contexts from operators
 jq '.operators[] | {name: .name, security_context: .spec.spec.template.spec.containers[0].securityContext}' full-snapshot.json
@@ -110,14 +110,14 @@ jq '.operators[] | select(.spec.spec.template.spec.containers[0].resources.limit
 ### Configuration Drift Detection
 ```bash
 # Store baseline snapshot
-k8s-inventory database store --notes "Baseline configuration"
+k8s-datamodel database store --notes "Baseline configuration"
 
 # After changes, store another snapshot
-k8s-inventory database store --notes "After configuration changes"
+k8s-datamodel database store --notes "After configuration changes"
 
 # Export both for comparison
-k8s-inventory database export 1 --file baseline.json
-k8s-inventory database export 2 --file current.json
+k8s-datamodel database export 1 --file baseline.json
+k8s-datamodel database export 2 --file current.json
 
 # Compare configurations
 diff <(jq -S . baseline.json) <(jq -S . current.json)
@@ -170,37 +170,37 @@ graph LR
 ### 1. **Compliance and Auditing**
 ```bash
 # Store pre-audit snapshot
-k8s-inventory database store --notes "Pre-compliance audit"
+k8s-datamodel database store --notes "Pre-compliance audit"
 
 # Generate compliance report
-k8s-inventory database export 1 --output json | \
+k8s-datamodel database export 1 --output json | \
   jq '.operators[] | select(.spec.spec.template.spec.securityContext.privileged == true)'
 ```
 
 ### 2. **Migration Planning**  
 ```bash
 # Store source cluster snapshot
-k8s-inventory --context source-cluster database store --notes "Migration source"
+k8s-datamodel --context source-cluster database store --notes "Migration source"
 
 # Store target cluster snapshot after migration
-k8s-inventory --context target-cluster database store --notes "Migration target"
+k8s-datamodel --context target-cluster database store --notes "Migration target"
 
 # Compare for validation
-k8s-inventory database export 1 --file source.json
-k8s-inventory database export 2 --file target.json
+k8s-datamodel database export 1 --file source.json
+k8s-datamodel database export 2 --file target.json
 ```
 
 ### 3. **Security Assessment**
 ```bash
 # Store current state
-k8s-inventory database store --notes "Security baseline"
+k8s-datamodel database store --notes "Security baseline"
 
 # Analyze privileged operators
-k8s-inventory database export 1 --output json | \
+k8s-datamodel database export 1 --output json | \
   jq '.operators[] | select(.spec.spec.template.spec.containers[0].securityContext.privileged == true)'
 
 # Check for host network access
-k8s-inventory database export 1 --output json | \
+k8s-datamodel database export 1 --output json | \
   jq '.operators[] | select(.spec.spec.template.spec.hostNetwork == true)'
 ```
 
@@ -208,11 +208,11 @@ k8s-inventory database export 1 --output json | \
 ```bash
 #!/bin/bash
 # Daily inventory collection
-k8s-inventory database store --notes "Daily snapshot - $(date)"
+k8s-datamodel database store --notes "Daily snapshot - $(date)"
 
 # Check database size and cleanup
-k8s-inventory database stats
-k8s-inventory database cleanup --keep 30
+k8s-datamodel database stats
+k8s-datamodel database cleanup --keep 30
 ```
 
 ## 🔧 Migration and Upgrade
@@ -267,26 +267,26 @@ k8s-inventory database cleanup --keep 30
 ### Immediate Usage
 ```bash
 # Store your first snapshot
-k8s-inventory database store --notes "My first snapshot"
+k8s-datamodel database store --notes "My first snapshot"
 
 # View stored snapshots
-k8s-inventory database list
+k8s-datamodel database list
 
 # Get database statistics
-k8s-inventory database stats
+k8s-datamodel database stats
 ```
 
 ### Advanced Features
 ```bash
 # Multi-cluster storage
-k8s-inventory --context prod database store --notes "Production"
-k8s-inventory --context dev database store --notes "Development"
+k8s-datamodel --context prod database store --notes "Production"
+k8s-datamodel --context dev database store --notes "Development"
 
 # Export with full specs for analysis
-k8s-inventory database export 1 --include-specs --file analysis.json
+k8s-datamodel database export 1 --include-specs --file analysis.json
 
 # Cleanup old snapshots
-k8s-inventory database cleanup --keep 10
+k8s-datamodel database cleanup --keep 10
 ```
 
 ## 🎯 What's Next
@@ -301,4 +301,4 @@ This release establishes the foundation for advanced cluster analysis and histor
 
 ---
 
-The k8s-inventory-cli now provides comprehensive, persistent cluster inventory capabilities with complete resource specification storage and robust datetime handling. Perfect for production cluster management, compliance tracking, and deep Kubernetes analysis! 🎉
+The k8s-datamodel now provides comprehensive, persistent cluster inventory capabilities with complete resource specification storage and robust datetime handling. Perfect for production cluster management, compliance tracking, and deep Kubernetes analysis! 🎉

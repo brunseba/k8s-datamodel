@@ -1,1 +1,1 @@
-"""Command modules for k8s-inventory-cli."""
+"""Command modules for k8s-datamodel."""

@@ -1,1 +1,1 @@
-"""Utility modules for k8s-inventory-cli."""
+"""Utility modules for k8s-datamodel."""

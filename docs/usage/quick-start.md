@@ -6,20 +6,20 @@ Get up and running with K8s Inventory CLI in minutes.
 
 ### Via pipx (Recommended)
 ```bash
-pipx install k8s-inventory-cli
+pipx install k8s-datamodel
 ```
 
 ### Via pip
 ```bash
-pip install k8s-inventory-cli
+pip install k8s-datamodel
 ```
 
 ### Development Installation
 ```bash
-git clone https://github.com/brun-s/k8s-inventory-cli.git
-cd k8s-inventory-cli
+git clone https://github.com/brun-s/k8s-datamodel.git
+cd k8s-datamodel
 uv sync
-uv run k8s-inventory --help
+uv run k8s-datamodel --help
 ```
 
 ## Prerequisites
@@ -32,34 +32,34 @@ uv run k8s-inventory --help
 
 ### 1. Test Cluster Connection
 ```bash
-k8s-inventory cluster test-connection
+k8s-datamodel cluster test-connection
 ```
 
 ### 2. Get Cluster Information
 ```bash
-k8s-inventory cluster info
+k8s-datamodel cluster info
 ```
 
 ### 3. View Cluster Summary
 ```bash
-k8s-inventory cluster summary
+k8s-datamodel cluster summary
 ```
 
 ## Common Commands
 
 ### List All CRDs
 ```bash
-k8s-inventory crd list
+k8s-datamodel crd list
 ```
 
 ### Find Operators
 ```bash
-k8s-inventory operators list
+k8s-datamodel operators list
 ```
 
 ### Export Complete Inventory
 ```bash
-k8s-inventory cluster export --file inventory.json --output json
+k8s-datamodel cluster export --file inventory.json --output json
 ```
 
 ## Output Formats
@@ -73,10 +73,10 @@ K8s Inventory CLI supports multiple output formats:
 
 Example with different formats:
 ```bash
-k8s-inventory crd list --output table
-k8s-inventory crd list --output json
-k8s-inventory crd list --output yaml
-k8s-inventory crd list --output rich
+k8s-datamodel crd list --output table
+k8s-datamodel crd list --output json
+k8s-datamodel crd list --output yaml
+k8s-datamodel crd list --output rich
 ```
 
 ## Next Steps

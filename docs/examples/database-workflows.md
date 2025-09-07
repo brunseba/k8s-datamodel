@@ -1,6 +1,6 @@
 # Database Workflow Examples
 
-This document provides comprehensive examples of using k8s-inventory-cli's database functionality for real-world scenarios.
+This document provides comprehensive examples of using k8s-datamodel's database functionality for real-world scenarios.
 
 ## Table of Contents
 
@@ -19,13 +19,13 @@ This document provides comprehensive examples of using k8s-inventory-cli's datab
 
 ```bash
 # Test cluster connectivity
-k8s-inventory cluster test-connection
+k8s-datamodel cluster test-connection
 
 # Create your first snapshot
-k8s-inventory database store --notes "Initial cluster baseline - $(date)"
+k8s-datamodel database store --notes "Initial cluster baseline - $(date)"
 
 # Verify the snapshot was created
-k8s-inventory database list
+k8s-datamodel database list
 ```
 
 **Expected Output:**
@@ -41,7 +41,7 @@ k8s-inventory database list
 
 ```bash
 # Get comprehensive database statistics
-k8s-inventory database stats --output rich
+k8s-datamodel database stats --output rich
 ```
 
 **Expected Output:**
@@ -62,13 +62,13 @@ k8s-inventory database stats --output rich
 
 ```bash
 # Export snapshot with complete specifications
-k8s-inventory database export 1 --file cluster-snapshot.json
+k8s-datamodel database export 1 --file cluster-snapshot.json
 
 # Export only CRDs for focused analysis  
-k8s-inventory database export 1 --crds-only --file crds-analysis.json
+k8s-datamodel database export 1 --crds-only --file crds-analysis.json
 
 # Export in YAML format for human readability
-k8s-inventory database export 1 --output yaml --file cluster-snapshot.yaml
+k8s-datamodel database export 1 --output yaml --file cluster-snapshot.yaml
 ```
 
 ## Multi-Cluster Management
@@ -77,17 +77,17 @@ k8s-inventory database export 1 --output yaml --file cluster-snapshot.yaml
 
 ```bash
 # Store snapshots from different environments
-k8s-inventory --context prod-cluster database store \
+k8s-datamodel --context prod-cluster database store \
     --notes "Production cluster - $(date +%Y-%m-%d)"
 
-k8s-inventory --context staging-cluster database store \
+k8s-datamodel --context staging-cluster database store \
     --notes "Staging cluster - $(date +%Y-%m-%d)"
 
-k8s-inventory --context dev-cluster database store \
+k8s-datamodel --context dev-cluster database store \
     --notes "Development cluster - $(date +%Y-%m-%d)"
 
 # List snapshots filtered by cluster context
-k8s-inventory database list --cluster-context prod-cluster
+k8s-datamodel database list --cluster-context prod-cluster
 ```
 
 **Expected Output:**
@@ -105,9 +105,9 @@ k8s-inventory database list --cluster-context prod-cluster
 
 ```bash
 # Export snapshots for comparison
-k8s-inventory database export 1 --file prod-inventory.json
-k8s-inventory database export 2 --file staging-inventory.json
-k8s-inventory database export 3 --file dev-inventory.json
+k8s-datamodel database export 1 --file prod-inventory.json
+k8s-datamodel database export 2 --file staging-inventory.json
+k8s-datamodel database export 3 --file dev-inventory.json
 
 # Compare CRD counts between environments
 echo "=== CRD Comparison ==="
@@ -126,11 +126,11 @@ comm -23 <(jq -r '.crds[].name' prod-inventory.json | sort) \
 
 ```bash
 # Create comprehensive audit baseline
-k8s-inventory database store \
+k8s-datamodel database store \
     --notes "SOC2 Audit Baseline - $(date +%Y-%m-%d) - Pre-audit snapshot"
 
 # Generate audit-specific exports
-k8s-inventory database export 1 --file audit-baseline.json
+k8s-datamodel database export 1 --file audit-baseline.json
 
 # Extract security-relevant information
 echo "=== Security Analysis for Audit ==="
@@ -152,12 +152,12 @@ jq -r '.csvs[] |
 
 ```bash
 # Store post-remediation snapshot
-k8s-inventory database store \
+k8s-datamodel database store \
     --notes "SOC2 Audit - Post-remediation snapshot - $(date +%Y-%m-%d)"
 
 # Compare audit snapshots
-k8s-inventory database export 1 --file pre-audit.json
-k8s-inventory database export 2 --file post-audit.json
+k8s-datamodel database export 1 --file pre-audit.json
+k8s-datamodel database export 2 --file post-audit.json
 
 # Check for security improvements
 echo "=== Security Improvements ==="
@@ -174,11 +174,11 @@ jq -r '.operators[] | select(.spec.spec.template.spec.containers[0].securityCont
 
 ```bash
 # Document source cluster state
-k8s-inventory --context source-cluster database store \
+k8s-datamodel --context source-cluster database store \
     --notes "Migration Source - EKS v1.28 - $(date +%Y-%m-%d)"
 
 # Export comprehensive migration documentation
-k8s-inventory database export 1 --file migration-source-inventory.json
+k8s-datamodel database export 1 --file migration-source-inventory.json
 
 # Generate migration planning report
 echo "=== Migration Planning Report ===" > migration-plan.md
@@ -205,11 +205,11 @@ jq -r '.operators[] | "- \(.name) (\(.operator_type)) - \(.namespace) - \(.opera
 
 ```bash
 # Document target cluster state
-k8s-inventory --context target-cluster database store \
+k8s-datamodel --context target-cluster database store \
     --notes "Migration Target - GKE v1.29 - Post-migration - $(date +%Y-%m-%d)"
 
 # Export target cluster inventory
-k8s-inventory database export 2 --file migration-target-inventory.json
+k8s-datamodel database export 2 --file migration-target-inventory.json
 
 # Verify migration completeness
 echo "=== Migration Verification ===" > migration-verification.md
@@ -238,7 +238,7 @@ while read crd; do echo "- ❌ $crd"; done >> migration-verification.md
 
 ```bash
 # Create golden configuration baseline
-k8s-inventory database store \
+k8s-datamodel database store \
     --notes "Golden Configuration Baseline - Approved by Platform Team - $(date +%Y-%m-%d)"
 
 # Store the baseline ID for future comparisons
@@ -254,12 +254,12 @@ BASELINE_ID=$(cat .baseline-snapshot-id)
 CURRENT_DATE=$(date +%Y-%m-%d)
 
 # Store current state
-k8s-inventory database store --notes "Weekly drift check - $CURRENT_DATE"
-CURRENT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database store --notes "Weekly drift check - $CURRENT_DATE"
+CURRENT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
 
 # Export both snapshots
-k8s-inventory database export $BASELINE_ID --file baseline.json
-k8s-inventory database export $CURRENT_ID --file current.json
+k8s-datamodel database export $BASELINE_ID --file baseline.json
+k8s-datamodel database export $CURRENT_ID --file current.json
 
 # Generate drift report
 echo "=== Configuration Drift Report - $CURRENT_DATE ===" > drift-report.md
@@ -306,11 +306,11 @@ diff baseline-images.txt current-images.txt | grep '^>' | sed 's/^> /- /' >> dri
 
 ```bash
 # Store current state for security analysis
-k8s-inventory database store \
+k8s-datamodel database store \
     --notes "Security Audit - $(date +%Y-%m-%d) - Comprehensive security review"
 
 # Export for detailed security analysis
-k8s-inventory database export 1 --file security-audit.json
+k8s-datamodel database export 1 --file security-audit.json
 
 # Generate security report
 echo "=== Security Audit Report - $(date +%Y-%m-%d) ===" > security-report.md
@@ -360,11 +360,11 @@ cat > security-monitor.sh << 'EOF'
 # Daily security monitoring
 
 DATE=$(date +%Y-%m-%d)
-k8s-inventory database store --notes "Security monitoring - $DATE"
+k8s-datamodel database store --notes "Security monitoring - $DATE"
 
 # Get latest snapshot
-LATEST_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $LATEST_ID --file daily-security.json
+LATEST_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $LATEST_ID --file daily-security.json
 
 # Check for security violations
 PRIVILEGED_COUNT=$(jq '[.operators[] | select(.spec.spec.template.spec.containers[0].securityContext.privileged == true)] | length' daily-security.json)
@@ -395,19 +395,19 @@ CONTEXTS=("prod-cluster" "staging-cluster" "dev-cluster")
 
 for CONTEXT in "${CONTEXTS[@]}"; do
     echo "Collecting inventory for $CONTEXT..."
-    k8s-inventory --context $CONTEXT database store \
+    k8s-datamodel --context $CONTEXT database store \
         --notes "Automated daily snapshot - $CONTEXT - $DATE"
 done
 
 # Cleanup old snapshots (keep 30 days)
-k8s-inventory database cleanup --keep 30
+k8s-datamodel database cleanup --keep 30
 
 # Generate daily summary
 echo "=== Daily Inventory Summary - $DATE ===" > daily-summary.txt
-k8s-inventory database stats >> daily-summary.txt
+k8s-datamodel database stats >> daily-summary.txt
 echo "" >> daily-summary.txt
 echo "Recent snapshots:" >> daily-summary.txt
-k8s-inventory database list --limit 10 >> daily-summary.txt
+k8s-datamodel database list --limit 10 >> daily-summary.txt
 EOF
 
 chmod +x daily-inventory.sh
@@ -435,7 +435,7 @@ for CONTEXT in prod-cluster staging-cluster dev-cluster; do
     echo "## $CONTEXT Trends" >> weekly-trends.md
     
     # Get snapshot IDs from the last week
-    SNAPSHOTS=$(k8s-inventory database list --cluster-context $CONTEXT --output json | \
+    SNAPSHOTS=$(k8s-datamodel database list --cluster-context $CONTEXT --output json | \
                 jq -r '.[] | select(.timestamp >= "'$WEEK_AGO'") | .id')
     
     if [ -n "$SNAPSHOTS" ]; then
@@ -443,8 +443,8 @@ for CONTEXT in prod-cluster staging-cluster dev-cluster; do
         LATEST_ID=$(echo "$SNAPSHOTS" | head -1)
         
         # Export snapshots
-        k8s-inventory database export $FIRST_ID --file week-start-$CONTEXT.json
-        k8s-inventory database export $LATEST_ID --file week-end-$CONTEXT.json
+        k8s-datamodel database export $FIRST_ID --file week-start-$CONTEXT.json
+        k8s-datamodel database export $LATEST_ID --file week-end-$CONTEXT.json
         
         # Calculate changes
         START_CRDS=$(jq '.crds | length' week-start-$CONTEXT.json)
@@ -498,8 +498,8 @@ jobs:
       with:
         python-version: '3.10'
     
-    - name: Install k8s-inventory-cli
-      run: pipx install k8s-inventory-cli
+    - name: Install k8s-datamodel
+      run: pipx install k8s-datamodel
     
     - name: Configure kubectl
       run: |
@@ -510,7 +510,7 @@ jobs:
       env:
         KUBECONFIG: /tmp/kubeconfig
       run: |
-        k8s-inventory database store \
+        k8s-datamodel database store \
           --notes "CI/CD automated snapshot - $(date +%Y-%m-%d) - ${{ github.sha }}"
     
     - name: Generate inventory report
@@ -518,10 +518,10 @@ jobs:
         KUBECONFIG: /tmp/kubeconfig
       run: |
         # Get latest snapshot
-        LATEST_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
+        LATEST_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
         
         # Export inventory
-        k8s-inventory database export $LATEST_ID --file inventory-report.json
+        k8s-datamodel database export $LATEST_ID --file inventory-report.json
         
         # Generate summary
         echo "# Kubernetes Inventory Report - $(date)" > inventory-summary.md
@@ -572,12 +572,12 @@ resource "null_resource" "k8s_inventory" {
       aws eks update-kubeconfig --region ${var.region} --name ${var.cluster_name}
       
       # Store inventory snapshot
-      k8s-inventory database store \
+      k8s-datamodel database store \
         --notes "Terraform deployment - ${var.environment} - $(date +%Y-%m-%d-%H-%M)"
       
       # Export inventory for terraform outputs
-      LATEST_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-      k8s-inventory database export $LATEST_ID --file ${var.output_path}/cluster-inventory.json
+      LATEST_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+      k8s-datamodel database export $LATEST_ID --file ${var.output_path}/cluster-inventory.json
     EOT
   }
 
@@ -611,14 +611,14 @@ output "inventory_summary" {
 # Create Prometheus metrics exporter
 cat > inventory-metrics-exporter.sh << 'EOF'
 #!/bin/bash
-# Export k8s-inventory metrics for Prometheus
+# Export k8s-datamodel metrics for Prometheus
 
 # Store current snapshot
-k8s-inventory database store --notes "Metrics collection - $(date)"
+k8s-datamodel database store --notes "Metrics collection - $(date)"
 
 # Get latest snapshot
-LATEST_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $LATEST_ID --file metrics-inventory.json
+LATEST_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $LATEST_ID --file metrics-inventory.json
 
 # Generate Prometheus metrics
 cat > /var/lib/node_exporter/k8s_inventory.prom << METRICS
@@ -663,13 +663,13 @@ echo "*/15 * * * * /path/to/inventory-metrics-exporter.sh" | crontab -
 
 ```bash
 # Use consistent naming patterns
-k8s-inventory database store --notes "TYPE-PURPOSE-DATE-DETAILS"
+k8s-datamodel database store --notes "TYPE-PURPOSE-DATE-DETAILS"
 
 # Examples:
-k8s-inventory database store --notes "BASELINE-initial-cluster-setup-$(date +%Y-%m-%d)"
-k8s-inventory database store --notes "AUDIT-sox-compliance-pre-$(date +%Y-%m-%d)"
-k8s-inventory database store --notes "MIGRATION-source-cluster-$(date +%Y-%m-%d-%H-%M)"
-k8s-inventory database store --notes "INCIDENT-post-recovery-$(date +%Y-%m-%d-%H-%M)"
+k8s-datamodel database store --notes "BASELINE-initial-cluster-setup-$(date +%Y-%m-%d)"
+k8s-datamodel database store --notes "AUDIT-sox-compliance-pre-$(date +%Y-%m-%d)"
+k8s-datamodel database store --notes "MIGRATION-source-cluster-$(date +%Y-%m-%d-%H-%M)"
+k8s-datamodel database store --notes "INCIDENT-post-recovery-$(date +%Y-%m-%d-%H-%M)"
 ```
 
 ### 2. Database Maintenance
@@ -684,11 +684,11 @@ echo "=== K8s Inventory Database Maintenance - $(date) ==="
 
 # Show current statistics
 echo "Current database statistics:"
-k8s-inventory database stats
+k8s-datamodel database stats
 
 # Clean up old snapshots (keep 30 most recent)
 echo "Cleaning up old snapshots..."
-k8s-inventory database cleanup --keep 30
+k8s-datamodel database cleanup --keep 30
 
 # Vacuum database to reclaim space
 echo "Vacuuming database..."
@@ -696,7 +696,7 @@ sqlite3 ~/.k8s-inventory/inventory.db "VACUUM;"
 
 # Show updated statistics
 echo "Updated database statistics:"
-k8s-inventory database stats
+k8s-datamodel database stats
 EOF
 
 chmod +x db-maintenance.sh
@@ -718,7 +718,7 @@ NOTES=${2:-"Automated snapshot - $(date)"}
 for i in $(seq 1 $MAX_RETRIES); do
     echo "Attempt $i of $MAX_RETRIES for context $CONTEXT"
     
-    if k8s-inventory --context $CONTEXT database store --notes "$NOTES"; then
+    if k8s-datamodel --context $CONTEXT database store --notes "$NOTES"; then
         echo "✅ Successfully stored snapshot for $CONTEXT"
         exit 0
     else
@@ -739,7 +739,7 @@ chmod +x robust-snapshot.sh
 
 ## Conclusion
 
-These examples demonstrate the powerful capabilities of k8s-inventory-cli's database functionality for real-world Kubernetes management scenarios. The tool enables comprehensive cluster tracking, compliance monitoring, security analysis, and operational insights through persistent storage of complete resource specifications.
+These examples demonstrate the powerful capabilities of k8s-datamodel's database functionality for real-world Kubernetes management scenarios. The tool enables comprehensive cluster tracking, compliance monitoring, security analysis, and operational insights through persistent storage of complete resource specifications.
 
 Key benefits demonstrated:
 

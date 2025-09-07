@@ -316,48 +316,48 @@ Tested against a live cluster with:
 ### CLI Commands Available
 ```bash
 # Connection & cluster info
-k8s-inventory cluster test-connection
-k8s-inventory cluster info
-k8s-inventory cluster summary
+k8s-datamodel cluster test-connection
+k8s-datamodel cluster info
+k8s-datamodel cluster summary
 
 # CRD operations
-k8s-inventory crd list [--group] [--kind] [--scope]
-k8s-inventory crd get <crd-name>
-k8s-inventory crd count [--group] [--scope]
+k8s-datamodel crd list [--group] [--kind] [--scope]
+k8s-datamodel crd get <crd-name>
+k8s-datamodel crd count [--group] [--scope]
 
 # Operator operations  
-k8s-inventory operators list [--namespace] [--framework]
-k8s-inventory operators get <name> [--namespace]
-k8s-inventory operators managed-crds <name>
+k8s-datamodel operators list [--namespace] [--framework]
+k8s-datamodel operators get <name> [--namespace]
+k8s-datamodel operators managed-crds <name>
 
 # OLM operations
-k8s-inventory olm list [--namespace] [--phase]
-k8s-inventory olm get <csv-name> [--namespace]
-k8s-inventory olm stats
+k8s-datamodel olm list [--namespace] [--phase]
+k8s-datamodel olm get <csv-name> [--namespace]
+k8s-datamodel olm stats
 
 # Database operations (NEW)
-k8s-inventory database store [--notes "description"]
-k8s-inventory database list [--cluster-context] [--limit]
-k8s-inventory database show <snapshot-id>
-k8s-inventory database export <snapshot-id> [--file]
-k8s-inventory database stats
-k8s-inventory database cleanup [--keep N]
-k8s-inventory database delete <snapshot-id>
+k8s-datamodel database store [--notes "description"]
+k8s-datamodel database list [--cluster-context] [--limit]
+k8s-datamodel database show <snapshot-id>
+k8s-datamodel database export <snapshot-id> [--file]
+k8s-datamodel database stats
+k8s-datamodel database cleanup [--keep N]
+k8s-datamodel database delete <snapshot-id>
 
 # Export & integration
-k8s-inventory cluster export [--file] [--output json|yaml]
+k8s-datamodel cluster export [--file] [--output json|yaml]
 ```
 
 ### Installation Options
 ```bash
 # Via pipx (recommended)
-pipx install k8s-inventory-cli
+pipx install k8s-datamodel
 
 # Via pip
-pip install k8s-inventory-cli
+pip install k8s-datamodel
 
 # Development install
-uv sync && uv run k8s-inventory --help
+uv sync && uv run k8s-datamodel --help
 ```
 
 ## 📚 Documentation Package

@@ -1,6 +1,6 @@
 # Examples
 
-This section provides comprehensive, real-world examples demonstrating the powerful capabilities of k8s-inventory-cli for managing, analyzing, and monitoring Kubernetes clusters.
+This section provides comprehensive, real-world examples demonstrating the powerful capabilities of k8s-datamodel for managing, analyzing, and monitoring Kubernetes clusters.
 
 ## 📊 Database Workflows
 
@@ -54,7 +54,7 @@ Each example section includes:
 ## Prerequisites
 
 Most examples assume:
-- k8s-inventory-cli is installed and configured
+- k8s-datamodel is installed and configured
 - Access to a Kubernetes cluster
 - Basic familiarity with `kubectl` and `jq`
 - For advanced examples: understanding of your compliance requirements
@@ -71,7 +71,7 @@ Multi-step processes that combine multiple commands to achieve complex goals.
 Production-ready scripts with error handling, logging, and integration patterns.
 
 ### Integration Examples
-Examples showing how to integrate k8s-inventory-cli with other tools and systems.
+Examples showing how to integrate k8s-datamodel with other tools and systems.
 
 ---
 

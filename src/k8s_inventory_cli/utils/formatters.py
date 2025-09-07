@@ -1,4 +1,4 @@
-"""Output formatting utilities for k8s-inventory-cli."""
+"""Output formatting utilities for k8s-datamodel."""
 
 import json
 import yaml

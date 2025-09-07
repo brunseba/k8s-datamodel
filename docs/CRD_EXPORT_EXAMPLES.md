@@ -1,11 +1,11 @@
 # CRD Export-All Command Examples
 
-The `k8s-inventory crd export-all` command allows you to export all CRDs in your cluster with their complete property schemas to a well-formatted Markdown document with a table of contents.
+The `k8s-datamodel crd export-all` command allows you to export all CRDs in your cluster with their complete property schemas to a well-formatted Markdown document with a table of contents.
 
 ## Command Syntax
 
 ```bash
-k8s-inventory crd export-all [OPTIONS]
+k8s-datamodel crd export-all [OPTIONS]
 ```
 
 ## Available Options
@@ -22,7 +22,7 @@ k8s-inventory crd export-all [OPTIONS]
 ### 1. Export All CRDs (Full Inventory)
 
 ```bash
-k8s-inventory crd export-all --output-file cluster-inventory.md
+k8s-datamodel crd export-all --output-file cluster-inventory.md
 ```
 
 This exports all CRDs in your cluster to `cluster-inventory.md` with complete property documentation.
@@ -30,7 +30,7 @@ This exports all CRDs in your cluster to `cluster-inventory.md` with complete pr
 ### 2. Export Specific API Group (e.g., cert-manager)
 
 ```bash
-k8s-inventory crd export-all --group cert-manager.io --output-file cert-manager-crds.md --max-depth 2
+k8s-datamodel crd export-all --group cert-manager.io --output-file cert-manager-crds.md --max-depth 2
 ```
 
 Exports only cert-manager CRDs with properties nested to depth 2.
@@ -38,7 +38,7 @@ Exports only cert-manager CRDs with properties nested to depth 2.
 ### 3. Export Only Namespaced CRDs
 
 ```bash
-k8s-inventory crd export-all --scope Namespaced --output-file namespaced-crds.md
+k8s-datamodel crd export-all --scope Namespaced --output-file namespaced-crds.md
 ```
 
 Focuses on CRDs that create namespaced resources only.
@@ -46,7 +46,7 @@ Focuses on CRDs that create namespaced resources only.
 ### 4. Export Required Properties Only
 
 ```bash
-k8s-inventory crd export-all --group kafka.strimzi.io --required-only --output-file kafka-required.md
+k8s-datamodel crd export-all --group kafka.strimzi.io --required-only --output-file kafka-required.md
 ```
 
 Shows only the mandatory fields for Kafka CRDs.
@@ -54,7 +54,7 @@ Shows only the mandatory fields for Kafka CRDs.
 ### 5. Database-Related CRDs
 
 ```bash
-k8s-inventory crd export-all --group postgresql.cnpg.io --output-file postgresql-inventory.md --max-depth 3
+k8s-datamodel crd export-all --group postgresql.cnpg.io --output-file postgresql-inventory.md --max-depth 3
 ```
 
 Exports PostgreSQL operator CRDs with detailed property nesting.
@@ -136,15 +136,15 @@ The generated Markdown files can be:
 
 ### Production Cluster Audit
 ```bash
-k8s-inventory crd export-all --output-file prod-cluster-audit.md --max-depth 2
+k8s-datamodel crd export-all --output-file prod-cluster-audit.md --max-depth 2
 ```
 
 ### Specific Operator Documentation
 ```bash
-k8s-inventory crd export-all --group strimzi.io --output-file kafka-operator-docs.md
+k8s-datamodel crd export-all --group strimzi.io --output-file kafka-operator-docs.md
 ```
 
 ### Quick Reference (Required Fields Only)
 ```bash
-k8s-inventory crd export-all --required-only --output-file crd-quick-reference.md --max-depth 1
+k8s-datamodel crd export-all --required-only --output-file crd-quick-reference.md --max-depth 1
 ```

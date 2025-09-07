@@ -13,8 +13,8 @@ K8s Inventory CLI supports multiple output formats to accommodate different use 
 Human-readable grid format optimized for terminal viewing:
 
 ```bash
-k8s-inventory crd list --output table
-k8s-inventory operators list --output table
+k8s-datamodel crd list --output table
+k8s-datamodel operators list --output table
 ```
 
 **Characteristics:**
@@ -37,8 +37,8 @@ clusterissuers.cert-manager.io    cert-manager.io           Cluster       30d   
 Enhanced terminal output with styling, colors, and visual enhancements:
 
 ```bash
-k8s-inventory crd list --output rich
-k8s-inventory operators list --output rich
+k8s-datamodel crd list --output rich
+k8s-datamodel operators list --output rich
 ```
 
 **Features:**
@@ -60,9 +60,9 @@ k8s-inventory operators list --output rich
 Machine-readable JSON format for automation and integration:
 
 ```bash
-k8s-inventory crd list --output json
-k8s-inventory operators list --output json
-k8s-inventory cluster export --output json
+k8s-datamodel crd list --output json
+k8s-datamodel operators list --output json
+k8s-datamodel cluster export --output json
 ```
 
 **Characteristics:**
@@ -94,9 +94,9 @@ k8s-inventory cluster export --output json
 Human and machine-readable YAML format:
 
 ```bash
-k8s-inventory crd list --output yaml
-k8s-inventory operators list --output yaml
-k8s-inventory cluster export --output yaml
+k8s-datamodel crd list --output yaml
+k8s-datamodel operators list --output yaml
+k8s-datamodel cluster export --output yaml
 ```
 
 **Features:**
@@ -164,13 +164,13 @@ All formats support the same filtering options:
 
 ```bash
 # JSON output with filtering
-k8s-inventory crd list --group cert-manager.io --output json
+k8s-datamodel crd list --group cert-manager.io --output json
 
 # YAML output with namespace filtering
-k8s-inventory operators list --namespace kube-system --output yaml
+k8s-datamodel operators list --namespace kube-system --output yaml
 
 # Rich format with scope filtering
-k8s-inventory crd list --scope Cluster --output rich
+k8s-datamodel crd list --scope Cluster --output rich
 ```
 
 ### File Output
@@ -179,13 +179,13 @@ Save formatted output directly to files:
 
 ```bash
 # Save JSON export
-k8s-inventory cluster export --output json --file cluster-inventory.json
+k8s-datamodel cluster export --output json --file cluster-inventory.json
 
 # Save YAML export
-k8s-inventory cluster export --output yaml --file cluster-inventory.yaml
+k8s-datamodel cluster export --output yaml --file cluster-inventory.yaml
 
 # Save filtered CRD list
-k8s-inventory crd list --group networking.k8s.io --output json > networking-crds.json
+k8s-datamodel crd list --group networking.k8s.io --output json > networking-crds.json
 ```
 
 ## Integration Examples
@@ -194,14 +194,14 @@ k8s-inventory crd list --group networking.k8s.io --output json > networking-crds
 
 ```bash
 # Extract specific fields
-k8s-inventory crd list --output json | jq '.[] | {name, group, instances: .instance_count}'
+k8s-datamodel crd list --output json | jq '.[] | {name, group, instances: .instance_count}'
 
 # Filter and transform
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq '.[] | select(.framework == "Helm") | .name'
 
 # Generate summary statistics
-k8s-inventory cluster export --output json | \
+k8s-datamodel cluster export --output json | \
   jq '{
     total_crds: (.crds | length),
     total_operators: (.operators | length),
@@ -213,15 +213,15 @@ k8s-inventory cluster export --output json | \
 
 ```bash
 # Extract operator information
-k8s-inventory operators list --output yaml | \
+k8s-datamodel operators list --output yaml | \
   yq eval '.[] | select(.namespace == "kube-system")'
 
 # Transform structure
-k8s-inventory crd list --output yaml | \
+k8s-datamodel crd list --output yaml | \
   yq eval 'map({(.name): {group: .group, scope: .scope}}) | add'
 
 # Merge with existing YAML
-k8s-inventory cluster export --output yaml | \
+k8s-datamodel cluster export --output yaml | \
   yq eval-all '. as $item ireduce ({}; . * $item)' - existing-config.yaml
 ```
 
@@ -229,11 +229,11 @@ k8s-inventory cluster export --output yaml | \
 
 ```bash
 # Table format with shell tools
-k8s-inventory crd list --output table | grep "cert-manager"
-k8s-inventory operators list --output table | awk '{print $1, $3}' | sort
+k8s-datamodel crd list --output table | grep "cert-manager"
+k8s-datamodel operators list --output table | awk '{print $1, $3}' | sort
 
 # Count operations
-CRD_COUNT=$(k8s-inventory crd list --output json | jq '. | length')
+CRD_COUNT=$(k8s-datamodel crd list --output json | jq '. | length')
 echo "Total CRDs: $CRD_COUNT"
 ```
 
@@ -246,7 +246,7 @@ echo "Total CRDs: $CRD_COUNT"
 # Export and validate cluster state
 
 # Export current state
-k8s-inventory cluster export --output json --file current-state.json
+k8s-datamodel cluster export --output json --file current-state.json
 
 # Validate against expected state
 if ! jq -e '.crds | length >= 50' current-state.json; then
@@ -255,7 +255,7 @@ if ! jq -e '.crds | length >= 50' current-state.json; then
 fi
 
 # Check operator health
-UNHEALTHY=$(k8s-inventory operators list --output json | \
+UNHEALTHY=$(k8s-datamodel operators list --output json | \
   jq '.[] | select(.replicas.ready != .replicas.desired) | .name' | wc -l)
 
 if [[ $UNHEALTHY -gt 0 ]]; then
@@ -268,7 +268,7 @@ fi
 
 ```bash
 # Generate Prometheus metrics
-k8s-inventory cluster summary --output json | \
+k8s-datamodel cluster summary --output json | \
   jq -r '
     "k8s_inventory_crds_total " + (.crds.total | tostring),
     "k8s_inventory_operators_total " + (.operators.total | tostring),
@@ -280,11 +280,11 @@ k8s-inventory cluster summary --output json | \
 
 ```bash
 # Generate Ansible inventory
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq -r '.[] | "\(.name) ansible_host=\(.namespace) operator_framework=\(.framework)"'
 
 # Generate Terraform variables
-k8s-inventory crd list --output json | \
+k8s-datamodel crd list --output json | \
   jq '{crds: [.[] | {name: .name, group: .group, scope: .scope}]}' > terraform-vars.json
 ```
 
@@ -296,13 +296,13 @@ For clusters with many resources, consider:
 
 ```bash
 # Use pagination for large results (if supported)
-k8s-inventory crd list --output json | jq '. | to_entries | .[0:50] | from_entries'
+k8s-datamodel crd list --output json | jq '. | to_entries | .[0:50] | from_entries'
 
 # Filter early to reduce data transfer
-k8s-inventory crd list --group specific.domain.com --output json
+k8s-datamodel crd list --group specific.domain.com --output json
 
 # Use streaming processing for large exports
-k8s-inventory cluster export --output json | jq -c '.crds[]' | while read crd; do
+k8s-datamodel cluster export --output json | jq -c '.crds[]' | while read crd; do
   # Process each CRD individually
   echo "$crd" | jq '.name'
 done
@@ -312,10 +312,10 @@ done
 
 ```bash
 # For very large exports, consider split processing
-k8s-inventory cluster export --output json | \
+k8s-datamodel cluster export --output json | \
   jq -c '{crds: .crds}' > crds-only.json
 
-k8s-inventory cluster export --output json | \
+k8s-datamodel cluster export --output json | \
   jq -c '{operators: .operators}' > operators-only.json
 ```
 
@@ -351,31 +351,31 @@ k8s-inventory cluster export --output json | \
 ```bash
 # Force UTF-8 encoding
 export LC_ALL=C.UTF-8
-k8s-inventory crd list --output rich
+k8s-datamodel crd list --output rich
 ```
 
 ### Terminal Compatibility
 ```bash
 # Fallback to table format if rich fails
-k8s-inventory crd list --output table
+k8s-datamodel crd list --output table
 ```
 
 ### Large Output Handling
 ```bash
 # Use pagination
-k8s-inventory crd list --output table | less
+k8s-datamodel crd list --output table | less
 
 # Filter to reduce output size
-k8s-inventory crd list --group cert-manager.io --output table
+k8s-datamodel crd list --group cert-manager.io --output table
 ```
 
 ### JSON Parsing Issues
 ```bash
 # Validate JSON output
-k8s-inventory crd list --output json | jq empty && echo "Valid JSON" || echo "Invalid JSON"
+k8s-datamodel crd list --output json | jq empty && echo "Valid JSON" || echo "Invalid JSON"
 
 # Pretty print for debugging
-k8s-inventory crd list --output json | jq .
+k8s-datamodel crd list --output json | jq .
 ```
 
 ## Related Documentation

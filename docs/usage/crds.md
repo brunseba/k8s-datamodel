@@ -13,27 +13,27 @@ The CRD commands provide powerful capabilities to discover, analyze, and invento
 Display all CRDs in your cluster with comprehensive metadata:
 
 ```bash
-k8s-inventory crd list
+k8s-datamodel crd list
 ```
 
 #### Filtering Options
 
 Filter CRDs by API group:
 ```bash
-k8s-inventory crd list --group networking.k8s.io
-k8s-inventory crd list --group operators.coreos.com
+k8s-datamodel crd list --group networking.k8s.io
+k8s-datamodel crd list --group operators.coreos.com
 ```
 
 Filter by resource kind:
 ```bash
-k8s-inventory crd list --kind VirtualService
-k8s-inventory crd list --kind Subscription
+k8s-datamodel crd list --kind VirtualService
+k8s-datamodel crd list --kind Subscription
 ```
 
 Filter by scope (Namespaced/Cluster):
 ```bash
-k8s-inventory crd list --scope Namespaced
-k8s-inventory crd list --scope Cluster
+k8s-datamodel crd list --scope Namespaced
+k8s-datamodel crd list --scope Cluster
 ```
 
 ### Get CRD Details
@@ -41,7 +41,7 @@ k8s-inventory crd list --scope Cluster
 Retrieve detailed information about a specific CRD:
 
 ```bash
-k8s-inventory crd get certificaterequests.cert-manager.io
+k8s-datamodel crd get certificaterequests.cert-manager.io
 ```
 
 This command provides:
@@ -57,13 +57,13 @@ This command provides:
 Count how many custom resource instances exist for each CRD:
 
 ```bash
-k8s-inventory crd count
+k8s-datamodel crd count
 ```
 
 With filtering:
 ```bash
-k8s-inventory crd count --group cert-manager.io
-k8s-inventory crd count --scope Cluster
+k8s-datamodel crd count --group cert-manager.io
+k8s-datamodel crd count --scope Cluster
 ```
 
 ## CRD Analysis Process
@@ -180,14 +180,14 @@ erDiagram
 
 Combine multiple filters for precise results:
 ```bash
-k8s-inventory crd list --group networking.k8s.io --scope Namespaced
+k8s-datamodel crd list --group networking.k8s.io --scope Namespaced
 ```
 
 ### Pattern Matching
 
 Use wildcards in group names:
 ```bash
-k8s-inventory crd list --group "*.coreos.com"
+k8s-datamodel crd list --group "*.coreos.com"
 ```
 
 ## Output Formats
@@ -196,25 +196,25 @@ All CRD commands support multiple output formats:
 
 ### Table Format (Default)
 ```bash
-k8s-inventory crd list --output table
+k8s-datamodel crd list --output table
 ```
 Human-readable grid with key information.
 
 ### Rich Format
 ```bash
-k8s-inventory crd list --output rich
+k8s-datamodel crd list --output rich
 ```
 Enhanced terminal output with colors and styling.
 
 ### JSON Format
 ```bash
-k8s-inventory crd list --output json
+k8s-datamodel crd list --output json
 ```
 Machine-readable format perfect for scripting.
 
 ### YAML Format
 ```bash
-k8s-inventory crd list --output yaml
+k8s-datamodel crd list --output yaml
 ```
 Structured format for configuration management.
 
@@ -223,37 +223,37 @@ Structured format for configuration management.
 ### Cluster Migration Planning
 ```bash
 # Identify all CRDs that need to be migrated
-k8s-inventory crd list --output yaml > crds-inventory.yaml
+k8s-datamodel crd list --output yaml > crds-inventory.yaml
 
 # Check which CRDs have active instances
-k8s-inventory crd count --output json > crd-usage.json
+k8s-datamodel crd count --output json > crd-usage.json
 ```
 
 ### Security Auditing
 ```bash
 # List all cluster-scoped CRDs (potential security impact)
-k8s-inventory crd list --scope Cluster
+k8s-datamodel crd list --scope Cluster
 
 # Find CRDs from specific vendors
-k8s-inventory crd list --group "*.example.com"
+k8s-datamodel crd list --group "*.example.com"
 ```
 
 ### Operator Management
 ```bash
 # Find all OLM-managed CRDs
-k8s-inventory crd list | grep "OLM"
+k8s-datamodel crd list | grep "OLM"
 
 # Analyze CRDs by framework
-k8s-inventory crd list --output json | jq '.[] | select(.framework == "Helm")'
+k8s-datamodel crd list --output json | jq '.[] | select(.framework == "Helm")'
 ```
 
 ### Cleanup Operations
 ```bash
 # Find CRDs with zero instances
-k8s-inventory crd count | grep "0 instances"
+k8s-datamodel crd count | grep "0 instances"
 
 # Identify old/deprecated CRDs
-k8s-inventory crd list | sort -k6  # Sort by age
+k8s-datamodel crd list | sort -k6  # Sort by age
 ```
 
 ## Troubleshooting
@@ -262,7 +262,7 @@ k8s-inventory crd list | sort -k6  # Sort by age
 If you encounter permission errors:
 ```bash
 # Test cluster connection
-k8s-inventory cluster test-connection
+k8s-datamodel cluster test-connection
 
 # Check your RBAC permissions
 kubectl auth can-i get customresourcedefinitions
@@ -272,13 +272,13 @@ kubectl auth can-i get customresourcedefinitions
 For clusters with many CRDs, use filtering to improve performance:
 ```bash
 # Instead of listing all CRDs
-k8s-inventory crd list --group specific.domain.com
+k8s-datamodel crd list --group specific.domain.com
 ```
 
 ### Output Formatting
 Use `--verbose` flag for debugging:
 ```bash
-k8s-inventory crd list --verbose
+k8s-datamodel crd list --verbose
 ```
 
 ## Integration Examples
@@ -287,10 +287,10 @@ k8s-inventory crd list --verbose
 ```bash
 #!/bin/bash
 # Export CRD inventory for compliance reporting
-k8s-inventory crd list --output json > artifacts/crd-inventory.json
+k8s-datamodel crd list --output json > artifacts/crd-inventory.json
 
 # Check for unauthorized CRDs
-UNAUTHORIZED=$(k8s-inventory crd list --group "untrusted.com" --output json)
+UNAUTHORIZED=$(k8s-datamodel crd list --group "untrusted.com" --output json)
 if [[ "$UNAUTHORIZED" != "[]" ]]; then
   echo "Unauthorized CRDs detected!"
   exit 1
@@ -300,7 +300,7 @@ fi
 ### Monitoring Integration
 ```bash
 # Generate metrics for monitoring systems
-k8s-inventory crd count --output json | \
+k8s-datamodel crd count --output json | \
   jq -r '.[] | "\(.name) \(.instance_count)"' | \
   while read name count; do
     echo "crd_instances{name=\"$name\"} $count"

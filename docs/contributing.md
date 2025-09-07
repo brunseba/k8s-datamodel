@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to k8s-inventory-cli!
+Thank you for your interest in contributing to k8s-datamodel!
 
 ## Development Setup
 
@@ -14,8 +14,8 @@ Thank you for your interest in contributing to k8s-inventory-cli!
 
 ```bash
 # Clone the repository
-git clone https://github.com/brun-s/k8s-inventory-cli.git
-cd k8s-inventory-cli
+git clone https://github.com/brun-s/k8s-datamodel.git
+cd k8s-datamodel
 
 # Install dependencies using uv
 uv sync

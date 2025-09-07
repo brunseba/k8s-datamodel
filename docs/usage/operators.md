@@ -13,22 +13,22 @@ The operator commands help you identify, classify, and analyze operators running
 Display all detected operators in your cluster:
 
 ```bash
-k8s-inventory operators list
+k8s-datamodel operators list
 ```
 
 #### Filtering Options
 
 Filter operators by namespace:
 ```bash
-k8s-inventory operators list --namespace kube-system
-k8s-inventory operators list --namespace operators
+k8s-datamodel operators list --namespace kube-system
+k8s-datamodel operators list --namespace operators
 ```
 
 Filter by deployment framework:
 ```bash
-k8s-inventory operators list --framework OLM
-k8s-inventory operators list --framework Helm  
-k8s-inventory operators list --framework Manual
+k8s-datamodel operators list --framework OLM
+k8s-datamodel operators list --framework Helm  
+k8s-datamodel operators list --framework Manual
 ```
 
 ### Get Operator Details
@@ -36,7 +36,7 @@ k8s-inventory operators list --framework Manual
 Retrieve comprehensive information about a specific operator:
 
 ```bash
-k8s-inventory operators get cert-manager --namespace cert-manager
+k8s-datamodel operators get cert-manager --namespace cert-manager
 ```
 
 This provides:
@@ -52,7 +52,7 @@ This provides:
 Discover which CRDs are managed by a specific operator:
 
 ```bash
-k8s-inventory operators managed-crds cert-manager
+k8s-datamodel operators managed-crds cert-manager
 ```
 
 This shows:
@@ -179,16 +179,16 @@ For each operator, the tool analyzes:
 ### Multi-condition Filtering
 ```bash
 # Find OLM operators in specific namespace
-k8s-inventory operators list --framework OLM --namespace operators
+k8s-datamodel operators list --framework OLM --namespace operators
 
 # Find unhealthy operators (combine with external tools)
-k8s-inventory operators list --output json | jq '.[] | select(.replicas.ready != .replicas.desired)'
+k8s-datamodel operators list --output json | jq '.[] | select(.replicas.ready != .replicas.desired)'
 ```
 
 ### Cross-Reference with CRDs
 ```bash
 # Find operators managing specific CRDs
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq '.[] | select(.managed_crds[] | contains("certificates"))'
 ```
 
@@ -196,25 +196,25 @@ k8s-inventory operators list --output json | \
 
 ### Table Format (Default)
 ```bash
-k8s-inventory operators list --output table
+k8s-datamodel operators list --output table
 ```
 Displays essential operator information in a readable grid.
 
 ### Rich Format
 ```bash
-k8s-inventory operators list --output rich
+k8s-datamodel operators list --output rich
 ```
 Enhanced output with color coding for health status and framework types.
 
 ### JSON Format
 ```bash
-k8s-inventory operators list --output json
+k8s-datamodel operators list --output json
 ```
 Complete operator data for programmatic processing.
 
 ### YAML Format
 ```bash
-k8s-inventory operators list --output yaml
+k8s-datamodel operators list --output yaml
 ```
 Structured format suitable for configuration and analysis.
 
@@ -223,20 +223,20 @@ Structured format suitable for configuration and analysis.
 ### Operator Auditing
 ```bash
 # Get complete operator inventory
-k8s-inventory operators list --output yaml > operator-inventory.yaml
+k8s-datamodel operators list --output yaml > operator-inventory.yaml
 
 # Identify operators with elevated privileges
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq '.[] | select(.security_context.privileged == true)'
 ```
 
 ### Migration Planning
 ```bash
 # List all operators that need to be migrated
-k8s-inventory operators list --output json > operators-to-migrate.json
+k8s-datamodel operators list --output json > operators-to-migrate.json
 
 # Check operator versions for compatibility
-k8s-inventory operators list | grep -E "v[0-9]+\.[0-9]+\.[0-9]+"
+k8s-datamodel operators list | grep -E "v[0-9]+\.[0-9]+\.[0-9]+"
 ```
 
 ### Security Assessment
@@ -246,13 +246,13 @@ kubectl get clusterrolebindings -o json | \
   jq '.items[] | select(.roleRef.name == "cluster-admin") | .subjects[] | select(.kind == "ServiceAccount")'
 
 # Cross-reference with operator list
-k8s-inventory operators list --namespace <namespace>
+k8s-datamodel operators list --namespace <namespace>
 ```
 
 ### Compliance Reporting
 ```bash
 # Generate operator compliance report
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq '[.[] | {name, namespace, framework, version: .image_version, health: (.replicas.ready == .replicas.desired)}]'
 ```
 
@@ -261,22 +261,22 @@ k8s-inventory operators list --output json | \
 #### Health Check Workflow
 1. **List all operators**:
    ```bash
-   k8s-inventory operators list
+   k8s-datamodel operators list
    ```
 
 2. **Identify unhealthy operators**:
    ```bash
-   k8s-inventory operators list --output json | jq '.[] | select(.replicas.ready != .replicas.desired)'
+   k8s-datamodel operators list --output json | jq '.[] | select(.replicas.ready != .replicas.desired)'
    ```
 
 3. **Get detailed information**:
    ```bash
-   k8s-inventory operators get <operator-name> --namespace <namespace>
+   k8s-datamodel operators get <operator-name> --namespace <namespace>
    ```
 
 4. **Check managed CRDs**:
    ```bash
-   k8s-inventory operators managed-crds <operator-name>
+   k8s-datamodel operators managed-crds <operator-name>
    ```
 
 #### Common Issues
@@ -290,13 +290,13 @@ kubectl auth can-i get customresourcedefinitions --as=system:serviceaccount:<nam
 **Resource Constraints**:
 ```bash
 # Check operator resource usage
-k8s-inventory operators list --output json | jq '.[] | {name, requests: .resources.requests, limits: .resources.limits}'
+k8s-datamodel operators list --output json | jq '.[] | {name, requests: .resources.requests, limits: .resources.limits}'
 ```
 
 **CRD Conflicts**:
 ```bash
 # Find operators managing the same CRDs
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq 'group_by(.managed_crds[]) | map(select(length > 1))'
 ```
 
@@ -305,7 +305,7 @@ k8s-inventory operators list --output json | \
 ### Monitoring Integration
 ```bash
 # Export operator metrics for monitoring
-k8s-inventory operators list --output json | \
+k8s-datamodel operators list --output json | \
   jq -r '.[] | "operator_healthy{name=\"\(.name)\",namespace=\"\(.namespace)\"} \(if .replicas.ready == .replicas.desired then 1 else 0 end)"'
 ```
 
@@ -313,7 +313,7 @@ k8s-inventory operators list --output json | \
 ```bash
 #!/bin/bash
 # Validate operator deployment in CI/CD
-FAILED_OPERATORS=$(k8s-inventory operators list --output json | jq -r '.[] | select(.replicas.ready != .replicas.desired) | .name')
+FAILED_OPERATORS=$(k8s-datamodel operators list --output json | jq -r '.[] | select(.replicas.ready != .replicas.desired) | .name')
 
 if [[ -n "$FAILED_OPERATORS" ]]; then
   echo "Failed operators detected: $FAILED_OPERATORS"
@@ -324,7 +324,7 @@ fi
 ### GitOps Integration
 ```bash
 # Generate operator state for GitOps comparison
-k8s-inventory operators list --output yaml | \
+k8s-datamodel operators list --output yaml | \
   yq eval 'sort_by(.name) | .[] | {"name": .name, "namespace": .namespace, "image": .image, "version": .image_version}' -
 ```
 

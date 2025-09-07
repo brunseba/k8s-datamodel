@@ -1,6 +1,6 @@
 # Security and Compliance Analysis Examples
 
-This document provides comprehensive examples for security analysis and compliance reporting using k8s-inventory-cli's database functionality and spec analysis capabilities.
+This document provides comprehensive examples for security analysis and compliance reporting using k8s-datamodel's database functionality and spec analysis capabilities.
 
 ## Table of Contents
 
@@ -19,12 +19,12 @@ This document provides comprehensive examples for security analysis and complian
 
 ```bash
 # Establish comprehensive security baseline
-k8s-inventory database store \
+k8s-datamodel database store \
     --notes "SECURITY-BASELINE-$(date +%Y-%m-%d) - Initial security assessment and baseline"
 
 # Export baseline for detailed analysis
-BASELINE_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $BASELINE_ID --file security-baseline.json
+BASELINE_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $BASELINE_ID --file security-baseline.json
 
 echo "Security baseline established with snapshot ID: $BASELINE_ID"
 echo $BASELINE_ID > .security-baseline-id
@@ -42,7 +42,7 @@ This document establishes the security baseline for the Kubernetes cluster, docu
 
 ## Methodology
 
-The security baseline was established using k8s-inventory-cli to:
+The security baseline was established using k8s-datamodel to:
 1. Capture complete cluster specifications including security contexts
 2. Analyze RBAC permissions for all operators and CSVs
 3. Document privileged containers and high-risk configurations
@@ -83,12 +83,12 @@ echo "# Security Baseline Validation - $(date)" > $VALIDATION_REPORT
 echo "" >> $VALIDATION_REPORT
 
 # Export baseline for comparison
-k8s-inventory database export $BASELINE_ID --file baseline-validation.json
+k8s-datamodel database export $BASELINE_ID --file baseline-validation.json
 
 # Current snapshot for comparison
-k8s-inventory database store --notes "Security validation against baseline - $(date +%Y-%m-%d)"
-CURRENT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $CURRENT_ID --file current-validation.json
+k8s-datamodel database store --notes "Security validation against baseline - $(date +%Y-%m-%d)"
+CURRENT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $CURRENT_ID --file current-validation.json
 
 echo "## Validation Summary" >> $VALIDATION_REPORT
 echo "- **Baseline Snapshot:** $BASELINE_ID" >> $VALIDATION_REPORT
@@ -171,9 +171,9 @@ echo "# RBAC Security Audit Report - $(date)" > $AUDIT_REPORT
 echo "" >> $AUDIT_REPORT
 
 # Store current state for analysis
-k8s-inventory database store --notes "RBAC Security Audit - $(date +%Y-%m-%d)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file rbac-audit.json
+k8s-datamodel database store --notes "RBAC Security Audit - $(date +%Y-%m-%d)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file rbac-audit.json
 
 echo "## Executive Summary" >> $AUDIT_REPORT
 echo "" >> $AUDIT_REPORT
@@ -297,12 +297,12 @@ echo "# RBAC Change Detection Report - $(date)" > $CHANGE_REPORT
 echo "" >> $CHANGE_REPORT
 
 # Get current state
-k8s-inventory database store --notes "RBAC change detection - $(date +%Y-%m-%d)"
-CURRENT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database store --notes "RBAC change detection - $(date +%Y-%m-%d)"
+CURRENT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
 
 # Export snapshots
-k8s-inventory database export $BASELINE_ID --file rbac-baseline.json
-k8s-inventory database export $CURRENT_ID --file rbac-current.json
+k8s-datamodel database export $BASELINE_ID --file rbac-baseline.json
+k8s-datamodel database export $CURRENT_ID --file rbac-current.json
 
 echo "## Change Summary" >> $CHANGE_REPORT
 echo "- **Baseline Snapshot:** $BASELINE_ID" >> $CHANGE_REPORT
@@ -413,9 +413,9 @@ echo "# Container Security Analysis Report - $(date)" > $SECURITY_REPORT
 echo "" >> $SECURITY_REPORT
 
 # Store current state
-k8s-inventory database store --notes "Container security analysis - $(date +%Y-%m-%d)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file container-security.json
+k8s-datamodel database store --notes "Container security analysis - $(date +%Y-%m-%d)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file container-security.json
 
 echo "## Security Posture Overview" >> $SECURITY_REPORT
 echo "" >> $SECURITY_REPORT
@@ -582,9 +582,9 @@ echo "**Scope:** Kubernetes Cluster Security Controls" >> $COMPLIANCE_REPORT
 echo "" >> $COMPLIANCE_REPORT
 
 # Store current state
-k8s-inventory database store --notes "SOC2 Compliance Assessment - $(date +%Y-%m-%d)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file soc2-compliance.json
+k8s-datamodel database store --notes "SOC2 Compliance Assessment - $(date +%Y-%m-%d)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file soc2-compliance.json
 
 echo "## Executive Summary" >> $COMPLIANCE_REPORT
 echo "" >> $COMPLIANCE_REPORT
@@ -659,7 +659,7 @@ echo "**Control Objective:** The entity monitors system components and operation
 echo "" >> $COMPLIANCE_REPORT
 
 echo "âœ… **COMPLIANT**: Monitoring controls implemented" >> $COMPLIANCE_REPORT
-echo "- k8s-inventory-cli provides continuous monitoring" >> $COMPLIANCE_REPORT
+echo "- k8s-datamodel provides continuous monitoring" >> $COMPLIANCE_REPORT
 echo "- Historical snapshots maintained for audit trail" >> $COMPLIANCE_REPORT
 echo "- Security baselines established and monitored" >> $COMPLIANCE_REPORT
 
@@ -683,7 +683,7 @@ fi
 echo "" >> $COMPLIANCE_REPORT
 echo "## Audit Evidence" >> $COMPLIANCE_REPORT
 echo "- **Snapshot ID:** $SNAPSHOT_ID" >> $COMPLIANCE_REPORT
-echo "- **Assessment Tool:** k8s-inventory-cli" >> $COMPLIANCE_REPORT
+echo "- **Assessment Tool:** k8s-datamodel" >> $COMPLIANCE_REPORT
 echo "- **Evidence Location:** Database snapshot contains complete cluster configuration" >> $COMPLIANCE_REPORT
 echo "- **Retention:** Snapshots retained per data retention policy" >> $COMPLIANCE_REPORT
 
@@ -732,9 +732,9 @@ echo "**Scope:** Kubernetes Infrastructure Security Controls" >> $PCI_REPORT
 echo "" >> $PCI_REPORT
 
 # Store current state
-k8s-inventory database store --notes "PCI DSS Compliance Assessment - $(date +%Y-%m-%d)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file pci-compliance.json
+k8s-datamodel database store --notes "PCI DSS Compliance Assessment - $(date +%Y-%m-%d)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file pci-compliance.json
 
 echo "## Executive Summary" >> $PCI_REPORT
 echo "" >> $PCI_REPORT
@@ -910,9 +910,9 @@ send_alert() {
 }
 
 # Store current security snapshot
-k8s-inventory database store --notes "Security monitoring - $(date +%Y-%m-%d-%H-%M)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file security-monitoring.json
+k8s-datamodel database store --notes "Security monitoring - $(date +%Y-%m-%d-%H-%M)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file security-monitoring.json
 
 echo "$(date): Security monitoring check started" | tee -a "$MONITORING_LOG"
 
@@ -962,7 +962,7 @@ Security Status: $([ $(($PRIVILEGED_COUNT + $WILDCARD_COUNT)) -eq 0 ] && echo "â
 
 Database Info:
 - Latest Snapshot: $SNAPSHOT_ID
-- Storage Location: $(dirname $(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id' 2>/dev/null) 2>/dev/null || echo "~/.k8s-inventory/")/inventory.db
+- Storage Location: $(dirname $(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id' 2>/dev/null) 2>/dev/null || echo "~/.k8s-inventory/")/inventory.db
 
 SUMMARY
 
@@ -1073,7 +1073,7 @@ send_pagerduty_alert() {
                 \"payload\": {
                     \"summary\": \"Kubernetes Security Alert: $alert_type\",
                     \"severity\": \"$severity\",
-                    \"source\": \"k8s-inventory-cli\",
+                    \"source\": \"k8s-datamodel\",
                     \"custom_details\": {
                         \"alert_type\": \"$alert_type\",
                         \"message\": \"$message\",
@@ -1110,9 +1110,9 @@ if [ "$1" = "test" ]; then
 fi
 
 # Store current state and analyze
-k8s-inventory database store --notes "Security alerting check - $(date +%Y-%m-%d-%H-%M)"
-SNAPSHOT_ID=$(k8s-inventory database list --limit 1 --output json | jq -r '.[0].id')
-k8s-inventory database export $SNAPSHOT_ID --file alerting-security.json
+k8s-datamodel database store --notes "Security alerting check - $(date +%Y-%m-%d-%H-%M)"
+SNAPSHOT_ID=$(k8s-datamodel database list --limit 1 --output json | jq -r '.[0].id')
+k8s-datamodel database export $SNAPSHOT_ID --file alerting-security.json
 
 # Check for critical violations and send alerts
 PRIVILEGED_COUNT=$(jq '[.operators[] | select(.spec.spec.template.spec.containers[0].securityContext.privileged == true)] | length' alerting-security.json)
@@ -1148,7 +1148,7 @@ This comprehensive security and compliance analysis suite provides:
 6. **Automated Monitoring**: Continuous security monitoring and alerting
 7. **Integration**: Slack, Teams, and PagerDuty alerting integration
 
-These tools enable enterprise-grade security management and compliance reporting using k8s-inventory-cli's database and analysis capabilities.
+These tools enable enterprise-grade security management and compliance reporting using k8s-datamodel's database and analysis capabilities.
 
 ## Vulnerability Assessment
 
@@ -1184,4 +1184,4 @@ Security drift detection is implemented through the security baseline validation
 - Security posture degradation alerts
 - Historical trend analysis
 
-The drift detection capabilities leverage k8s-inventory-cli's database functionality to maintain historical security baselines and detect deviations over time.
+The drift detection capabilities leverage k8s-datamodel's database functionality to maintain historical security baselines and detect deviations over time.

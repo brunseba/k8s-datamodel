@@ -7,7 +7,7 @@ Complete API reference for all K8s Inventory CLI commands, options, and paramete
 These options are available for all commands:
 
 ```bash
-k8s-inventory [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS]
+k8s-datamodel [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS]
 ```
 
 ### Global Parameters
@@ -41,7 +41,7 @@ Commands for cluster-wide operations.
 Test connectivity to the Kubernetes cluster.
 
 ```bash
-k8s-inventory cluster test-connection [OPTIONS]
+k8s-datamodel cluster test-connection [OPTIONS]
 ```
 
 **Options:**
@@ -56,8 +56,8 @@ k8s-inventory cluster test-connection [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory cluster test-connection
-k8s-inventory cluster test-connection --timeout 60s --verbose
+k8s-datamodel cluster test-connection
+k8s-datamodel cluster test-connection --timeout 60s --verbose
 ```
 
 ### `cluster info`
@@ -65,7 +65,7 @@ k8s-inventory cluster test-connection --timeout 60s --verbose
 Display detailed cluster information.
 
 ```bash
-k8s-inventory cluster info [OPTIONS]
+k8s-datamodel cluster info [OPTIONS]
 ```
 
 **Output includes:**
@@ -77,8 +77,8 @@ k8s-inventory cluster info [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory cluster info
-k8s-inventory cluster info --output json
+k8s-datamodel cluster info
+k8s-datamodel cluster info --output json
 ```
 
 ### `cluster summary`
@@ -86,7 +86,7 @@ k8s-inventory cluster info --output json
 Generate statistical summary of cluster resources.
 
 ```bash
-k8s-inventory cluster summary [OPTIONS]
+k8s-datamodel cluster summary [OPTIONS]
 ```
 
 **Output includes:**
@@ -97,8 +97,8 @@ k8s-inventory cluster summary [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory cluster summary
-k8s-inventory cluster summary --output yaml
+k8s-datamodel cluster summary
+k8s-datamodel cluster summary --output yaml
 ```
 
 ### `cluster export`
@@ -106,7 +106,7 @@ k8s-inventory cluster summary --output yaml
 Export complete cluster inventory.
 
 ```bash
-k8s-inventory cluster export [OPTIONS]
+k8s-datamodel cluster export [OPTIONS]
 ```
 
 **Options:**
@@ -116,9 +116,9 @@ k8s-inventory cluster export [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory cluster export --file inventory.json
-k8s-inventory cluster export --output yaml --file inventory.yaml
-k8s-inventory cluster export --compress --file inventory.json.gz
+k8s-datamodel cluster export --file inventory.json
+k8s-datamodel cluster export --output yaml --file inventory.yaml
+k8s-datamodel cluster export --compress --file inventory.json.gz
 ```
 
 ## CRD Commands
@@ -130,7 +130,7 @@ Commands for Custom Resource Definition management.
 List Custom Resource Definitions with filtering.
 
 ```bash
-k8s-inventory crd list [OPTIONS]
+k8s-datamodel crd list [OPTIONS]
 ```
 
 **Filtering Options:**
@@ -148,10 +148,10 @@ k8s-inventory crd list [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory crd list
-k8s-inventory crd list --group cert-manager.io
-k8s-inventory crd list --scope Cluster --output json
-k8s-inventory crd list --kind Certificate --show-instances
+k8s-datamodel crd list
+k8s-datamodel crd list --group cert-manager.io
+k8s-datamodel crd list --scope Cluster --output json
+k8s-datamodel crd list --kind Certificate --show-instances
 ```
 
 ### `crd get`
@@ -159,7 +159,7 @@ k8s-inventory crd list --kind Certificate --show-instances
 Get detailed information about a specific CRD.
 
 ```bash
-k8s-inventory crd get CRD_NAME [OPTIONS]
+k8s-datamodel crd get CRD_NAME [OPTIONS]
 ```
 
 **Arguments:**
@@ -172,8 +172,8 @@ k8s-inventory crd get CRD_NAME [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory crd get certificates.cert-manager.io
-k8s-inventory crd get certificates.cert-manager.io --show-spec --output yaml
+k8s-datamodel crd get certificates.cert-manager.io
+k8s-datamodel crd get certificates.cert-manager.io --show-spec --output yaml
 ```
 
 ### `crd count`
@@ -181,7 +181,7 @@ k8s-inventory crd get certificates.cert-manager.io --show-spec --output yaml
 Count custom resource instances for each CRD.
 
 ```bash
-k8s-inventory crd count [OPTIONS]
+k8s-datamodel crd count [OPTIONS]
 ```
 
 **Filtering Options:**
@@ -195,9 +195,9 @@ k8s-inventory crd count [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory crd count
-k8s-inventory crd count --group networking.k8s.io
-k8s-inventory crd count --zero-instances --output json
+k8s-datamodel crd count
+k8s-datamodel crd count --group networking.k8s.io
+k8s-datamodel crd count --zero-instances --output json
 ```
 
 ## Operator Commands
@@ -209,7 +209,7 @@ Commands for Kubernetes operator management.
 List detected operators with classification.
 
 ```bash
-k8s-inventory operators list [OPTIONS]
+k8s-datamodel operators list [OPTIONS]
 ```
 
 **Filtering Options:**
@@ -226,10 +226,10 @@ k8s-inventory operators list [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory operators list
-k8s-inventory operators list --namespace kube-system
-k8s-inventory operators list --framework OLM --output json
-k8s-inventory operators list --all-namespaces --show-images
+k8s-datamodel operators list
+k8s-datamodel operators list --namespace kube-system
+k8s-datamodel operators list --framework OLM --output json
+k8s-datamodel operators list --all-namespaces --show-images
 ```
 
 ### `operators get`
@@ -237,7 +237,7 @@ k8s-inventory operators list --all-namespaces --show-images
 Get detailed information about a specific operator.
 
 ```bash
-k8s-inventory operators get OPERATOR_NAME [OPTIONS]
+k8s-datamodel operators get OPERATOR_NAME [OPTIONS]
 ```
 
 **Arguments:**
@@ -251,8 +251,8 @@ k8s-inventory operators get OPERATOR_NAME [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory operators get cert-manager --namespace cert-manager
-k8s-inventory operators get prometheus-operator --show-pods --output yaml
+k8s-datamodel operators get cert-manager --namespace cert-manager
+k8s-datamodel operators get prometheus-operator --show-pods --output yaml
 ```
 
 ### `operators managed-crds`
@@ -260,7 +260,7 @@ k8s-inventory operators get prometheus-operator --show-pods --output yaml
 Show CRDs managed by a specific operator.
 
 ```bash
-k8s-inventory operators managed-crds OPERATOR_NAME [OPTIONS]
+k8s-datamodel operators managed-crds OPERATOR_NAME [OPTIONS]
 ```
 
 **Arguments:**
@@ -273,8 +273,8 @@ k8s-inventory operators managed-crds OPERATOR_NAME [OPTIONS]
 
 **Examples:**
 ```bash
-k8s-inventory operators managed-crds cert-manager
-k8s-inventory operators managed-crds istio-pilot --show-instances --output json
+k8s-datamodel operators managed-crds cert-manager
+k8s-datamodel operators managed-crds istio-pilot --show-instances --output json
 ```
 
 ## Common Parameters
@@ -421,7 +421,7 @@ Solution: Grant required permissions or use different credentials
 
 ```bash
 # Test basic connectivity
-k8s-inventory cluster test-connection --verbose
+k8s-datamodel cluster test-connection --verbose
 
 # Check authentication
 kubectl auth whoami
@@ -438,21 +438,21 @@ Enable shell completion for enhanced CLI experience:
 ### Bash
 ```bash
 # Install completion
-k8s-inventory completion bash > /etc/bash_completion.d/k8s-inventory
+k8s-datamodel completion bash > /etc/bash_completion.d/k8s-inventory
 
 # Or for user only
-k8s-inventory completion bash > ~/.local/share/bash-completion/completions/k8s-inventory
+k8s-datamodel completion bash > ~/.local/share/bash-completion/completions/k8s-inventory
 ```
 
 ### Zsh
 ```bash
 # Install completion
-k8s-inventory completion zsh > "${fpath[1]}/_k8s-inventory"
+k8s-datamodel completion zsh > "${fpath[1]}/_k8s-inventory"
 ```
 
 ### Fish
 ```bash
-k8s-inventory completion fish > ~/.config/fish/completions/k8s-inventory.fish
+k8s-datamodel completion fish > ~/.config/fish/completions/k8s-inventory.fish
 ```
 
 ## Advanced Usage
@@ -467,13 +467,13 @@ k8s-inventory completion fish > ~/.config/fish/completions/k8s-inventory.fish
 set -euo pipefail
 
 # Export inventory with error handling
-if ! k8s-inventory cluster export --file inventory.json; then
+if ! k8s-datamodel cluster export --file inventory.json; then
   echo "Failed to export cluster inventory" >&2
   exit 1
 fi
 
 # Process with jq
-CRITICAL_OPERATORS=$(k8s-inventory operators list --output json | \
+CRITICAL_OPERATORS=$(k8s-datamodel operators list --output json | \
   jq -r '.[] | select(.framework == "OLM" and .replicas.ready != .replicas.desired) | .name')
 
 if [[ -n "$CRITICAL_OPERATORS" ]]; then
@@ -486,7 +486,7 @@ fi
 
 ```bash
 # Prometheus metrics export
-k8s-inventory cluster summary --output json | \
+k8s-datamodel cluster summary --output json | \
   jq -r '
     "k8s_inventory_crds_total " + (.crds.total | tostring),
     "k8s_inventory_operators_total " + (.operators.total | tostring),

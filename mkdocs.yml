@@ -1,10 +1,10 @@
-site_name: K8s Inventory CLI
-site_description: A CLI tool to inventory CRDs and operators in Kubernetes clusters
-site_author: brun_s
-site_url: https://brun-s.github.io/k8s-inventory-cli/
+site_name: K8s DataModel
+site_description: A CLI tool to model and analyze Kubernetes cluster data including CRDs, operators, and OLM components
+site_author: brunseba
+site_url: https://brunseba.github.io/k8s-datamodel/
 
-repo_name: brun-s/k8s-inventory-cli
-repo_url: https://github.com/brun-s/k8s-inventory-cli
+repo_name: brunseba/k8s-datamodel
+repo_url: https://github.com/brunseba/k8s-datamodel
 edit_uri: edit/main/docs/
 
 theme:

@@ -143,7 +143,7 @@ Kubernetes API client wrapper with enhanced functionality.
 
 Main client for Kubernetes API operations.
 
-```python path=/Users/brun_s/Documents/veille-technologique/Personnel/kubernetes-datamodel/k8s-inventory-cli/src/k8s_inventory_cli/core/k8s_client.py start=null
+```python path=/Users/brun_s/Documents/veille-technologique/Personnel/kubernetes-datamodel/k8s-datamodel/src/k8s_inventory_cli/core/k8s_client.py start=null
 from k8s_inventory_cli.core.k8s_client import K8sClient
 
 # Initialize client

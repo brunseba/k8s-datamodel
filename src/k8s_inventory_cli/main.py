@@ -1,4 +1,4 @@
-"""Main CLI entry point for k8s-inventory-cli."""
+"""Main CLI entry point for k8s-datamodel."""
 
 import click
 from typing import Optional
@@ -16,10 +16,10 @@ def version_callback(ctx: click.Context, param: click.Parameter, value: bool) ->
     if not value or ctx.resilient_parsing:
         return
     try:
-        pkg_version = importlib.metadata.version('k8s-inventory-cli')
+        pkg_version = importlib.metadata.version('k8s-datamodel')
     except importlib.metadata.PackageNotFoundError:
         pkg_version = '0.1.0'  # fallback version
-    click.echo(f"k8s-inventory-cli version {pkg_version}")
+    click.echo(f"k8s-datamodel version {pkg_version}")
     ctx.exit()
 
 
