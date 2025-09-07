@@ -41,6 +41,8 @@ theme:
     - content.code.copy
     - content.code.select
     - content.tabs.link
+    - content.action.edit
+    - content.action.view
 
   icon:
     repo: fontawesome/brands/github
@@ -94,6 +96,13 @@ markdown_extensions:
 
 plugins:
   - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+      fallback_to_build_date: true
+  - git-committers:
+      repository: brunseba/k8s-datamodel
+      branch: main
   - mermaid2:
       arguments:
         theme: auto
