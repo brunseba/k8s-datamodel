@@ -1,0 +1,108 @@
+site_name: K8s Inventory CLI
+site_description: A CLI tool to inventory CRDs and operators in Kubernetes clusters
+site_author: brun_s
+site_url: https://brun-s.github.io/k8s-inventory-cli/
+
+repo_name: brun-s/k8s-inventory-cli
+repo_url: https://github.com/brun-s/k8s-inventory-cli
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - toc.follow
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage:
+    - Quick Start: usage/quick-start.md
+    - CRDs: usage/crds.md
+    - Operators: usage/operators.md
+    - Cluster Operations: usage/cluster.md
+    - Output Formats: usage/output-formats.md
+  - Examples: examples.md
+  - API Reference:
+    - CLI Commands: api/cli.md
+    - Core Modules: api/core.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mermaid2:
+      arguments:
+        theme: auto
+  - pdf-export:
+      verbose: true
+      media_type: print
+      enabled_if_env: ENABLE_PDF_EXPORT
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/brun-s
+  version:
+    provider: mike
+
+extra_css:
+  - stylesheets/extra.css
+
+watch:
+  - src/
+  - README.md
