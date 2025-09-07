@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2025-09-07
+
+### Changed
+- **Breaking Change**: Renamed project from `k8s-inventory-cli` to `k8s-datamodel`
+- Updated CLI command from `k8s-inventory` to `k8s-datamodel`
+- Updated project name throughout codebase and documentation
+- Enhanced mkdocs configuration with version tracking
+
+## [0.3.0] - Previous Release
 
 ### Added
 - **Complete Database Functionality**: Full SQLite database support for persistent cluster inventory storage
