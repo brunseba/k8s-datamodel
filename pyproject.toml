@@ -1,6 +1,6 @@
 [project]
 name = "k8s-datamodel"
-version = "0.3.0"
+version = "0.4.0"
 description = "A CLI tool to model and analyze Kubernetes cluster data including CRDs, operators, and OLM components"
 readme = "README.md"
 requires-python = ">=3.10"
