@@ -108,6 +108,7 @@ extra:
       link: https://github.com/brun-s
   version:
     provider: mike
+    default: 0.4.0
 
 extra_css:
   - stylesheets/extra.css

@@ -1,5 +1,7 @@
 # K8s DataModel
 
+**Version 0.4.0**
+
 A comprehensive CLI tool to model and analyze Kubernetes cluster data including CRDs, operators, and OLM components.
 
 ## Features
